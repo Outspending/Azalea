@@ -1,7 +1,5 @@
 package me.outspending.protocol.listener;
 
-import lombok.AccessLevel;
-import lombok.Getter;
 import me.outspending.connection.Connection;
 import me.outspending.protocol.AnnotatedPacketHandler;
 import me.outspending.protocol.CodecHandler;
@@ -13,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
-@Getter(AccessLevel.PUBLIC)
 public class PacketListener {
     private static final AnnotatedPacketHandler packetHandler = new AnnotatedPacketHandler();
 
@@ -27,7 +24,7 @@ public class PacketListener {
 
         Function<PacketReader, Packet> packetFunction = CodecHandler.GAMESTATE_CODEC.getPacket(state, id);
         if (packetFunction == null) {
-            System.out.println("Unknown packet ID: " + reader.getPacketId());
+            System.out.printf("Unknown packet ID: %d, in state: %s%n", id, state.name());
             return;
         }
 

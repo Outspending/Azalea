@@ -19,11 +19,11 @@ public class ClientConnection extends Connection {
     private static final byte[] BYTE_ARRAY = new byte[1024];
     private final Socket socket;
 
-    private PacketListener packetListener;
-    private boolean isRunning = false;
+    public PacketListener packetListener;
+    public boolean isRunning = false;
 
     public ClientConnection(Socket socket) throws IOException {
-        super(MinecraftServer.getInstance());
+        super(MinecraftServer.getInstance(), GameState.HANDSHAKE);
 
         this.socket = socket;
         this.packetListener = new PacketListener();
