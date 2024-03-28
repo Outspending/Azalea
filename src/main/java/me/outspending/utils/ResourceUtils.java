@@ -12,18 +12,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ResourceUtils {
-    public static @Nullable InputStream getResource(@NotNull String resource) {
+    public static URL getResource(@NotNull String resource) {
+        return ResourceUtils.class.getResource(resource);
+    }
+
+    public static @Nullable InputStream getResourceAsStream(@NotNull String resource) {
         return ResourceUtils.class.getResourceAsStream(resource);
     }
 
     public static @NotNull List<String> readResourceLines(@NotNull String resource) {
         List<String> lines = new ArrayList<>();
-        InputStream stream = getResource(resource);
+        InputStream stream = getResourceAsStream(resource);
         Preconditions.checkNotNull(stream, "Resource not found: " + resource);
 
         try (InputStreamReader streamReader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
@@ -41,14 +46,14 @@ public class ResourceUtils {
     }
 
     public static @Nullable JsonObject getResourceJson(@NotNull String resource) {
-        InputStream stream = getResource(resource);
+        InputStream stream = getResourceAsStream(resource);
         Preconditions.checkNotNull(stream, "Resource not found: " + resource);
 
         return new Gson().fromJson(new InputStreamReader(stream), JsonObject.class);
     }
 
     public static @NotNull NBTCompound getResourceCompound(@NotNull String resource) throws IOException {
-        InputStream stream = getResource(resource);
+        InputStream stream = getResourceAsStream(resource);
         System.out.println(stream);
         return NBTReader.read(stream);
     }

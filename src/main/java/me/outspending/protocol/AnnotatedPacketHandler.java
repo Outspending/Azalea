@@ -1,19 +1,18 @@
 package me.outspending.protocol;
 
-import me.nullicorn.nedit.type.NBTCompound;
 import me.outspending.MinecraftServer;
 import me.outspending.connection.Connection;
+import me.outspending.connection.GameState;
 import me.outspending.protocol.annotations.PacketReceiver;
-import me.outspending.protocol.packets.status.client.StatusRequestPacket;
 import me.outspending.protocol.packets.configuration.client.AcknowledgeFinishConfigurationPacket;
+import me.outspending.protocol.packets.configuration.server.FinishConfigurationPacket;
+import me.outspending.protocol.packets.configuration.server.RegistryDataPacket;
+import me.outspending.protocol.packets.handshaking.HandshakePacket;
 import me.outspending.protocol.packets.login.client.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.login.client.LoginStartPacket;
 import me.outspending.protocol.packets.login.client.LoginSuccessPacket;
-import me.outspending.connection.GameState;
-import me.outspending.protocol.packets.handshaking.HandshakePacket;
+import me.outspending.protocol.packets.status.client.StatusRequestPacket;
 import me.outspending.protocol.packets.status.server.StatusResponsePacket;
-import me.outspending.protocol.packets.configuration.server.FinishConfigurationPacket;
-import me.outspending.protocol.packets.configuration.server.RegistryDataPacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,7 +39,8 @@ public class AnnotatedPacketHandler {
 
     public void handle(@NotNull Connection connection, @NotNull Packet packet) throws InvocationTargetException, IllegalAccessException {
         Method method = PACKET_HANDLERS.get(packet.getClass());
-        method.invoke(this, connection, packet);
+        if (method != null)
+            method.invoke(this, connection, packet);
     }
 
     @PacketReceiver
@@ -65,14 +65,12 @@ public class AnnotatedPacketHandler {
 
     @PacketReceiver
     public void onLoginAcknowledged(@NotNull Connection client, @NotNull LoginAcknowledgedPacket packet) {
+        System.out.println("Login has been acknowledged!");
         client.setState(GameState.CONFIGURATION);
 
-//        JsonObject registryJson = ResourceUtils.getResourceJson("/registry_data.json");
-//        NBTCompound compound = NBTJson.parse(registryJson);
-//
-//        System.out.println(compound);
-        client.sendPacket(new RegistryDataPacket(new NBTCompound()));
+        client.sendPacket(new RegistryDataPacket(client.getServer().REGISTRY_NBT));
         client.sendPacket(new FinishConfigurationPacket());
+        System.out.println("Sent registry data and finish configuration packet!");
     }
 
     @PacketReceiver

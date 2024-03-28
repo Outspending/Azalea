@@ -1,14 +1,17 @@
 package me.outspending.protocol;
 
+import com.github.steveice10.opennbt.NBTIO;
+import com.github.steveice10.opennbt.NBTInputStream;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
-import me.nullicorn.nedit.NBTReader;
-import me.nullicorn.nedit.type.NBTCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -16,20 +19,18 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 @Getter(AccessLevel.PUBLIC)
-public class PacketReader {
+public class PacketReader extends ByteArrayInputStream {
     private static final int SEGMENT_BITS = 0x7F;
     private static final int CONTINUE_BIT = 0x80;
 
     private final int length;
-    private final int packetId;
-
-    private final ByteArrayInputStream inputStream;
+    private final int packetID;
 
     public PacketReader(byte[] buffer) {
-        inputStream = new ByteArrayInputStream(buffer);
+        super(buffer);
 
         this.length = readVarInt();
-        this.packetId = readVarInt();
+        this.packetID = readVarInt();
     }
 
     public int readVarInt() {
@@ -38,7 +39,7 @@ public class PacketReader {
         int b;
 
         do {
-            b = inputStream.read();
+            b = read();
             value |= (b & SEGMENT_BITS) << (size++ * 7);
         } while ((b & CONTINUE_BIT) != 0);
 
@@ -51,7 +52,7 @@ public class PacketReader {
         int b;
 
         do {
-            b = inputStream.read();
+            b = read();
             value |= (b & SEGMENT_BITS) << (size++ * 7);
         } while ((b & CONTINUE_BIT) != 0);
 
@@ -61,24 +62,39 @@ public class PacketReader {
     public @Nullable String readString() {
         int length = readVarInt();
         byte[] bytes = new byte[length];
-        inputStream.read(bytes, 0, length);
+        read(bytes, 0, length);
         return new String(bytes);
     }
 
+    public byte[] readByteArray() {
+        int length = readVarInt();
+        byte[] bytes = new byte[length];
+        read(bytes, 0, length);
+        return bytes;
+    }
+
+    public byte readByte() {
+        return (byte) read();
+    }
+
+    public int readUnsignedByte() {
+        return readByte() & 0xFF;
+    }
+
     public boolean readBoolean() {
-        return inputStream.read() == 1;
+        return read() == 1;
     }
 
     public short readShort() {
-        return (short) ((inputStream.read() << 8) | inputStream.read());
+        return (short) ((read() << 8) | read());
     }
 
     public int readInt() {
-        return (inputStream.read() << 24) | (inputStream.read() << 16) | (inputStream.read() << 8) | inputStream.read();
+        return (read() << 24) | (read() << 16) | (read() << 8) | read();
     }
 
     public long readLong() {
-        return ((long) inputStream.read() << 56) | ((long) inputStream.read() << 48) | ((long) inputStream.read() << 40) | ((long) inputStream.read() << 32) | ((long) inputStream.read() << 24) | ((long) inputStream.read() << 16) | ((long) inputStream.read() << 8) | inputStream.read();
+        return ((long) read() << 56) | ((long) read() << 48) | ((long) read() << 40) | ((long) read() << 32) | ((long) read() << 24) | ((long) read() << 16) | ((long) read() << 8) | read();
     }
 
     public float readFloat() {
@@ -104,14 +120,22 @@ public class PacketReader {
         return Arrays.asList(array);
     }
 
-    public @Nullable NBTCompound readNBTCompound() {
-        NBTCompound compound;
+    public <T extends Tag> @Nullable T readAnyTag(Class<T> expected) {
         try {
-            compound = NBTReader.read(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read NBT compound", e);
-        }
+            Tag tag = NBTIO.readAnyTag(this);
 
-        return compound;
+            if (tag == null) {
+                return null;
+            }
+
+            if (!expected.isInstance(tag)) {
+                throw new IOException("Expected " + expected.getName() + " but got " + tag.getClass().getName());
+            }
+
+            return expected.cast(tag);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

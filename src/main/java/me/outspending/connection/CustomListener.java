@@ -1,8 +1,8 @@
 package me.outspending.connection;
 
 import me.outspending.protocol.Packet;
-import me.outspending.protocol.packets.handshaking.HandshakePacket;
 import me.outspending.protocol.listener.PacketListener;
+import me.outspending.protocol.packets.handshaking.HandshakePacket;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomListener extends PacketListener {

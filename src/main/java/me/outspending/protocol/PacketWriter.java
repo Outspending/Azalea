@@ -1,25 +1,45 @@
 package me.outspending.protocol;
 
+import com.github.steveice10.opennbt.NBTIO;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.nullicorn.nedit.NBTWriter;
-import me.nullicorn.nedit.type.NBTCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+@Getter(AccessLevel.PUBLIC)
 @NoArgsConstructor
-public class PacketWriter {
+public class PacketWriter extends ByteArrayOutputStream {
     private static final int SEGMENT_BITS = 0x7F;
     private static final int CONTINUE_BIT = 0x80;
 
-    private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    private int length;
+    private int packetID;
+
+    public static int getPacketLength(@NotNull Packet packet) {
+        PacketWriter writer = new PacketWriter();
+        writer.writeVarInt(packet.getID());
+        packet.write(writer);
+
+        return writer.size();
+    }
+
+    public PacketWriter(@NotNull Packet packet) {
+        this(packet, getPacketLength(packet));
+    }
 
     public PacketWriter(@NotNull Packet packet, int length) {
-        writeVarInt(length);
-        writeVarInt(packet.getID());
+        this.length = length;
+        this.packetID = packet.getID();
+
+        writeVarInt(this.length);
+        writeVarInt(this.packetID);
         packet.write(this);
     }
 
@@ -30,7 +50,7 @@ public class PacketWriter {
             if (value != 0) {
                 temp |= CONTINUE_BIT;
             }
-            outputStream.write(temp);
+            write(temp);
         } while (value != 0);
     }
 
@@ -41,41 +61,41 @@ public class PacketWriter {
             if (value != 0) {
                 temp |= CONTINUE_BIT;
             }
-            outputStream.write(temp);
+            write(temp);
         } while (value != 0);
     }
 
     public void writeString(@NotNull String value) {
         byte[] bytes = value.getBytes();
         writeVarInt(bytes.length);
-        outputStream.write(bytes, 0, bytes.length);
+        write(bytes, 0, bytes.length);
     }
 
     public void writeBoolean(boolean value) {
-        outputStream.write(value ? 1 : 0);
+        write(value ? 1 : 0);
     }
 
     public void writeShort(short value) {
-        outputStream.write(value >> 8);
-        outputStream.write(value);
+        write(value >> 8);
+        write(value);
     }
 
     public void writeInt(int value) {
-        outputStream.write(value >> 24);
-        outputStream.write(value >> 16);
-        outputStream.write(value >> 8);
-        outputStream.write(value);
+        write(value >> 24);
+        write(value >> 16);
+        write(value >> 8);
+        write(value);
     }
 
     public void writeLong(long value) {
-        outputStream.write((int) (value >> 56));
-        outputStream.write((int) (value >> 48));
-        outputStream.write((int) (value >> 40));
-        outputStream.write((int) (value >> 32));
-        outputStream.write((int) (value >> 24));
-        outputStream.write((int) (value >> 16));
-        outputStream.write((int) (value >> 8));
-        outputStream.write((int) value);
+        write((int) (value >> 56));
+        write((int) (value >> 48));
+        write((int) (value >> 40));
+        write((int) (value >> 32));
+        write((int) (value >> 24));
+        write((int) (value >> 16));
+        write((int) (value >> 8));
+        write((int) value);
     }
 
     public void writeUUID(@NotNull UUID uuid) {
@@ -91,37 +111,23 @@ public class PacketWriter {
     }
 
     public void writeByteArray(byte[] bytes) {
-        outputStream.write(bytes, 0, bytes.length);
+        write(bytes, 0, bytes.length);
     }
 
     public void writePacketWriter(@NotNull PacketWriter writer) {
         writeByteArray(writer.toByteArray());
     }
 
-    public void writeNBTCompound(@NotNull NBTCompound compound) {
+    public void writeNBTCompound(@NotNull CompoundTag compound) {
         try {
-            NBTWriter.write(compound, outputStream);
+            PacketWriter instance = this;
+            NBTIO.writeAnyTag(new ByteArrayOutputStream() {
+                @Override
+                public void write(int b) {
+                    instance.write(b);
+                }
+            }, compound);
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public byte[] toByteArray() {
-        return outputStream.toByteArray();
-    }
-
-    public int size() {
-        return outputStream.size();
-    }
-
-    public void reset() {
-        outputStream.reset();
-    }
-
-    public void close() {
-        try {
-            outputStream.close();
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
