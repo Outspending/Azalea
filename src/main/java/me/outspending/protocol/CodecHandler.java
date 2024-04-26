@@ -3,8 +3,6 @@ package me.outspending.protocol;
 import me.outspending.MinecraftServer;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.packets.configuration.client.AcknowledgeFinishConfigurationPacket;
-import me.outspending.protocol.packets.configuration.server.ConfigurationDisconnectPacket;
-import me.outspending.protocol.packets.configuration.server.ConfigurationPluginMessagePacket;
 import me.outspending.protocol.packets.configuration.server.RegistryDataPacket;
 import me.outspending.protocol.packets.handshaking.HandshakePacket;
 import me.outspending.protocol.packets.login.client.LoginAcknowledgedPacket;
@@ -32,8 +30,6 @@ public class CodecHandler {
                     0x03, LoginAcknowledgedPacket::of
             ))
             .packetType(GameState.CONFIGURATION, Map.of(
-                    0x00, ConfigurationPluginMessagePacket::of,
-                    0x01, ConfigurationDisconnectPacket::of,
                     0x02, AcknowledgeFinishConfigurationPacket::of,
                     0x05, RegistryDataPacket::of
             ))

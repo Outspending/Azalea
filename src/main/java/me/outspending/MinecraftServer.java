@@ -1,20 +1,18 @@
 package me.outspending;
 
-import com.github.steveice10.opennbt.NBTIO;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.outspending.utils.ResourceUtils;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.TagStringIO;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
+import java.io.*;
+import java.net.URL;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -32,7 +30,7 @@ public class MinecraftServer {
     private int maxPlayers = 20;
     private String description = "Woah, an MOTD for my custom mc protocol!";
 
-    public CompoundTag REGISTRY_NBT;
+    public CompoundBinaryTag REGISTRY_NBT;
 
     public static @NotNull MinecraftServer getInstance() {
         if (instance == null) {
@@ -62,10 +60,8 @@ public class MinecraftServer {
         try (InputStream inputStream = ResourceUtils.getResourceAsStream("/networkCodec.nbt")) {
             if (inputStream == null) return;
 
-            DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream));
-            REGISTRY_NBT = (CompoundTag) NBTIO.readTag((DataInput) stream);
-
-            System.out.println(REGISTRY_NBT);
+            InputStream stream = ResourceUtils.getResourceAsStream("/networkCodec.nbt");
+            REGISTRY_NBT = BinaryTagIO.reader().read(stream);
         } catch (Exception e) {
             e.printStackTrace();
         }

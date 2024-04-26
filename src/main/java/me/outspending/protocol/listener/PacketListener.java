@@ -22,6 +22,8 @@ public class PacketListener {
         int id = reader.getPacketID();
         GameState state = connection.getState();
 
+        System.out.println("Received packet ID: " + id + ", in state: " + state.name());
+
         Function<PacketReader, Packet> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
         if (packetFunction == null) {
             System.out.printf("Unknown packet ID: %d, in state: %s%n", id, state.name());

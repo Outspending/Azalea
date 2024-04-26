@@ -1,14 +1,14 @@
 package me.outspending.protocol.packets.configuration.server;
 
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import me.outspending.protocol.Packet;
 import me.outspending.protocol.PacketReader;
 import me.outspending.protocol.PacketWriter;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
-public record RegistryDataPacket(CompoundTag compound) implements Packet {
+public record RegistryDataPacket(CompoundBinaryTag compound) implements Packet {
     public static RegistryDataPacket of(@NotNull PacketReader reader) {
-        return new RegistryDataPacket(reader.readAnyTag(CompoundTag.class));
+        return new RegistryDataPacket(reader.readNBTCompound());
     }
 
     @Override

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ServerImpl.iml" filepath="$PROJECT_DIR$/ServerImpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ServerImpl.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ServerImpl.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ServerImpl.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ServerImpl.test.iml" />
     </modules>
   </component>
 </project>

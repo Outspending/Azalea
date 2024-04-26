@@ -1,17 +1,15 @@
 package me.outspending.protocol;
 
-import com.github.steveice10.opennbt.NBTIO;
-import com.github.steveice10.opennbt.NBTInputStream;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.outspending.position.Location;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -73,16 +71,16 @@ public class PacketReader extends ByteArrayInputStream {
         return bytes;
     }
 
+    public boolean readBoolean() {
+        return read() == 1;
+    }
+
     public byte readByte() {
         return (byte) read();
     }
 
     public int readUnsignedByte() {
         return readByte() & 0xFF;
-    }
-
-    public boolean readBoolean() {
-        return read() == 1;
     }
 
     public short readShort() {
@@ -120,19 +118,13 @@ public class PacketReader extends ByteArrayInputStream {
         return Arrays.asList(array);
     }
 
-    public <T extends Tag> @Nullable T readAnyTag(Class<T> expected) {
+    public @Nullable Location readLocation() {
+        return new Location(readDouble(), readDouble(), readDouble());
+    }
+
+    public @Nullable CompoundBinaryTag readNBTCompound() {
         try {
-            Tag tag = NBTIO.readAnyTag(this);
-
-            if (tag == null) {
-                return null;
-            }
-
-            if (!expected.isInstance(tag)) {
-                throw new IOException("Expected " + expected.getName() + " but got " + tag.getClass().getName());
-            }
-
-            return expected.cast(tag);
+            return BinaryTagIO.reader().readNameless(this);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.connection.ClientConnection;
-import me.outspending.connection.CustomListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -37,8 +36,7 @@ public class ServerConnection {
                 Socket clientSocket = mainSocket.accept();
                 System.out.println("Client connected: " + clientSocket);
 
-                ClientConnection connection = new ClientConnection(clientSocket);
-                connection.setPacketListener(new CustomListener());
+                new ClientConnection(clientSocket);
             }
         } catch (IOException e) {
             e.printStackTrace();

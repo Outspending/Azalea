@@ -1,15 +1,15 @@
 package me.outspending.protocol;
 
-import com.github.steveice10.opennbt.NBTIO;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.outspending.position.Location;
+import me.outspending.protocol.packets.configuration.server.RegistryDataPacket;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -27,7 +27,7 @@ public class PacketWriter extends ByteArrayOutputStream {
         writer.writeVarInt(packet.getID());
         packet.write(writer);
 
-        return writer.size();
+        return packet instanceof RegistryDataPacket ? writer.size() + 8 : writer.size(); // VERY janky way to fix the issue but idgaf
     }
 
     public PacketWriter(@NotNull Packet packet) {
@@ -35,6 +35,8 @@ public class PacketWriter extends ByteArrayOutputStream {
     }
 
     public PacketWriter(@NotNull Packet packet, int length) {
+        super(length);
+
         this.length = length;
         this.packetID = packet.getID();
 
@@ -87,6 +89,10 @@ public class PacketWriter extends ByteArrayOutputStream {
         write(value);
     }
 
+    public void writeDouble(double value) {
+        writeLong(Double.doubleToLongBits(value));
+    }
+
     public void writeLong(long value) {
         write((int) (value >> 56));
         write((int) (value >> 48));
@@ -118,15 +124,15 @@ public class PacketWriter extends ByteArrayOutputStream {
         writeByteArray(writer.toByteArray());
     }
 
-    public void writeNBTCompound(@NotNull CompoundTag compound) {
+    public void writeLocation(@NotNull Location location) {
+        writeDouble(location.x());
+        writeDouble(location.y());
+        writeDouble(location.z());
+    }
+
+    public void writeNBTCompound(@NotNull CompoundBinaryTag tag) {
         try {
-            PacketWriter instance = this;
-            NBTIO.writeAnyTag(new ByteArrayOutputStream() {
-                @Override
-                public void write(int b) {
-                    instance.write(b);
-                }
-            }, compound);
+            BinaryTagIO.writer().writeNameless(tag, this);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -16,6 +16,6 @@ public record FinishConfigurationPacket() implements Packet {
 
     @Override
     public int getID() {
-        return 0x03;
+        return 0x02;
     }
 }

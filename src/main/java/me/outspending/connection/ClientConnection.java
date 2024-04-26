@@ -1,6 +1,5 @@
 package me.outspending.connection;
 
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +9,8 @@ import me.outspending.protocol.PacketReader;
 import me.outspending.protocol.PacketWriter;
 import me.outspending.protocol.listener.PacketListener;
 import me.outspending.protocol.packets.configuration.server.RegistryDataPacket;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.TagStringIO;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
 public class ClientConnection extends Connection {
-    private static final byte[] BYTE_ARRAY = new byte[1024];
+    private static final byte[] BYTE_ARRAY = new byte[32767];
     private final Socket socket;
 
     public PacketListener packetListener;
@@ -60,16 +61,8 @@ public class ClientConnection extends Connection {
     }
 
     public void sendPacket(@NotNull Packet packet) {
-        PacketWriter writer = new PacketWriter(packet);
-        PacketReader reader = new PacketReader(writer.toByteArray());
-
-        System.out.println(writer.getLength());
-        System.out.println(writer.getPacketID());
-
-        if (packet instanceof RegistryDataPacket)
-            System.out.println(reader.readAnyTag(CompoundTag.class));
-
         try {
+            PacketWriter writer = new PacketWriter(packet);
             socket.getOutputStream().write(writer.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
