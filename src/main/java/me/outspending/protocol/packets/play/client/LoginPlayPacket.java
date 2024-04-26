@@ -14,7 +14,7 @@ public record LoginPlayPacket(
         int entityID,
         boolean isHardcore,
         int dimensionCount,
-        List<String> dimensionNames,
+        String[] dimensionNames, // Might be the issue
         int maxPlayers,
         int viewDistance,
         int simulationDistance,
@@ -30,7 +30,7 @@ public record LoginPlayPacket(
         boolean isFlatWorld,
         boolean hasDeathLocation,
         String deathDimensionName,
-        Location deathLocation,
+        Location deathLocation, // Might be the issue
         int portalCooldown
 ) implements Packet {
     public static LoginPlayPacket of(@NotNull PacketReader reader) {

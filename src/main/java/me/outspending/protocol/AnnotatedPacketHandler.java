@@ -80,7 +80,7 @@ public class AnnotatedPacketHandler {
     @PacketReceiver
     public void onLoginStart(@NotNull Connection client, @NotNull LoginStartPacket packet) {
         client.sendPacket(new SetCompressionPacket(-1));
-        client.sendPacket(new LoginSuccessPacket(packet.uuid(), packet.name(), new ArrayList<>()));
+        client.sendPacket(new LoginSuccessPacket(packet.uuid(), packet.name(), new LoginSuccessPacket.Property[0]));
     }
 
     @PacketReceiver
@@ -100,7 +100,7 @@ public class AnnotatedPacketHandler {
                 0,
                 false,
                 1,
-                List.of("minecraft:overworld"),
+                new String[]{"minecraft:overworld"},
                 20,
                 10,
                 8,

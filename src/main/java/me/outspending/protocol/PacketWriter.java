@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @Getter(AccessLevel.PUBLIC)
@@ -113,7 +114,8 @@ public class PacketWriter extends ByteArrayOutputStream {
         writeLong(uuid.getLeastSignificantBits());
     }
 
-    public <T> void writeArray(@NotNull Iterable<T> array, @NotNull Consumer<T> consumer) {
+    public <T> void writeArray(@NotNull T[] array, @NotNull Consumer<T> consumer) {
+        writeVarInt(array.length);
         for (T element : array) {
             consumer.accept(element);
         }
@@ -128,9 +130,7 @@ public class PacketWriter extends ByteArrayOutputStream {
     }
 
     public void writeLocation(@NotNull Location location) {
-        writeDouble(location.x());
-        writeDouble(location.y());
-        writeDouble(location.z());
+        writeLong(((location.x() & 0x3FFFFFF) << 38) | ((location.z() & 0x3FFFFFF) << 12) | (location.y() & 0xFFF));
     }
 
     public void writeNBTCompound(@NotNull CompoundBinaryTag tag) {

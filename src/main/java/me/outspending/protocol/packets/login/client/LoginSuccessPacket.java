@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public record LoginSuccessPacket(UUID uuid, String username, List<Property> properties) implements Packet {
+public record LoginSuccessPacket(UUID uuid, String username, Property[] properties) implements Packet {
     public static @NotNull LoginSuccessPacket of(@NotNull PacketReader reader) {
         return new LoginSuccessPacket(
                 reader.readUUID(),
@@ -33,7 +33,6 @@ public record LoginSuccessPacket(UUID uuid, String username, List<Property> prop
     public void write(@NotNull PacketWriter writer) {
         writer.writeUUID(uuid);
         writer.writeString(username);
-        writer.writeVarInt(properties.size());
         writer.writeArray(properties, (property) -> writeProperty(property, writer));
     }
 

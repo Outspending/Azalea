@@ -117,18 +117,23 @@ public class PacketReader extends ByteArrayInputStream {
         return new UUID(readLong(), readLong());
     }
 
-    public <T> @Nullable List<T> readArray(@NotNull Function<PacketReader, T> reader, @NotNull IntFunction<T[]> generator) {
+    public <T> @Nullable T[] readArray(@NotNull Function<PacketReader, T> reader, @NotNull IntFunction<T[]> generator) {
         int length = readVarInt();
         T[] array = generator.apply(length);
         for (int i = 0; i < length; i++) {
             array[i] = reader.apply(this);
         }
 
-        return Arrays.asList(array);
+        return array;
     }
 
     public @Nullable Location readLocation() {
-        return new Location(readDouble(), readDouble(), readDouble());
+        long encoded = readLong();
+        return new Location(
+                (encoded >> 38),
+                (encoded << 52 >> 52),
+                (encoded << 26 >> 38)
+        );
     }
 
     public @Nullable CompoundBinaryTag readNBTCompound() {
