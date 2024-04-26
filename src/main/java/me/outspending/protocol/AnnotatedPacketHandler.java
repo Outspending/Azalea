@@ -1,25 +1,34 @@
 package me.outspending.protocol;
 
+import com.google.common.base.Charsets;
+import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.connection.Connection;
 import me.outspending.connection.GameState;
 import me.outspending.position.Location;
 import me.outspending.protocol.annotations.PacketReceiver;
-import me.outspending.protocol.packets.configuration.client.AcknowledgeFinishConfigurationPacket;
-import me.outspending.protocol.packets.configuration.server.FinishConfigurationPacket;
-import me.outspending.protocol.packets.configuration.server.RegistryDataPacket;
+import me.outspending.protocol.packets.configuration.server.AcknowledgeFinishConfigurationPacket;
+import me.outspending.protocol.packets.configuration.client.FinishConfigurationPacket;
+import me.outspending.protocol.packets.configuration.client.RegistryDataPacket;
 import me.outspending.protocol.packets.handshaking.HandshakePacket;
-import me.outspending.protocol.packets.login.client.LoginAcknowledgedPacket;
-import me.outspending.protocol.packets.login.client.LoginStartPacket;
+import me.outspending.protocol.packets.login.server.LoginAcknowledgedPacket;
+import me.outspending.protocol.packets.login.server.LoginStartPacket;
 import me.outspending.protocol.packets.login.client.LoginSuccessPacket;
-import me.outspending.protocol.packets.login.server.SetCompressionPacket;
+import me.outspending.protocol.packets.login.client.SetCompressionPacket;
+import me.outspending.protocol.packets.play.client.GameEventPacket;
 import me.outspending.protocol.packets.play.client.LoginPlayPacket;
+import me.outspending.protocol.packets.status.client.PingRequestPacket;
 import me.outspending.protocol.packets.status.client.StatusRequestPacket;
+import me.outspending.protocol.packets.status.server.PingResponsePacket;
 import me.outspending.protocol.packets.status.server.StatusResponsePacket;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +36,7 @@ import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class AnnotatedPacketHandler {
+    private static final Logger logger = LoggerFactory.getLogger(AnnotatedPacketHandler.class);
     private static final Map<Class<? extends Packet>, Method> PACKET_HANDLERS = new HashMap<>();
 
     static {
@@ -63,8 +73,13 @@ public class AnnotatedPacketHandler {
     }
 
     @PacketReceiver
+    public void onPingRequest(@NotNull Connection client, @NotNull PingRequestPacket packet) {
+        client.sendPacket(new PingResponsePacket(packet.payload()));
+    }
+
+    @PacketReceiver
     public void onLoginStart(@NotNull Connection client, @NotNull LoginStartPacket packet) {
-        // client.sendPacket(new SetCompressionPacket(-1));
+        client.sendPacket(new SetCompressionPacket(-1));
         client.sendPacket(new LoginSuccessPacket(packet.uuid(), packet.name(), new ArrayList<>()));
     }
 
@@ -77,15 +92,15 @@ public class AnnotatedPacketHandler {
     }
 
     @PacketReceiver
-    public void onConfigurationFinished(@NotNull Connection client, @NotNull AcknowledgeFinishConfigurationPacket packet) {
+    public void onAcknowledgeConfiguration(@NotNull Connection client, @NotNull AcknowledgeFinishConfigurationPacket packet) {
+        logger.info("Configuration has finished!");
         client.setState(GameState.PLAY);
-        System.out.println("Configuration has finished!");
 
         client.sendPacket(new LoginPlayPacket(
                 0,
                 false,
-                4,
-                List.of("minecraft:overworld", "minecraft:overworld_caves", "minecraft:the_end", "minecraft:the_nether"),
+                1,
+                List.of("minecraft:overworld"),
                 20,
                 10,
                 8,
@@ -95,14 +110,15 @@ public class AnnotatedPacketHandler {
                 "minecraft:overworld",
                 "overworld",
                 0L,
-                (byte) 0,
+                (byte) 1,
                 (byte) -1,
                 false,
                 false,
                 false,
-                null,
+                "",
                 Location.ZERO,
                 0
         ));
+        client.sendPacket(new GameEventPacket((byte) 0,0f));
     }
 }

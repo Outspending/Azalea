@@ -1,5 +1,6 @@
 package me.outspending.protocol.packets.play.client;
 
+import me.outspending.GameMode;
 import me.outspending.position.Location;
 import me.outspending.protocol.Packet;
 import me.outspending.protocol.PacketReader;
@@ -28,8 +29,8 @@ public record LoginPlayPacket(
         boolean isDebugWorld,
         boolean isFlatWorld,
         boolean hasDeathLocation,
-        @Nullable String deathDimensionName,
-        @Nullable Location deathLocation,
+        String deathDimensionName,
+        Location deathLocation,
         int portalCooldown
 ) implements Packet {
     public static LoginPlayPacket of(@NotNull PacketReader reader) {

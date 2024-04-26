@@ -5,14 +5,13 @@ import me.outspending.protocol.PacketReader;
 import me.outspending.protocol.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record AcknowledgeFinishConfigurationPacket() implements Packet {
-    public static AcknowledgeFinishConfigurationPacket of(@NotNull PacketReader reader) {
-        return new AcknowledgeFinishConfigurationPacket();
+public record FinishConfigurationPacket() implements Packet {
+    public static FinishConfigurationPacket of(@NotNull PacketReader reader) {
+        return new FinishConfigurationPacket();
     }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-
     }
 
     @Override

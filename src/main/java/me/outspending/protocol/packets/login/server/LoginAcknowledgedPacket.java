@@ -5,14 +5,13 @@ import me.outspending.protocol.PacketReader;
 import me.outspending.protocol.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record SetCompressionPacket(int threshold) implements Packet {
-    public static @NotNull SetCompressionPacket of(@NotNull PacketReader reader) {
-        return new SetCompressionPacket(reader.readVarInt());
+public record LoginAcknowledgedPacket() implements Packet {
+    public static @NotNull LoginAcknowledgedPacket of(@NotNull PacketReader reader) {
+        return new LoginAcknowledgedPacket();
     }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-        writer.writeVarInt(threshold);
     }
 
     @Override

@@ -2,11 +2,12 @@ package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
 import me.outspending.connection.GameState;
-import me.outspending.protocol.packets.configuration.client.AcknowledgeFinishConfigurationPacket;
-import me.outspending.protocol.packets.configuration.server.RegistryDataPacket;
+import me.outspending.protocol.packets.configuration.server.AcknowledgeFinishConfigurationPacket;
+import me.outspending.protocol.packets.configuration.server.ClientInformationPacket;
+import me.outspending.protocol.packets.configuration.server.PluginMessageConfigurationPacket;
 import me.outspending.protocol.packets.handshaking.HandshakePacket;
-import me.outspending.protocol.packets.login.client.LoginAcknowledgedPacket;
-import me.outspending.protocol.packets.login.client.LoginStartPacket;
+import me.outspending.protocol.packets.login.server.LoginAcknowledgedPacket;
+import me.outspending.protocol.packets.login.server.LoginStartPacket;
 import me.outspending.protocol.packets.login.client.LoginSuccessPacket;
 import me.outspending.protocol.packets.status.client.PingRequestPacket;
 import me.outspending.protocol.packets.status.client.StatusRequestPacket;
@@ -30,8 +31,12 @@ public class CodecHandler {
                     0x03, LoginAcknowledgedPacket::of
             ))
             .packetType(GameState.CONFIGURATION, Map.of(
-                    0x02, AcknowledgeFinishConfigurationPacket::of,
-                    0x05, RegistryDataPacket::of
+                    0x00, ClientInformationPacket::of,
+                    0x01, PluginMessageConfigurationPacket::of,
+                    0x02, AcknowledgeFinishConfigurationPacket::of
+            ))
+            .packetType(GameState.PLAY, Map.of(
+
             ))
             .build();
 }

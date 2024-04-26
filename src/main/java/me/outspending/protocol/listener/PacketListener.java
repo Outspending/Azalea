@@ -7,11 +7,14 @@ import me.outspending.protocol.CodecHandler;
 import me.outspending.protocol.Packet;
 import me.outspending.protocol.PacketReader;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 public class PacketListener {
+    private static final Logger logger = LoggerFactory.getLogger(PacketListener.class);
     private static final AnnotatedPacketHandler packetHandler = new AnnotatedPacketHandler();
 
     public void write(@NotNull Connection connection, @NotNull Packet packet) {
@@ -22,11 +25,11 @@ public class PacketListener {
         int id = reader.getPacketID();
         GameState state = connection.getState();
 
-        System.out.println("Received packet ID: " + id + ", in state: " + state.name());
+        logger.info("Received packet ID: " + id + ", in state: " + state.name());
 
         Function<PacketReader, Packet> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
         if (packetFunction == null) {
-            System.out.printf("Unknown packet ID: %d, in state: %s%n", id, state.name());
+            logger.info(String.format("Unknown packet ID: %d, in state: %s", id, state.name()));
             return;
         }
 
@@ -34,9 +37,14 @@ public class PacketListener {
         packetHandler.handle(connection, readPacket);
 
         read(connection, readPacket);
+
+        if (reader.hasAnotherPacket()) {
+            byte[] bytesLeft = reader.getRestOfBytes();
+            read(connection, new PacketReader(bytesLeft));
+        }
     }
 
     public void read(@NotNull Connection connection, @NotNull Packet packet) {
-        System.out.println("Handled packet: " + packet);
+        logger.info("Received packet: " + packet);
     }
 }

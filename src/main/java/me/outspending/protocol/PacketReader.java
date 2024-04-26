@@ -71,6 +71,16 @@ public class PacketReader extends ByteArrayInputStream {
         return bytes;
     }
 
+    public byte[] getRestOfBytes() {
+        byte[] bytes = new byte[available()];
+        read(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    public boolean hasAnotherPacket() {
+        return available() > 0;
+    }
+
     public boolean readBoolean() {
         return read() == 1;
     }
@@ -110,7 +120,6 @@ public class PacketReader extends ByteArrayInputStream {
     public <T> @Nullable List<T> readArray(@NotNull Function<PacketReader, T> reader, @NotNull IntFunction<T[]> generator) {
         int length = readVarInt();
         T[] array = generator.apply(length);
-        System.out.println("Length: " + length);
         for (int i = 0; i < length; i++) {
             array[i] = reader.apply(this);
         }

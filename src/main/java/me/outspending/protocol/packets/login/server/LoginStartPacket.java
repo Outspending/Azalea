@@ -1,4 +1,4 @@
-package me.outspending.protocol.packets.login.client;
+package me.outspending.protocol.packets.login.server;
 
 import me.outspending.protocol.Packet;
 import me.outspending.protocol.PacketReader;

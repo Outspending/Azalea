@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.outspending.position.Location;
-import me.outspending.protocol.packets.configuration.server.RegistryDataPacket;
+import me.outspending.protocol.packets.configuration.client.RegistryDataPacket;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class PacketWriter extends ByteArrayOutputStream {
         writer.writeVarInt(packet.getID());
         packet.write(writer);
 
-        return packet instanceof RegistryDataPacket ? writer.size() + 8 : writer.size(); // VERY janky way to fix the issue but idgaf
+        return writer.size();
     }
 
     public PacketWriter(@NotNull Packet packet) {
@@ -82,6 +82,10 @@ public class PacketWriter extends ByteArrayOutputStream {
         write(value);
     }
 
+    public void writeFloat(float value) {
+        writeInt(Float.floatToIntBits(value));
+    }
+
     public void writeInt(int value) {
         write(value >> 24);
         write(value >> 16);
@@ -111,7 +115,6 @@ public class PacketWriter extends ByteArrayOutputStream {
 
     public <T> void writeArray(@NotNull Iterable<T> array, @NotNull Consumer<T> consumer) {
         for (T element : array) {
-            System.out.println("Writing element: " + element);
             consumer.accept(element);
         }
     }
