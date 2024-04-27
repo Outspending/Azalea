@@ -30,13 +30,13 @@ public interface PacketReader {
     }
 
     int getPacketLength();
-    int getPacketDataLength();
     int getPacketID();
 
     <T> @Nullable T read(@NotNull NetworkType<T> type);
     boolean hasAnotherPacket();
     boolean isCompressed();
     byte[] getRemainingBytes();
+    byte[] getAllBytes();
 
     boolean readBoolean();
     byte readByte();

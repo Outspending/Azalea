@@ -3,18 +3,17 @@ package me.outspending.protocol.packets.server.status;
 import lombok.Getter;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
-import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class PingResponsePacket extends ServerPacket {
+public class PingRequestPacket extends ServerPacket {
     private final long payload;
 
-    public static PingResponsePacket of(@NotNull PacketReader reader) {
-        return new PingResponsePacket(reader.readLong());
+    public static PingRequestPacket of(@NotNull PacketReader reader) {
+        return new PingRequestPacket(reader.readLong());
     }
 
-    public PingResponsePacket(long payload) {
+    public PingRequestPacket(long payload) {
         super(0x01);
         this.payload = payload;
     }

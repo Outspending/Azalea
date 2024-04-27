@@ -16,14 +16,13 @@ public abstract class AbstractPacketReader implements PacketReader {
     protected final ByteBuffer buffer;
     private final boolean isCompressed;
     protected final int packetLength;
-    protected final int dataLength;
     protected final int packetID;
 
     public AbstractPacketReader(ByteBuffer buffer, boolean isCompressed) {
         this.buffer = buffer;
         this.isCompressed = isCompressed;
+
         this.packetLength = readVarInt();
-        this.dataLength = readVarInt();
         this.packetID = readVarInt();
     }
 
@@ -125,8 +124,8 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
-    public int getPacketDataLength() {
-        return dataLength;
+    public byte[] getAllBytes() {
+        return buffer.array();
     }
 
     @Override

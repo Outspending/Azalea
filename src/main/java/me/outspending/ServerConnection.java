@@ -3,6 +3,7 @@ package me.outspending;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import me.outspending.connection.ClientConnection;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -10,48 +11,53 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.concurrent.CountDownLatch;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
 public class ServerConnection {
     private static final Logger logger = LoggerFactory.getLogger(ServerConnection.class);
 
+    private boolean isRunning = true;
+
     private final String IPAddress;
     private final int port;
 
-    private final AsynchronousServerSocketChannel mainSocket;
+    private final ServerSocket mainSocket;
 
     public ServerConnection(@NotNull String IPAddress, int port) throws IOException {
-        this.mainSocket = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(IPAddress, port));
+        this.mainSocket = new ServerSocket();
         this.IPAddress = IPAddress;
         this.port = port;
+
+        mainSocket.bind(new InetSocketAddress(IPAddress, port));
     }
 
+    @SneakyThrows
     private void init() {
-        mainSocket.accept(null, new CompletionHandler<>() {
-            @Override
-            public void completed(AsynchronousSocketChannel result, Object attachment) {
-                logger.info("Client Connected: " + result);
-                new ClientConnection(result);
-            }
+        try {
+            while (isRunning) {
+                Socket clientSocket = mainSocket.accept();
+                logger.info("Client Connected: " + clientSocket);
 
-            @Override
-            public void failed(Throwable exc, Object attachment) {
-                logger.error("Failed to accept connection", exc);
+                new ClientConnection(clientSocket);
             }
-        });
+        } catch (IOException e) {
+            logger.error("Failed to accept connection", e);
+        }
     }
 
     public void start() {
-        if (isRunning()) return;
         init();
     }
 
     public boolean isRunning() {
-        return mainSocket.isOpen();
+        return isRunning;
     }
 
     public void stop() {

@@ -28,8 +28,13 @@ public class PacketListener {
         Function<PacketReader, Packet> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
         if (packetFunction == null) {
             logger.info(String.format("Unknown packet ID: %d, in state: %s", id, state.name()));
+            logger.info("Disconnecting client from server: Invalid Packet");
+            connection.kick();
             return;
         }
+
+        logger.info(Integer.toString(reader.getPacketLength()));
+        logger.info(Integer.toString(reader.getPacketID()));
 
         Packet readPacket = packetFunction.apply(reader);
         packetHandler.handle(connection, readPacket);

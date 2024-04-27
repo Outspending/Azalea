@@ -31,12 +31,4 @@ public class HandshakePacket extends ServerPacket {
         this.serverPort = serverPort;
         this.nextState = state;
     }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        writer.writeVarInt(protocolVersion);
-        writer.writeString(serverAddress);
-        writer.writeShort(serverPort);
-        writer.writeVarInt(nextState);
-    }
 }

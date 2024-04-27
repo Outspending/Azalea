@@ -11,12 +11,12 @@ import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPa
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
 import me.outspending.protocol.packets.client.play.ClientGameEventPacket;
 import me.outspending.protocol.packets.client.play.ClientLoginPlayPacket;
-import me.outspending.protocol.packets.client.status.ClientPingRequestPacket;
-import me.outspending.protocol.packets.client.status.ClientStatusRequestPacket;
+import me.outspending.protocol.packets.server.status.PingRequestPacket;
+import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
-import me.outspending.protocol.packets.server.status.PingResponsePacket;
+import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
 import me.outspending.protocol.types.Packet;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +57,7 @@ public class AnnotatedPacketHandler {
     }
 
     @PacketReceiver
-    public void onStatusRequest(@NotNull ClientConnection client, @NotNull ClientStatusRequestPacket packet) {
+    public void onStatusRequest(@NotNull ClientConnection client, @NotNull StatusRequestPacket packet) {
         MinecraftServer server = client.getServer();
         client.sendPacket(new ClientStatusResponsePacket(
                 new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
@@ -67,13 +67,13 @@ public class AnnotatedPacketHandler {
     }
 
     @PacketReceiver
-    public void onPingRequest(@NotNull ClientConnection client, @NotNull ClientPingRequestPacket packet) {
-        client.sendPacket(new PingResponsePacket(packet.payload()));
+    public void onPingRequest(@NotNull ClientConnection client, @NotNull PingRequestPacket packet) {
+        client.sendPacket(new ClientPingResponsePacket(packet.getPayload()));
     }
 
     @PacketReceiver
     public void onLoginStart(@NotNull ClientConnection client, @NotNull LoginStartPacket packet) {
-        client.sendPacket(new ClientLoginSuccessPacket(packet.uuid(), packet.name(), new ClientLoginSuccessPacket.Property[0]));
+        client.sendPacket(new ClientLoginSuccessPacket(packet.getUuid(), packet.getName(), new ClientLoginSuccessPacket.Property[0]));
     }
 
     @PacketReceiver

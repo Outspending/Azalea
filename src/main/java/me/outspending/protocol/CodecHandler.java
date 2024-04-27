@@ -4,8 +4,8 @@ import me.outspending.MinecraftServer;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.packets.HandshakePacket;
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
-import me.outspending.protocol.packets.client.status.ClientPingRequestPacket;
-import me.outspending.protocol.packets.client.status.ClientStatusRequestPacket;
+import me.outspending.protocol.packets.server.status.PingRequestPacket;
+import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.configuration.ClientInformationPacket;
 import me.outspending.protocol.packets.server.configuration.PluginMessageConfigurationPacket;
@@ -22,8 +22,8 @@ public class CodecHandler {
                     0x00, HandshakePacket::of
             ))
             .packetType(GameState.STATUS, Map.of(
-                    0x00, ClientStatusRequestPacket::of,
-                    0x01, ClientPingRequestPacket::of
+                    0x00, StatusRequestPacket::of,
+                    0x01, PingRequestPacket::of
             ))
             .packetType(GameState.LOGIN, Map.of(
                     0x00, LoginStartPacket::of,
