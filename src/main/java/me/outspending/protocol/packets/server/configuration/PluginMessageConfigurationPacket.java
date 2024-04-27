@@ -23,10 +23,4 @@ public class PluginMessageConfigurationPacket extends ServerPacket {
         this.channel = channel;
         this.data = data;
     }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        writer.writeString(channel);
-        writer.writeByteArray(data);
-    }
 }

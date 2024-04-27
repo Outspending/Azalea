@@ -17,12 +17,14 @@ public abstract class AbstractPacketReader implements PacketReader {
     private final boolean isCompressed;
     protected final int packetLength;
     protected final int dataLength;
+    protected final int packetID;
 
     public AbstractPacketReader(ByteBuffer buffer, boolean isCompressed) {
         this.buffer = buffer;
         this.isCompressed = isCompressed;
         this.packetLength = readVarInt();
         this.dataLength = readVarInt();
+        this.packetID = readVarInt();
     }
 
     @Override
@@ -113,6 +115,23 @@ public abstract class AbstractPacketReader implements PacketReader {
     @Override
     public Byte @Nullable [] readByteArray() {
         return NetworkTypes.BYTEARRAY_TYPE.read(buffer);
+    }
+
+    @Override
+    public byte[] getRemainingBytes() {
+        byte[] remaining = new byte[buffer.remaining()];
+        buffer.get(remaining);
+        return remaining;
+    }
+
+    @Override
+    public int getPacketDataLength() {
+        return dataLength;
+    }
+
+    @Override
+    public int getPacketID() {
+        return packetID;
     }
 
     @Override

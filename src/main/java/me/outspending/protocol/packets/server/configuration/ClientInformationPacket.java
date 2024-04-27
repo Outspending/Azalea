@@ -41,16 +41,4 @@ public class ClientInformationPacket extends ServerPacket {
         this.textFiltering = textFiltering;
         this.serverListings = serverListings;
     }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        writer.writeString(locale);
-        writer.writeByte(viewDistance);
-        writer.writeVarInt(chatMode);
-        writer.writeBoolean(chatColors);
-        writer.writeByte(skinParts);
-        writer.writeVarInt(mainHand);
-        writer.writeBoolean(textFiltering);
-        writer.writeBoolean(serverListings);
-    }
 }

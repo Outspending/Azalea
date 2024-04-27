@@ -14,7 +14,4 @@ public class LoginAcknowledgedPacket extends ServerPacket {
     public LoginAcknowledgedPacket() {
         super(0x03);
     }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {}
 }

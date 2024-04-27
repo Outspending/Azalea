@@ -2,6 +2,7 @@ package me.outspending.protocol.packets.client.status;
 
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
+import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public class ClientStatusRequestPacket extends ClientPacket {
@@ -12,4 +13,7 @@ public class ClientStatusRequestPacket extends ClientPacket {
     public ClientStatusRequestPacket() {
         super(0x00);
     }
+
+    @Override
+    public void write(PacketWriter writer) {}
 }

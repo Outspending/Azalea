@@ -1,24 +1,24 @@
-package me.outspending.protocol.packets.server.status;
+package me.outspending.protocol.packets.client.status;
 
 import com.google.gson.Gson;
 import lombok.Getter;
-import me.outspending.protocol.types.ServerPacket;
+import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import me.outspending.utils.AdventureUtils;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class StatusResponsePacket extends ServerPacket {
+public class ClientStatusResponsePacket extends ClientPacket {
     private final Players players;
     private final Version version;
     private final String description;
 
-    public StatusResponsePacket(@NotNull Players players, @NotNull Version version, @NotNull Component description) {
+    public ClientStatusResponsePacket(@NotNull Players players, @NotNull Version version, @NotNull Component description) {
         this(players, version, AdventureUtils.serializeJson(description));
     }
 
-    public StatusResponsePacket(Players players, Version version, String description) {
+    public ClientStatusResponsePacket(Players players, Version version, String description) {
         super(0x00);
         this.players = players;
         this.version = version;
@@ -30,8 +30,8 @@ public class StatusResponsePacket extends ServerPacket {
     }
 
     @Override
-    public void write(@NotNull PacketWriter writer) {
-        writer.writeString(toJson());
+    public void write(PacketWriter writer) {
+        writer.writeString(this.toJson());
     }
 
     public record Players(int online, int max) {}

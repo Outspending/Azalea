@@ -25,10 +25,4 @@ public class LoginStartPacket extends ServerPacket {
         this.name = name;
         this.uuid = uuid;
     }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        writer.writeString(name);
-        writer.writeUUID(uuid);
-    }
 }

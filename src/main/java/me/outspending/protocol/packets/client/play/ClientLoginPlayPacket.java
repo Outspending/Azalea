@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.outspending.position.Location;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
+import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
@@ -79,5 +80,30 @@ public class ClientLoginPlayPacket extends ClientPacket {
         this.deathDimensionName = deathDimensionName;
         this.deathLocation = deathLocation;
         this.portalCooldown = portalCooldown;
+    }
+
+    @Override
+    public void write(PacketWriter writer) {
+        writer.writeInt(this.entityID);
+        writer.writeBoolean(this.isHardcore);
+        writer.writeVarInt(this.dimensionCount);
+        writer.writeArray(this.dimensionNames, writer::writeString);
+        writer.writeVarInt(this.maxPlayers);
+        writer.writeVarInt(this.viewDistance);
+        writer.writeVarInt(this.simulationDistance);
+        writer.writeBoolean(this.isDebug);
+        writer.writeBoolean(this.respawnScreen);
+        writer.writeBoolean(this.limitedCrafting);
+        writer.writeString(this.dimensionType);
+        writer.writeString(this.dimensionName);
+        writer.writeLong(this.hashedSeed);
+        writer.writeByte(this.gameMode);
+        writer.writeByte(this.previousGameMode);
+        writer.writeBoolean(this.isDebugWorld);
+        writer.writeBoolean(this.isFlatWorld);
+        writer.writeBoolean(this.hasDeathLocation);
+        writer.writeString(this.deathDimensionName);
+        writer.writeLocation(this.deathLocation);
+        writer.writeVarInt(this.portalCooldown);
     }
 }

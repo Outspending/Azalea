@@ -13,7 +13,4 @@ public class AcknowledgeFinishConfigurationPacket extends ServerPacket {
     public AcknowledgeFinishConfigurationPacket() {
         super(0x02);
     }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {}
 }

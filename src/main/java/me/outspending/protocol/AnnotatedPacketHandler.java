@@ -17,7 +17,7 @@ import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishCon
 import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
 import me.outspending.protocol.packets.server.status.PingResponsePacket;
-import me.outspending.protocol.packets.server.status.StatusResponsePacket;
+import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
 import me.outspending.protocol.types.Packet;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -53,15 +53,15 @@ public class AnnotatedPacketHandler {
 
     @PacketReceiver
     public void onHandshake(@NotNull ClientConnection client, @NotNull HandshakePacket packet) {
-        client.setState(packet.nextState() == 2 ? GameState.LOGIN : GameState.STATUS);
+        client.setState(packet.getNextState() == 2 ? GameState.LOGIN : GameState.STATUS);
     }
 
     @PacketReceiver
     public void onStatusRequest(@NotNull ClientConnection client, @NotNull ClientStatusRequestPacket packet) {
         MinecraftServer server = client.getServer();
-        client.sendPacket(new StatusResponsePacket(
-                new StatusResponsePacket.Players(0, server.getMaxPlayers()),
-                new StatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
+        client.sendPacket(new ClientStatusResponsePacket(
+                new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
+                new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
                 server.getDescription()
         ));
     }

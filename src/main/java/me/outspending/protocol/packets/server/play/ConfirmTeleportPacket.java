@@ -20,9 +20,4 @@ public class ConfirmTeleportPacket extends ServerPacket {
         super(0x00);
         this.teleportID = teleportID;
     }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        writer.writeVarInt(this.teleportID);
-    }
 }

@@ -6,6 +6,8 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface PacketWriter {
     <T> T write(@NotNull NetworkType<T> type);
@@ -36,7 +38,7 @@ public interface PacketWriter {
     // writeBitSet
     // writeFixedBitSet
     <T> void writeOptional(@NotNull T element, @NotNull NetworkType<T> type);
-    <T> void writeArray(@NotNull T[] array, @NotNull NetworkType<T> type);
+    <T> void writeArray(@NotNull T[] array, Consumer<T> consumer);
     <T extends Enum<?>> void writeEnum(@NotNull T e);
     void writeByteArray(Byte[] array);
 }

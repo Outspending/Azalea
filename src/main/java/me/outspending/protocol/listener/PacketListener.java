@@ -19,10 +19,6 @@ public class PacketListener {
     private static final Logger logger = LoggerFactory.getLogger(PacketListener.class);
     private static final AnnotatedPacketHandler packetHandler = new AnnotatedPacketHandler();
 
-    public void write(@NotNull ClientConnection connection, @NotNull Packet packet) {
-        connection.sendPacket(packet);
-    }
-
     public void read(@NotNull ClientConnection connection, @NotNull PacketReader reader) throws InvocationTargetException, IllegalAccessException {
         int id = reader.getPacketID();
         GameState state = connection.getState();

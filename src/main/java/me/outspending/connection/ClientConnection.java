@@ -64,7 +64,7 @@ public class ClientConnection {
         });
     }
 
-    public void sendPacket(@NotNull ClientPacket<?> packet) {
+    public void sendPacket(@NotNull ClientPacket packet) {
 
     }
 }

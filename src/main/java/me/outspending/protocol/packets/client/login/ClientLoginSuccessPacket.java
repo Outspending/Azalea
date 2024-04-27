@@ -41,6 +41,14 @@ public class ClientLoginSuccessPacket extends ClientPacket {
         }
     }
 
+    @Override
+    public void write(PacketWriter writer) {
+        writer.writeUUID(this.uuid);
+        writer.writeString(this.username);
+        writer.writeArray(this.properties, property -> writeProperty(property, writer));
+
+    }
+
     public record Property(@NotNull String name, @NotNull String value, @Nullable String signature) {
         public boolean isSigned() {
             return signature != null;

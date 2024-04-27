@@ -18,9 +18,4 @@ public class PingResponsePacket extends ServerPacket {
         super(0x01);
         this.payload = payload;
     }
-
-    @Override
-    public void write(PacketWriter writer) {
-        writer.writeLong(this.payload);
-    }
 }
