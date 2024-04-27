@@ -2,15 +2,15 @@ package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
 import me.outspending.connection.GameState;
-import me.outspending.protocol.packets.configuration.server.AcknowledgeFinishConfigurationPacket;
-import me.outspending.protocol.packets.configuration.server.ClientInformationPacket;
-import me.outspending.protocol.packets.configuration.server.PluginMessageConfigurationPacket;
-import me.outspending.protocol.packets.handshaking.HandshakePacket;
-import me.outspending.protocol.packets.login.server.LoginAcknowledgedPacket;
-import me.outspending.protocol.packets.login.server.LoginStartPacket;
-import me.outspending.protocol.packets.login.client.LoginSuccessPacket;
-import me.outspending.protocol.packets.status.client.PingRequestPacket;
-import me.outspending.protocol.packets.status.client.StatusRequestPacket;
+import me.outspending.protocol.packets.HandshakePacket;
+import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
+import me.outspending.protocol.packets.client.status.ClientPingRequestPacket;
+import me.outspending.protocol.packets.client.status.ClientStatusRequestPacket;
+import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
+import me.outspending.protocol.packets.server.configuration.ClientInformationPacket;
+import me.outspending.protocol.packets.server.configuration.PluginMessageConfigurationPacket;
+import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
+import me.outspending.protocol.packets.server.login.LoginStartPacket;
 
 import java.util.Map;
 
@@ -22,12 +22,12 @@ public class CodecHandler {
                     0x00, HandshakePacket::of
             ))
             .packetType(GameState.STATUS, Map.of(
-                    0x00, StatusRequestPacket::of,
-                    0x01, PingRequestPacket::of
+                    0x00, ClientStatusRequestPacket::of,
+                    0x01, ClientPingRequestPacket::of
             ))
             .packetType(GameState.LOGIN, Map.of(
                     0x00, LoginStartPacket::of,
-                    0x02, LoginSuccessPacket::of,
+                    0x02, ClientLoginSuccessPacket::of,
                     0x03, LoginAcknowledgedPacket::of
             ))
             .packetType(GameState.CONFIGURATION, Map.of(

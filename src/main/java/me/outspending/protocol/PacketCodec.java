@@ -1,6 +1,8 @@
 package me.outspending.protocol;
 
 import lombok.*;
+import me.outspending.protocol.reader.PacketReader;
+import me.outspending.protocol.types.Packet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

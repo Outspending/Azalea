@@ -3,76 +3,68 @@ package me.outspending.connection;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
-import me.outspending.protocol.Packet;
-import me.outspending.protocol.PacketReader;
-import me.outspending.protocol.PacketWriter;
 import me.outspending.protocol.listener.PacketListener;
+import me.outspending.protocol.reader.PacketReader;
+import me.outspending.protocol.types.ClientPacket;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.net.Socket;
-import java.util.Arrays;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
-public class ClientConnection extends Connection {
+public class ClientConnection {
     private static final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
-    private static final byte[] BYTE_ARRAY = new byte[32767];
 
-    private final Socket socket;
+    private final ByteBuffer buffer = ByteBuffer.allocate(32767);
+    private final AsynchronousSocketChannel socket;
+
+    public final MinecraftServer server;
+    public GameState state = GameState.HANDSHAKE;
 
     public PacketListener packetListener;
     public boolean isRunning = false;
 
-    public ClientConnection(Socket socket) throws IOException {
-        super(MinecraftServer.getInstance(), GameState.HANDSHAKE);
-
+    public ClientConnection(AsynchronousSocketChannel socket) {
         this.socket = socket;
+        this.server = MinecraftServer.getInstance();
         this.packetListener = new PacketListener();
 
         run();
     }
 
     private void run() {
-        isRunning = true;
-        synchronized (socket) {
-            try {
-                InputStream stream = socket.getInputStream();
-
-                while (isRunning) {
-                    int bytesRead = stream.read(BYTE_ARRAY);
-                    if (bytesRead == -1) {
-                        break;
-                    }
-
-                    byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, bytesRead);
-                    PacketReader reader = new PacketReader(responseArray);
-                    packetListener.read(this, reader);
+        socket.read(buffer, null, new CompletionHandler<>() {
+            @Override
+            @SneakyThrows
+            public void completed(Integer result, Object attachment) {
+                if (result == -1) {
+                    socket.close();
+                    return;
                 }
 
-                logger.info("Client disconnected: " + socket);
-                socket.close();
-            } catch (IOException | InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
+                buffer.flip();
+                ByteBuffer serializedBuffer = ByteBuffer.allocate(buffer.remaining());
+                serializedBuffer.put(buffer);
+                serializedBuffer.flip();
+
+                PacketReader reader = PacketReader.createNormalReader(serializedBuffer);
+                packetListener.read(ClientConnection.this, reader);
             }
-        }
+
+            @Override
+            public void failed(Throwable exc, Object attachment) {
+                logger.error("Failed to read data", exc);
+            }
+        });
     }
 
-    public void sendPacket(@NotNull Packet packet) {
-        try {
-            PacketWriter writer = new PacketWriter(packet);
-            OutputStream stream = socket.getOutputStream();
+    public void sendPacket(@NotNull ClientPacket<?> packet) {
 
-            stream.write(writer.toByteArray());
-            stream.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
