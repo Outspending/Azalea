@@ -33,8 +33,8 @@ public class PacketListener {
             return;
         }
 
-        logger.info(Integer.toString(reader.getPacketLength()));
-        logger.info(Integer.toString(reader.getPacketID()));
+        logger.info("Length: " + reader.getPacketLength());
+        logger.info("ID: " + reader.getPacketID());
 
         Packet readPacket = packetFunction.apply(reader);
         packetHandler.handle(connection, readPacket);

@@ -28,7 +28,10 @@ public class NormalPacketWriter extends AbstractPacketWriter {
 
     @Override
     public <T> void writeArray(@NotNull T[] array, Consumer<T> consumer) {
-
+        writeVarInt(array.length);
+        for (T element : array) {
+            consumer.accept(element);
+        }
     }
 
     @Override

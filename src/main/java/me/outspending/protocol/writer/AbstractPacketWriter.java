@@ -36,6 +36,11 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     }
 
     @Override
+    public ByteArrayOutputStream getStream() {
+        return stream;
+    }
+
+    @Override
     public void writeBoolean(boolean b) {
         NetworkTypes.BOOLEAN_TYPE.write(stream, b);
     }

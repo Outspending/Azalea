@@ -4,12 +4,12 @@ import me.outspending.position.Location;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -137,13 +137,13 @@ public interface NetworkTypes {
             int length = VARINT_TYPE.read(buffer);
             byte[] bytes = new byte[length];
             buffer.get(bytes);
-            return new String(bytes);
+            return new String(bytes, StandardCharsets.UTF_8);
         }
 
         @Override
         public void write(ByteArrayOutputStream stream, String type) {
             byte[] bytes = type.getBytes();
-            UNSIGNED_SHORT_TYPE.write(stream, bytes.length);
+            VARINT_TYPE.write(stream, bytes.length);
             stream.write(bytes, 0, bytes.length);
         }
     };
@@ -291,7 +291,7 @@ public interface NetworkTypes {
     NetworkType<Byte[]> BYTEARRAY_TYPE = new NetworkType<>() {
         @Override
         public Byte[] read(ByteBuffer buffer) {
-            int length = UNSIGNED_SHORT_TYPE.read(buffer);
+            int length = VARINT_TYPE.read(buffer);
             Byte[] bytes = new Byte[length];
             for (int i = 0; i < length; i++) {
                 bytes[i] = buffer.get();

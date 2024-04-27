@@ -59,6 +59,7 @@ public class AnnotatedPacketHandler {
     @PacketReceiver
     public void onStatusRequest(@NotNull ClientConnection client, @NotNull StatusRequestPacket packet) {
         MinecraftServer server = client.getServer();
+        logger.info("Sending status response..");
         client.sendPacket(new ClientStatusResponsePacket(
                 new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
                 new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),

@@ -1,18 +1,13 @@
 package me.outspending.protocol.writer;
 
 import me.outspending.position.Location;
-import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.NetworkType;
-import me.outspending.protocol.reader.CompressedPacketReader;
-import me.outspending.protocol.reader.NormalPacketReader;
-import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -35,7 +30,9 @@ public interface PacketWriter {
 
     <T> void write(@NotNull NetworkType<T> type, T value);
     boolean isCompressed();
+
     int getSize();
+    ByteArrayOutputStream getStream();
 
     void writeBoolean(boolean b);
     void writeByte(byte b);
@@ -43,10 +40,9 @@ public interface PacketWriter {
     void writeShort(short s);
     void writeUnsignedShort(int s);
     void writeInt(int i);
-    void writeLong(long l);
+    void writeLong(long l); 
     void writeFloat(float f);
     void writeDouble(double d);
-
     void writeString(@NotNull String s);
     // writeTextComponent
     // writeJSONTextComponent
