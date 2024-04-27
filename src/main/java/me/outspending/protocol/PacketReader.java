@@ -10,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -128,11 +126,11 @@ public class PacketReader extends ByteArrayInputStream {
     }
 
     public @Nullable Location readLocation() {
-        long encoded = readLong();
+        long encoded = readVarLong();
         return new Location(
-                (encoded >> 38),
-                (encoded << 52 >> 52),
-                (encoded << 26 >> 38)
+                (int) (encoded >> 38),
+                (int) (encoded << 52 >> 52),
+                (int) (encoded << 26 >> 38)
         );
     }
 

@@ -33,6 +33,8 @@ public record LoginSuccessPacket(UUID uuid, String username, Property[] properti
     public void write(@NotNull PacketWriter writer) {
         writer.writeUUID(uuid);
         writer.writeString(username);
+
+        writer.writeVarInt(properties.length);
         writer.writeArray(properties, (property) -> writeProperty(property, writer));
     }
 

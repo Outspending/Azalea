@@ -1,20 +1,16 @@
 package me.outspending.protocol.packets.play.client;
 
-import me.outspending.GameMode;
 import me.outspending.position.Location;
 import me.outspending.protocol.Packet;
 import me.outspending.protocol.PacketReader;
 import me.outspending.protocol.PacketWriter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public record LoginPlayPacket(
         int entityID,
         boolean isHardcore,
         int dimensionCount,
-        String[] dimensionNames, // Might be the issue
+        String[] dimensionNames,
         int maxPlayers,
         int viewDistance,
         int simulationDistance,
@@ -23,19 +19,19 @@ public record LoginPlayPacket(
         boolean limitedCrafting,
         String dimensionType,
         String dimensionName,
-        long seed,
+        long hashedSeed,
         byte gameMode,
         byte previousGameMode,
         boolean isDebugWorld,
         boolean isFlatWorld,
         boolean hasDeathLocation,
         String deathDimensionName,
-        Location deathLocation, // Might be the issue
+        Location deathLocation,
         int portalCooldown
 ) implements Packet {
     public static LoginPlayPacket of(@NotNull PacketReader reader) {
         return new LoginPlayPacket(
-                reader.readVarInt(),
+                reader.readInt(),
                 reader.readBoolean(),
                 reader.readVarInt(),
                 reader.readArray(packetReader -> reader.readString(), String[]::new),
@@ -60,7 +56,7 @@ public record LoginPlayPacket(
     }
     @Override
     public void write(@NotNull PacketWriter writer) {
-        writer.writeVarInt(entityID);
+        writer.writeInt(entityID);
         writer.writeBoolean(isHardcore);
         writer.writeVarInt(dimensionCount);
         writer.writeArray(dimensionNames, writer::writeString);
@@ -72,14 +68,16 @@ public record LoginPlayPacket(
         writer.writeBoolean(limitedCrafting);
         writer.writeString(dimensionType);
         writer.writeString(dimensionName);
-        writer.writeLong(seed);
+        writer.writeLong(hashedSeed);
         writer.write(gameMode);
         writer.write(previousGameMode);
         writer.writeBoolean(isDebugWorld);
         writer.writeBoolean(isFlatWorld);
         writer.writeBoolean(hasDeathLocation);
-        writer.writeString(deathDimensionName);
-        writer.writeLocation(deathLocation);
+        if (hasDeathLocation) {
+            writer.writeString(deathDimensionName);
+            writer.writeLocation(deathLocation);
+        }
         writer.writeVarInt(portalCooldown);
     }
 

@@ -79,7 +79,6 @@ public class AnnotatedPacketHandler {
 
     @PacketReceiver
     public void onLoginStart(@NotNull Connection client, @NotNull LoginStartPacket packet) {
-        client.sendPacket(new SetCompressionPacket(-1));
         client.sendPacket(new LoginSuccessPacket(packet.uuid(), packet.name(), new LoginSuccessPacket.Property[0]));
     }
 
@@ -97,7 +96,7 @@ public class AnnotatedPacketHandler {
         client.setState(GameState.PLAY);
 
         client.sendPacket(new LoginPlayPacket(
-                0,
+                273,
                 false,
                 1,
                 new String[]{"minecraft:overworld"},
@@ -105,10 +104,10 @@ public class AnnotatedPacketHandler {
                 10,
                 8,
                 false,
-                false,
+                true,
                 false,
                 "minecraft:overworld",
-                "overworld",
+                "minecraft:overworld",
                 0L,
                 (byte) 1,
                 (byte) -1,

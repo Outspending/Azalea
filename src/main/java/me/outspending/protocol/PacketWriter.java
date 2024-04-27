@@ -1,5 +1,6 @@
 package me.outspending.protocol;
 
+import com.google.common.base.Charsets;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -69,53 +71,73 @@ public class PacketWriter extends ByteArrayOutputStream {
     }
 
     public void writeString(@NotNull String value) {
-        byte[] bytes = value.getBytes();
-        writeVarInt(bytes.length);
+        byte[] bytes = value.getBytes(Charsets.UTF_8);
+
+        writeVarInt(value.length());
         write(bytes, 0, bytes.length);
     }
 
     public void writeBoolean(boolean value) {
-        write(value ? 1 : 0);
+        write(value ? 0x01 : 0x00);
     }
 
     public void writeShort(short value) {
-        write(value >> 8);
-        write(value);
+        try {
+            byte[] bytes = ByteBuffer.allocate(2).putShort(value).array();
+            write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void writeFloat(float value) {
-        writeInt(Float.floatToIntBits(value));
+        try {
+            byte[] bytes = ByteBuffer.allocate(4).putFloat(value).array();
+            write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void writeInt(int value) {
-        write(value >> 24);
-        write(value >> 16);
-        write(value >> 8);
-        write(value);
+        try {
+            byte[] bytes = ByteBuffer.allocate(4).putInt(value).array();
+            write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void writeDouble(double value) {
-        writeLong(Double.doubleToLongBits(value));
+        try {
+            byte[] bytes = ByteBuffer.allocate(8).putDouble(value).array();
+            write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void writeLong(long value) {
-        write((int) (value >> 56));
-        write((int) (value >> 48));
-        write((int) (value >> 40));
-        write((int) (value >> 32));
-        write((int) (value >> 24));
-        write((int) (value >> 16));
-        write((int) (value >> 8));
-        write((int) value);
+        try {
+            byte[] bytes = ByteBuffer.allocate(8).putLong(value).array();
+            write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void writeUUID(@NotNull UUID uuid) {
-        writeLong(uuid.getMostSignificantBits());
-        writeLong(uuid.getLeastSignificantBits());
+        try {
+            ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
+            buffer.putLong(uuid.getMostSignificantBits());
+            buffer.putLong(uuid.getLeastSignificantBits());
+            write(buffer.array());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public <T> void writeArray(@NotNull T[] array, @NotNull Consumer<T> consumer) {
-        writeVarInt(array.length);
         for (T element : array) {
             consumer.accept(element);
         }
@@ -130,7 +152,7 @@ public class PacketWriter extends ByteArrayOutputStream {
     }
 
     public void writeLocation(@NotNull Location location) {
-        writeLong(((location.x() & 0x3FFFFFF) << 38) | ((location.z() & 0x3FFFFFF) << 12) | (location.y() & 0xFFF));
+        writeVarLong(((long) (location.x() & 0x3FFFFFF) << 38) | ((long) (location.z() & 0x3FFFFFF) << 12) | (location.y() & 0xFFF));
     }
 
     public void writeNBTCompound(@NotNull CompoundBinaryTag tag) {
