@@ -104,7 +104,7 @@ public class AnnotatedPacketHandler {
                         true, false,
                         overworld, overworld,
                         0L,
-                        (byte) 1, (byte) -1,
+                        (byte) 3, (byte) -1,
                         false, false, false,
                         null, null,
                         0
@@ -114,8 +114,8 @@ public class AnnotatedPacketHandler {
         );
 
         client.sendGroupedPacket(group);
-        sendChunks(client);
-        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
+        //sendChunks(client);
+        // client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
     }
 
     private void sendChunks(@NotNull ClientConnection connection) {
