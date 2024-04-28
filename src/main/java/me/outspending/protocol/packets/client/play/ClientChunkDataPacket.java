@@ -1,6 +1,7 @@
 package me.outspending.protocol.packets.client.play;
 
 import lombok.Getter;
+import me.outspending.chunk.ChunkSection;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -17,7 +18,7 @@ public class ClientChunkDataPacket extends ClientPacket {
     private final int chunkX;
     private final int chunkZ;
     private final CompoundBinaryTag heightmaps;
-    private final byte[] data;
+    private final ChunkSection[] data;
     private final BlockEntity[] blockEntity;
     private final BitSet skyLightMask;
     private final BitSet blockLightMask;
@@ -26,7 +27,7 @@ public class ClientChunkDataPacket extends ClientPacket {
     private final Skylight[] skyLight;
     private final Blocklight[] blockLight;
 
-    public ClientChunkDataPacket(int chunkX, int chunkZ, CompoundBinaryTag heightmaps, byte[] data, BlockEntity[] blockEntity, BitSet skyLightMask, BitSet blockLightMask, BitSet emptySkyLightMask, BitSet emptyBlockLightMask, Skylight[] skyLight, Blocklight[] blockLight) {
+    public ClientChunkDataPacket(int chunkX, int chunkZ, CompoundBinaryTag heightmaps, ChunkSection[] data, BlockEntity[] blockEntity, BitSet skyLightMask, BitSet blockLightMask, BitSet emptySkyLightMask, BitSet emptyBlockLightMask, Skylight[] skyLight, Blocklight[] blockLight) {
         super(0x25);
 
         this.chunkX = chunkX;
@@ -48,7 +49,12 @@ public class ClientChunkDataPacket extends ClientPacket {
         writer.writeInt(this.chunkZ);
         writer.writeNBTCompound(this.heightmaps);
         writer.writeVarInt(this.data.length);
-        writer.writeByteArray(this.data);
+
+        // Write the DATA field
+        for (ChunkSection section : this.data) {
+            section.write(writer);
+        }
+
         writer.writeVarInt(this.blockEntity.length);
         writer.writeArray(this.blockEntity, blockEntity -> {
             writer.writeUnsignedByte(blockEntity.packedXZ);

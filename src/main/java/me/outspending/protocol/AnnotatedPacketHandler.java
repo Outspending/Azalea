@@ -2,6 +2,9 @@ package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
+import me.outspending.chunk.ChunkSection;
+import me.outspending.chunk.palette.BiomesPalette;
+import me.outspending.chunk.palette.BlockStatePalette;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.entity.Player;
@@ -122,19 +125,28 @@ public class AnnotatedPacketHandler {
     }
 
     private void sendChunks(@NotNull ClientConnection connection) {
-        GroupedPacket group = new GroupedPacket();
-        for (int x = 0; x < 5; x++) {
-            for (int z = 0; z < 5; z++) {
-                group.addPacket(new ClientChunkDataPacket(
-                        x, z,
-                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                        new byte[24], new ClientChunkDataPacket.BlockEntity[0],
-                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
-                ));
-            }
-        }
+//        GroupedPacket group = new GroupedPacket();
+//        for (int x = 0; x < 5; x++) {
+//            for (int z = 0; z < 5; z++) {
+//                group.addPacket(new ClientChunkDataPacket(
+//                        x, z,
+//                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+//                        new ChunkSection[]{new ChunkSection(new BlockStatePalette((byte) 4), new BiomesPalette((byte) 2))},
+//                        new ClientChunkDataPacket.BlockEntity[0],
+//                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+//                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+//                ));
+//            }
+//        }
+//        connection.sendGroupedPacket(group);
 
-        connection.sendGroupedPacket(group);
+        connection.sendPacket(new ClientChunkDataPacket(
+                0, 0,
+                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+                new ChunkSection[]{new ChunkSection(new BlockStatePalette((byte) 4), new BiomesPalette((byte) 2))},
+                new ClientChunkDataPacket.BlockEntity[0],
+                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+                new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+        ));
     }
 }
