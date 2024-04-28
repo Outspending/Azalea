@@ -26,8 +26,8 @@ public class PacketListener {
         Function<PacketReader, Packet> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
         if (packetFunction == null) {
             logger.info(String.format("Unknown packet ID: %d, in state: %s", id, state.name()));
-            logger.info("Disconnecting client from server: Invalid Packet");
-            connection.kick();
+//            logger.info("Disconnecting client from server: Invalid Packet");
+//            connection.kick();
             return;
         }
         Packet readPacket = packetFunction.apply(reader);
@@ -46,6 +46,6 @@ public class PacketListener {
     }
 
     public void read(@NotNull ClientConnection connection, @NotNull Packet packet) {
-        logger.info("Received packet: " + packet);
+
     }
 }

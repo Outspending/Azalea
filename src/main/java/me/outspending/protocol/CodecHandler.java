@@ -5,6 +5,8 @@ import me.outspending.connection.GameState;
 import me.outspending.protocol.packets.HandshakePacket;
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
 import me.outspending.protocol.packets.server.play.ConfirmTeleportPacket;
+import me.outspending.protocol.packets.server.play.SetPlayerPositionAndRotationPacket;
+import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
@@ -37,7 +39,9 @@ public class CodecHandler {
                     0x02, AcknowledgeFinishConfigurationPacket::of
             ))
             .packetType(GameState.PLAY, Map.of(
-                    0x00, ConfirmTeleportPacket::of
+                    0x00, ConfirmTeleportPacket::of,
+                    0x17, SetPlayerPositionPacket::of,
+                    0x18, SetPlayerPositionAndRotationPacket::of
             ))
             .build();
 }

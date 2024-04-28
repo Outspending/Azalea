@@ -65,8 +65,6 @@ public class ClientConnection {
                 ByteBuffer buffer = ByteBuffer.wrap(responseArray);
 
                 PacketReader reader = PacketReader.createNormalReader(buffer);
-                logger.info(Arrays.toString(reader.getAllBytes()));
-
                 packetListener.read(ClientConnection.this, reader);
             }
         } catch (IOException | InvocationTargetException | IllegalAccessException e) {

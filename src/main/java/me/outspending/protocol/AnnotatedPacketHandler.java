@@ -96,26 +96,22 @@ public class AnnotatedPacketHandler {
         client.setState(GameState.PLAY);
 
         final NamespacedID overworld = new NamespacedID("overworld");
-        GroupedPacket group = new GroupedPacket(
-                new ClientLoginPlayPacket(
-                        273, false, 1,
-                        new NamespacedID[]{overworld}, 20,
-                        10, 8, false,
-                        true, false,
-                        overworld, overworld,
-                        0L,
-                        (byte) 1, (byte) -1,
-                        false, false, false,
-                        null, null,
-                        0
-                ),
-                new ClientGameEventPacket((byte) 13,0f),
-                new ClientCenterChunkPacket(0, 0)
-        );
+        client.sendPacket(new ClientLoginPlayPacket(
+                273, false, 1,
+                new NamespacedID[]{overworld}, 20,
+                10, 8, false,
+                true, false,
+                overworld, overworld,
+                0L,
+                (byte) 0, (byte) -1,
+                false, false, false,
+                null, null,
+                0
+        ));
+        client.sendPacket(new ClientGameEventPacket((byte) 13, 0f));
 
-        client.sendGroupedPacket(group);
         sendChunks(client);
-        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
+        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 64, 0, 0f, 0f), (byte) 0, 24));
     }
 
     private void sendChunks(@NotNull ClientConnection connection) {
