@@ -62,7 +62,9 @@ public interface PacketWriter {
     <T> void writeOptional(@NotNull T element, @NotNull NetworkType<T> type);
     <T> void writeArray(@NotNull T[] array, Consumer<T> consumer);
     <T extends Enum<?>> void writeEnum(@NotNull T e);
+
     void writeByteArray(byte[] array);
+    void writeLongArray(long[] array);
 
     void writeToStream(OutputStream stream);
 }

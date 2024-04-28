@@ -133,6 +133,13 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     }
 
     @Override
+    public void writeLongArray(long[] array) {
+        for (long value : array) {
+            writeLong(value);
+        }
+    }
+
+    @Override
     public void writeToStream(OutputStream stream) {
         try {
             this.stream.writeTo(stream);
