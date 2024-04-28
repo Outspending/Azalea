@@ -45,6 +45,8 @@ public class ClientLoginSuccessPacket extends ClientPacket {
     public void write(PacketWriter writer) {
         writer.writeUUID(this.uuid);
         writer.writeString(this.username);
+
+        writer.writeVarInt(this.properties.length);
         writer.writeArray(this.properties, property -> writeProperty(property, writer));
 
     }

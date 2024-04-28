@@ -4,6 +4,7 @@ import me.outspending.MinecraftServer;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.packets.HandshakePacket;
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
+import me.outspending.protocol.packets.server.play.ConfirmTeleportPacket;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
@@ -36,7 +37,7 @@ public class CodecHandler {
                     0x02, AcknowledgeFinishConfigurationPacket::of
             ))
             .packetType(GameState.PLAY, Map.of(
-
+                    0x00, ConfirmTeleportPacket::of
             ))
             .build();
 }

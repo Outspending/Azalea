@@ -145,7 +145,7 @@ public interface NetworkTypes {
 
         @Override
         public void write(ByteArrayOutputStream stream, String type) {
-            byte[] bytes = type.getBytes();
+            byte[] bytes = type.getBytes(StandardCharsets.UTF_8);
             VARINT_TYPE.write(stream, bytes.length);
             stream.write(bytes, 0, bytes.length);
         }

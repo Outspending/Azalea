@@ -117,7 +117,7 @@ public class AnnotatedPacketHandler {
                 null,
                 0
         ));
-//        client.sendPacket(new ClientGameEventPacket((byte) 0,0f));
-//        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
+        client.sendPacket(new ClientGameEventPacket((byte) 13,0f));
+        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
     }
 }
