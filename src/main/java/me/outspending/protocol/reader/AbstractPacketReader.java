@@ -118,7 +118,7 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
-    public Byte @Nullable [] readByteArray() {
+    public byte[] readByteArray() {
         return NetworkTypes.BYTEARRAY_TYPE.read(buffer);
     }
 

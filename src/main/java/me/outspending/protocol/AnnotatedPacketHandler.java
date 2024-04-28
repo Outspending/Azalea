@@ -11,9 +11,8 @@ import me.outspending.protocol.packets.HandshakePacket;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
 import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
-import me.outspending.protocol.packets.client.play.ClientGameEventPacket;
-import me.outspending.protocol.packets.client.play.ClientLoginPlayPacket;
-import me.outspending.protocol.packets.client.play.ClientSynchronizePlayerPosition;
+import me.outspending.protocol.packets.client.login.ClientSetCompressionPacket;
+import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
@@ -21,13 +20,16 @@ import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
 import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
+import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.types.Packet;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,30 +96,47 @@ public class AnnotatedPacketHandler {
         client.setState(GameState.PLAY);
 
         final NamespacedID overworld = new NamespacedID("overworld");
-        client.sendPacket(new ClientLoginPlayPacket(
-                273,
-                false,
-                1,
-                new NamespacedID[]{overworld},
-                20,
-                10,
-                8,
-                false,
-                true,
-                false,
-                overworld,
-                overworld,
-                0L,
-                (byte) 1,
-                (byte) -1,
-                false,
-                false,
-                false,
-                null,
-                null,
-                0
-        ));
-        client.sendPacket(new ClientGameEventPacket((byte) 13,0f));
+        GroupedPacket group = new GroupedPacket(
+                new ClientLoginPlayPacket(
+                        273, false, 1,
+                        new NamespacedID[]{overworld}, 20,
+                        10, 8, false,
+                        true, false,
+                        overworld, overworld,
+                        0L,
+                        (byte) 1, (byte) -1,
+                        false, false, false,
+                        null, null,
+                        0
+                ),
+                new ClientGameEventPacket((byte) 13,0f),
+                new ClientCenterChunkPacket(0, 0)
+        );
+
+        client.sendGroupedPacket(group);
+        sendChunks(client);
         client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
+    }
+
+    private void sendChunks(@NotNull ClientConnection connection) {
+//        GroupedPacket group = new GroupedPacket();
+//        for (int x = 0; x < 5; x++) {
+//            for (int z = 0; z < 5; z++) {
+//                group.addPacket(new ClientChunkDataPacket(
+//                        x, z,
+//                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+//                        new Byte[4096], new ClientChunkDataPacket.BlockEntity[0],
+//                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+//                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+//                ));
+//            }
+//        }
+        connection.sendPacket(new ClientChunkDataPacket(
+                0, 0,
+                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+                new byte[24], new ClientChunkDataPacket.BlockEntity[0],
+                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+                new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+        ));
     }
 }

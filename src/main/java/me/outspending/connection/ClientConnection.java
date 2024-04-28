@@ -11,6 +11,7 @@ import me.outspending.protocol.packets.client.play.ClientLoginPlayPacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
+import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -105,6 +106,12 @@ public class ClientConnection {
             logger.info(Arrays.toString(reader.getAllBytes()));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void sendGroupedPacket(@NotNull GroupedPacket packet) {
+        for (ClientPacket entryPacket : packet.getPackets()) {
+            sendPacket(entryPacket);
         }
     }
 }

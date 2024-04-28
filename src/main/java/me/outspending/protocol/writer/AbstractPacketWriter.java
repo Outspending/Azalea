@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.BitSet;
 import java.util.UUID;
 
 public abstract class AbstractPacketWriter implements PacketWriter {
@@ -122,8 +123,13 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     }
 
     @Override
-    public void writeByteArray(Byte[] array) {
+    public void writeByteArray(byte[] array) {
         NetworkTypes.BYTEARRAY_TYPE.write(stream, array);
+    }
+
+    @Override
+    public void writeBitSet(@NotNull BitSet bitSet) {
+        NetworkTypes.BITSET_TYPE.write(stream, bitSet);
     }
 
     @Override

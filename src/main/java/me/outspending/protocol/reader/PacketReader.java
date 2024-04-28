@@ -23,6 +23,13 @@ public interface PacketReader {
         return CompressedPacketReader.create(buffer);
     }
 
+    static @NotNull PacketReader createReader(@NotNull ByteBuffer buffer, int threshold) {
+        if (buffer.remaining() < threshold) {
+            return createNormalReader(buffer);
+        }
+        return createCompressedReader(buffer);
+    }
+
     static @NotNull PacketReader createReader(@NotNull ByteBuffer buffer, @NotNull CompressionType type) {
         return switch (type) {
             case NONE -> createNormalReader(buffer);
@@ -65,5 +72,5 @@ public interface PacketReader {
     <T> @Nullable Optional<T> readOptional(@NotNull Function<PacketReader, T> elementReader);
     <T> @Nullable T[] readArray(@NotNull Function<PacketReader, T> elementReader, @NotNull IntFunction<T[]> arrayCreator);
     <T extends Enum<?>> @Nullable T readEnum(@NotNull Class<T> enumClass);
-    Byte @Nullable [] readByteArray();
+    byte[] readByteArray();
 }

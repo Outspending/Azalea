@@ -10,6 +10,15 @@ public class NamespacedID {
     private final String namespace;
     private final String path;
 
+    public static NamespacedID of(String string) {
+        if (string.contains(":")) {
+            String[] split = string.split(":");
+            return new NamespacedID(split[0], split[1]);
+        }
+
+        return new NamespacedID(string);
+    }
+
     public NamespacedID(String namespace, String path) {
         if (!namespace.matches(VALID_NAMESPACE) || !path.matches(VALID_PATH)) {
             throw new IllegalArgumentException("Invalid namespace or path");

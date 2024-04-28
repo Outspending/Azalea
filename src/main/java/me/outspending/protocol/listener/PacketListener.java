@@ -23,8 +23,6 @@ public class PacketListener {
         int id = reader.getPacketID();
         GameState state = connection.getState();
 
-        logger.info("Received packet ID: " + id + ", in state: " + state.name());
-
         Function<PacketReader, Packet> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
         if (packetFunction == null) {
             logger.info(String.format("Unknown packet ID: %d, in state: %s", id, state.name()));
@@ -32,10 +30,6 @@ public class PacketListener {
             connection.kick();
             return;
         }
-
-        logger.info("Length: " + reader.getPacketLength());
-        logger.info("ID: " + reader.getPacketID());
-
         Packet readPacket = packetFunction.apply(reader);
         packetHandler.handle(connection, readPacket);
 

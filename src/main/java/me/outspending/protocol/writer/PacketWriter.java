@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.BitSet;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -56,12 +57,12 @@ public interface PacketWriter {
     void writeLocation(@NotNull Location location);
     // writeAngle
     void writeUUID(@NotNull UUID uuid);
-    // writeBitSet
-    // writeFixedBitSet
+    void writeBitSet(@NotNull BitSet bitSet);
+    // writeFixedBitSet(@NotNull BitSet bitSet)
     <T> void writeOptional(@NotNull T element, @NotNull NetworkType<T> type);
     <T> void writeArray(@NotNull T[] array, Consumer<T> consumer);
     <T extends Enum<?>> void writeEnum(@NotNull T e);
-    void writeByteArray(Byte[] array);
+    void writeByteArray(byte[] array);
 
     void writeToStream(OutputStream stream);
 }

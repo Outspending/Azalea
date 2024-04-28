@@ -4,7 +4,6 @@ import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.types.ClientPacket;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 
 public class NormalPacketWriter extends AbstractPacketWriter {

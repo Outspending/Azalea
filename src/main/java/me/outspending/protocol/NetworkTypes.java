@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.BitSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -230,7 +231,6 @@ public interface NetworkTypes {
 
                 stream.write((byte) ((byte) (type & SEGMENT_BITS) | CONTINUE_BIT));
 
-                // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
                 type >>>= 7;
             }
         }
@@ -304,11 +304,31 @@ public interface NetworkTypes {
         }
     };
 
-    NetworkType<Byte[]> BYTEARRAY_TYPE = new NetworkType<>() {
+    NetworkType<BitSet> BITSET_TYPE = new NetworkType<>() {
         @Override
-        public Byte[] read(ByteBuffer buffer) {
+        public @Nullable BitSet read(ByteBuffer buffer) {
             int length = VARINT_TYPE.read(buffer);
-            Byte[] bytes = new Byte[length];
+            BitSet bitSet = new BitSet(length);
+            for (int i = 0; i < length; i++) {
+                bitSet.set(i, BOOLEAN_TYPE.read(buffer));
+            }
+
+            return bitSet;
+        }
+
+        @Override
+        public void write(ByteArrayOutputStream stream, BitSet type) {
+            for (int i = 0; i < type.length(); i++) {
+                BOOLEAN_TYPE.write(stream, type.get(i));
+            }
+        }
+    };
+
+    NetworkType<byte[]> BYTEARRAY_TYPE = new NetworkType<>() {
+        @Override
+        public byte[] read(ByteBuffer buffer) {
+            int length = VARINT_TYPE.read(buffer);
+            byte[] bytes = new byte[length];
             for (int i = 0; i < length; i++) {
                 bytes[i] = buffer.get();
             }
@@ -316,8 +336,7 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteArrayOutputStream stream, Byte[] type) {
-            UNSIGNED_SHORT_TYPE.write(stream, type.length);
+        public void write(ByteArrayOutputStream stream, byte[] type) {
             for (Byte b : type) {
                 stream.write(b);
             }

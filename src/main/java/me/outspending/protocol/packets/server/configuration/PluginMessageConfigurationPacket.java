@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class PluginMessageConfigurationPacket extends ServerPacket {
     private final String channel;
-    private final Byte[] data;
+    private final byte[] data;
 
     public static PluginMessageConfigurationPacket of(@NotNull PacketReader reader) {
         return new PluginMessageConfigurationPacket(
@@ -18,7 +18,7 @@ public class PluginMessageConfigurationPacket extends ServerPacket {
         );
     }
 
-    public PluginMessageConfigurationPacket(String channel, Byte[] data) {
+    public PluginMessageConfigurationPacket(String channel, byte[] data) {
         super(0x01);
         this.channel = channel;
         this.data = data;

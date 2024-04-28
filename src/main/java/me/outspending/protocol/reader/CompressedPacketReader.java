@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -20,6 +21,7 @@ public class CompressedPacketReader extends AbstractPacketReader {
         deflater.end();
 
         ByteBuffer compressedBuffer = ByteBuffer.wrap(compressedData);
+        System.out.println(Arrays.toString(compressedData));
         return new CompressedPacketReader(compressedBuffer);
     }
 
