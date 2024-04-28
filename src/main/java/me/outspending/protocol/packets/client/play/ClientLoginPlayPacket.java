@@ -58,7 +58,7 @@ public class ClientLoginPlayPacket extends ClientPacket {
     }
 
     public ClientLoginPlayPacket(int entityID, boolean isHardcore, int dimensionCount, String[] dimensionNames, int maxPlayers, int viewDistance, int simulationDistance, boolean isDebug, boolean respawnScreen, boolean limitedCrafting, String dimensionType, String dimensionName, long hashedSeed, byte gameMode, byte previousGameMode, boolean isDebugWorld, boolean isFlatWorld, boolean hasDeathLocation, String deathDimensionName, Location deathLocation, int portalCooldown) {
-        super(0x2A);
+        super(0x29);
         this.entityID = entityID;
         this.isHardcore = isHardcore;
         this.dimensionCount = dimensionCount;
@@ -102,8 +102,10 @@ public class ClientLoginPlayPacket extends ClientPacket {
         writer.writeBoolean(this.isDebugWorld);
         writer.writeBoolean(this.isFlatWorld);
         writer.writeBoolean(this.hasDeathLocation);
-        writer.writeString(this.deathDimensionName);
-        writer.writeLocation(this.deathLocation);
+        if (hasDeathLocation) {
+            writer.writeString(this.deathDimensionName);
+            writer.writeLocation(this.deathLocation);
+        }
         writer.writeVarInt(this.portalCooldown);
     }
 }

@@ -4,6 +4,7 @@ import me.outspending.MinecraftServer;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
 import me.outspending.protocol.packets.HandshakePacket;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
@@ -11,6 +12,7 @@ import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPa
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
 import me.outspending.protocol.packets.client.play.ClientGameEventPacket;
 import me.outspending.protocol.packets.client.play.ClientLoginPlayPacket;
+import me.outspending.protocol.packets.client.play.ClientSynchronizePlayerPosition;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
@@ -114,5 +116,6 @@ public class AnnotatedPacketHandler {
                 0
         ));
         client.sendPacket(new ClientGameEventPacket((byte) 0,0f));
+        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
     }
 }
