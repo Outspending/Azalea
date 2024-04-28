@@ -4,6 +4,7 @@ import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
+import me.outspending.entity.Player;
 import me.outspending.position.Location;
 import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
@@ -32,6 +33,7 @@ import java.lang.reflect.Method;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @SuppressWarnings("unchecked")
 public class AnnotatedPacketHandler {
@@ -79,7 +81,12 @@ public class AnnotatedPacketHandler {
 
     @PacketReceiver
     public void onLoginStart(@NotNull ClientConnection client, @NotNull LoginStartPacket packet) {
-        client.sendPacket(new ClientLoginSuccessPacket(packet.getUuid(), packet.getName(), new ClientLoginSuccessPacket.Property[0]));
+        MinecraftServer server = client.getServer();
+        String name = packet.getName();
+        UUID uuid = packet.getUuid();
+
+        server.getServerProcess().getPlayerManager().addPlayer(new Player(client, name, uuid));
+        client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
     }
 
     @PacketReceiver
@@ -103,7 +110,7 @@ public class AnnotatedPacketHandler {
                 true, false,
                 overworld, overworld,
                 0L,
-                (byte) 0, (byte) -1,
+                (byte) 1, (byte) -1,
                 false, false, false,
                 null, null,
                 0
@@ -115,24 +122,19 @@ public class AnnotatedPacketHandler {
     }
 
     private void sendChunks(@NotNull ClientConnection connection) {
-//        GroupedPacket group = new GroupedPacket();
-//        for (int x = 0; x < 5; x++) {
-//            for (int z = 0; z < 5; z++) {
-//                group.addPacket(new ClientChunkDataPacket(
-//                        x, z,
-//                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-//                        new Byte[4096], new ClientChunkDataPacket.BlockEntity[0],
-//                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-//                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
-//                ));
-//            }
-//        }
-        connection.sendPacket(new ClientChunkDataPacket(
-                0, 0,
-                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                new byte[24], new ClientChunkDataPacket.BlockEntity[0],
-                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
-        ));
+        GroupedPacket group = new GroupedPacket();
+        for (int x = 0; x < 5; x++) {
+            for (int z = 0; z < 5; z++) {
+                group.addPacket(new ClientChunkDataPacket(
+                        x, z,
+                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+                        new byte[24], new ClientChunkDataPacket.BlockEntity[0],
+                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+                ));
+            }
+        }
+
+        connection.sendGroupedPacket(group);
     }
 }

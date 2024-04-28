@@ -31,6 +31,7 @@ public class MinecraftServer {
     private final String host;
     private final int port;
     private final ServerConnection serverConnection;
+    private final ServerProcess serverProcess;
 
     private int maxPlayers = 20;
     private Component description = AdventureUtils.serializeString("Woah, an MOTD for my mc protocol!");
@@ -48,7 +49,10 @@ public class MinecraftServer {
     public static @Nullable MinecraftServer init(@NotNull String address, int port) {
         try {
             final ServerConnection connection = new ServerConnection(address, port);
-            final MinecraftServer server = new MinecraftServer(address, port, connection);
+            final MinecraftServer server = new MinecraftServer(
+                    address, port,
+                    connection, new ServerProcess()
+            );
 
             MinecraftServer.instance = server;
             server.loadRegistry();

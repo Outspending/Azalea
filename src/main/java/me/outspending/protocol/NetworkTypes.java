@@ -318,6 +318,7 @@ public interface NetworkTypes {
 
         @Override
         public void write(ByteArrayOutputStream stream, BitSet type) {
+            VARINT_TYPE.write(stream, type.length());
             for (int i = 0; i < type.length(); i++) {
                 BOOLEAN_TYPE.write(stream, type.get(i));
             }
