@@ -1,9 +1,12 @@
 package me.outspending.protocol;
 
+import com.google.common.graph.Network;
+import me.outspending.NamespacedID;
 import me.outspending.position.Location;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -145,6 +148,19 @@ public interface NetworkTypes {
             byte[] bytes = type.getBytes();
             VARINT_TYPE.write(stream, bytes.length);
             stream.write(bytes, 0, bytes.length);
+        }
+    };
+
+    NetworkType<NamespacedID> NAMESPACEDID_TYPE = new NetworkType<>() {
+        @Override
+        public @Nullable NamespacedID read(ByteBuffer buffer) {
+            String[] parts = STRING_TYPE.read(buffer).split(":");
+            return new NamespacedID(parts[0], parts[1]);
+        }
+
+        @Override
+        public void write(ByteArrayOutputStream stream, NamespacedID type) {
+            STRING_TYPE.write(stream, type.toString());
         }
     };
 

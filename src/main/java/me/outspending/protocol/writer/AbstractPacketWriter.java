@@ -1,5 +1,6 @@
 package me.outspending.protocol.writer;
 
+import me.outspending.NamespacedID;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
@@ -88,6 +89,11 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     @Override
     public void writeString(@NotNull String s) {
         NetworkTypes.STRING_TYPE.write(stream, s);
+    }
+
+    @Override
+    public void writeNamespacedKey(@NotNull NamespacedID id) {
+        NetworkTypes.NAMESPACEDID_TYPE.write(stream, id);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package me.outspending.protocol.packets.client.play;
 
 import lombok.Getter;
+import me.outspending.NamespacedID;
 import me.outspending.position.Location;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
@@ -12,15 +13,15 @@ public class ClientLoginPlayPacket extends ClientPacket {
     private final int entityID;
     private final boolean isHardcore;
     private final int dimensionCount;
-    private final String[] dimensionNames;
+    private final NamespacedID[] dimensionNames;
     private final int maxPlayers;
     private final int viewDistance;
     private final int simulationDistance;
     private final boolean isDebug;
     private final boolean respawnScreen;
     private final boolean limitedCrafting;
-    private final String dimensionType;
-    private final String dimensionName;
+    private final NamespacedID dimensionType;
+    private final NamespacedID dimensionName;
     private final long hashedSeed;
     private final byte gameMode;
     private final byte previousGameMode;
@@ -36,15 +37,15 @@ public class ClientLoginPlayPacket extends ClientPacket {
                 reader.readInt(),
                 reader.readBoolean(),
                 reader.readVarInt(),
-                reader.readArray(packetReader -> reader.readString(), String[]::new),
+                reader.readArray(packetReader -> reader.readNamespacedKey(), NamespacedID[]::new),
                 reader.readVarInt(),
                 reader.readVarInt(),
                 reader.readVarInt(),
                 reader.readBoolean(),
                 reader.readBoolean(),
                 reader.readBoolean(),
-                reader.readString(),
-                reader.readString(),
+                reader.readNamespacedKey(),
+                reader.readNamespacedKey(),
                 reader.readLong(),
                 reader.readByte(),
                 reader.readByte(),
@@ -57,7 +58,7 @@ public class ClientLoginPlayPacket extends ClientPacket {
         );
     }
 
-    public ClientLoginPlayPacket(int entityID, boolean isHardcore, int dimensionCount, String[] dimensionNames, int maxPlayers, int viewDistance, int simulationDistance, boolean isDebug, boolean respawnScreen, boolean limitedCrafting, String dimensionType, String dimensionName, long hashedSeed, byte gameMode, byte previousGameMode, boolean isDebugWorld, boolean isFlatWorld, boolean hasDeathLocation, String deathDimensionName, Location deathLocation, int portalCooldown) {
+    public ClientLoginPlayPacket(int entityID, boolean isHardcore, int dimensionCount, NamespacedID[] dimensionNames, int maxPlayers, int viewDistance, int simulationDistance, boolean isDebug, boolean respawnScreen, boolean limitedCrafting, NamespacedID dimensionType, NamespacedID dimensionName, long hashedSeed, byte gameMode, byte previousGameMode, boolean isDebugWorld, boolean isFlatWorld, boolean hasDeathLocation, String deathDimensionName, Location deathLocation, int portalCooldown) {
         super(0x29);
         this.entityID = entityID;
         this.isHardcore = isHardcore;
@@ -87,15 +88,15 @@ public class ClientLoginPlayPacket extends ClientPacket {
         writer.writeInt(this.entityID);
         writer.writeBoolean(this.isHardcore);
         writer.writeVarInt(this.dimensionCount);
-        writer.writeArray(this.dimensionNames, writer::writeString);
+        writer.writeArray(this.dimensionNames, writer::writeNamespacedKey);
         writer.writeVarInt(this.maxPlayers);
         writer.writeVarInt(this.viewDistance);
         writer.writeVarInt(this.simulationDistance);
         writer.writeBoolean(this.isDebug);
         writer.writeBoolean(this.respawnScreen);
         writer.writeBoolean(this.limitedCrafting);
-        writer.writeString(this.dimensionType);
-        writer.writeString(this.dimensionName);
+        writer.writeNamespacedKey(this.dimensionType);
+        writer.writeNamespacedKey(this.dimensionName);
         writer.writeLong(this.hashedSeed);
         writer.writeByte(this.gameMode);
         writer.writeByte(this.previousGameMode);

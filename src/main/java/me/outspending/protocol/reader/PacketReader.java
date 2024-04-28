@@ -1,5 +1,6 @@
 package me.outspending.protocol.reader;
 
+import me.outspending.NamespacedID;
 import me.outspending.position.Location;
 import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.NetworkType;
@@ -50,7 +51,7 @@ public interface PacketReader {
     @Nullable String readString();
     // readTextComponent
     // readJSONTextComponent
-    // readIdentifier
+    @Nullable NamespacedID readNamespacedKey();
     int readVarInt();
     long readVarLong();
     // readEntityMetaData

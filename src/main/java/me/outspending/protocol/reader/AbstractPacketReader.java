@@ -1,6 +1,7 @@
 package me.outspending.protocol.reader;
 
 import lombok.Getter;
+import me.outspending.NamespacedID;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
@@ -84,6 +85,11 @@ public abstract class AbstractPacketReader implements PacketReader {
     @Override
     public @Nullable String readString() {
         return NetworkTypes.STRING_TYPE.read(buffer);
+    }
+
+    @Override
+    public @Nullable NamespacedID readNamespacedKey() {
+        return NetworkTypes.NAMESPACEDID_TYPE.read(buffer);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package me.outspending.protocol.writer;
 
+import me.outspending.NamespacedID;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.types.ClientPacket;
@@ -46,7 +47,7 @@ public interface PacketWriter {
     void writeString(@NotNull String s);
     // writeTextComponent
     // writeJSONTextComponent
-    // writeIdentifier
+    void writeNamespacedKey(@NotNull NamespacedID id);
     void writeVarInt(int i);
     void writeVarLong(long l);
     // writeEntityMetaData

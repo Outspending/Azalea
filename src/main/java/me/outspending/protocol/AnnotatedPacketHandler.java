@@ -1,6 +1,7 @@
 package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
+import me.outspending.NamespacedID;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.position.Location;
@@ -92,30 +93,31 @@ public class AnnotatedPacketHandler {
         logger.info("Configuration has finished!");
         client.setState(GameState.PLAY);
 
+        final NamespacedID overworld = new NamespacedID("overworld");
         client.sendPacket(new ClientLoginPlayPacket(
                 273,
                 false,
                 1,
-                new String[]{"minecraft:overworld"},
+                new NamespacedID[]{overworld},
                 20,
                 10,
                 8,
                 false,
                 true,
                 false,
-                "minecraft:overworld",
-                "minecraft:overworld",
+                overworld,
+                overworld,
                 0L,
                 (byte) 1,
                 (byte) -1,
                 false,
                 false,
                 false,
-                "",
-                Location.ZERO,
+                null,
+                null,
                 0
         ));
-        client.sendPacket(new ClientGameEventPacket((byte) 0,0f));
-        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
+//        client.sendPacket(new ClientGameEventPacket((byte) 0,0f));
+//        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 0, 0, 0f, 0f), (byte) 0, 0));
     }
 }
