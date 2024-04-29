@@ -1,5 +1,6 @@
 package me.outspending.protocol.listener;
 
+import lombok.SneakyThrows;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.AnnotatedPacketHandler;
@@ -20,7 +21,8 @@ public class PacketListener {
     private static final Logger logger = LoggerFactory.getLogger(PacketListener.class);
     private static final AnnotatedPacketHandler packetHandler = new AnnotatedPacketHandler();
 
-    public void read(@NotNull ClientConnection connection, @NotNull PacketReader reader) throws InvocationTargetException, IllegalAccessException {
+    @SneakyThrows
+    public void read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         int id = reader.getPacketID();
         GameState state = connection.getState();
 

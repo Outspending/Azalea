@@ -65,6 +65,7 @@ public interface PacketWriter {
     <T extends Enum<?>> void writeEnum(@NotNull T e);
 
     void writeByteArray(byte[] array);
+    void writeByteArray(byte[] array, int offset, int length);
     void writeLongArray(long[] array);
 
     void writeStream(ByteArrayOutputStream stream);

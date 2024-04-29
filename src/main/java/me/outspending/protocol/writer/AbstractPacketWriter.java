@@ -129,6 +129,11 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     }
 
     @Override
+    public void writeByteArray(byte[] array, int offset, int length) {
+        stream.write(array, offset, length);
+    }
+
+    @Override
     public void writeBitSet(@NotNull BitSet bitSet) {
         NetworkTypes.BITSET_TYPE.write(stream, bitSet);
     }

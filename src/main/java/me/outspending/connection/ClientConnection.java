@@ -6,12 +6,16 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
+import me.outspending.protocol.PacketDecoder;
+import me.outspending.protocol.PacketEncoder;
 import me.outspending.protocol.listener.PacketListener;
+import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
 import me.outspending.protocol.packets.client.play.ClientLoginPlayPacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.GroupedPacket;
+import me.outspending.protocol.types.ServerPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -27,6 +31,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -51,26 +56,24 @@ public class ClientConnection {
     }
 
     private void run() {
-        synchronized (socket) {
-            try {
-                InputStream stream = socket.getInputStream();
+        try {
+            InputStream stream = socket.getInputStream();
 
-                while (isRunning) {
-                    int result = stream.read(BYTE_ARRAY);
-                    if (result == -1) {
-                        kick();
-                        return;
-                    }
-
-                    byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, result);
-                    ByteBuffer buffer = ByteBuffer.wrap(responseArray);
-
-                    PacketReader reader = PacketReader.createNormalReader(buffer);
-                    packetListener.read(ClientConnection.this, reader);
+            while (isRunning) {
+                int result = stream.read(BYTE_ARRAY);
+                if (result == -1) {
+                    kick();
+                    return;
                 }
-            } catch (IOException | InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
+
+                byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, result);
+                ByteBuffer buffer = ByteBuffer.wrap(responseArray);
+
+                PacketReader reader = PacketReader.createNormalReader(buffer);
+                packetListener.read(ClientConnection.this, reader);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -88,15 +91,16 @@ public class ClientConnection {
         return socket.isConnected() && isRunning;
     }
 
+    public void sendRegistryPacket() {
+        sendPacket(new ClientRegistryDataPacket(MinecraftServer.getInstance().REGISTRY_NBT));
+    }
+
+    @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (!isOnline()) return;
 
-        try {
-            PacketWriter writer = PacketWriter.createNormalWriter(packet);
-            writer.writeToStream(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        PacketEncoder encoder = new PacketEncoder(packet);
+        encoder.encode(socket.getOutputStream());
     }
 
     public void sendGroupedPacket(@NotNull GroupedPacket packet) {

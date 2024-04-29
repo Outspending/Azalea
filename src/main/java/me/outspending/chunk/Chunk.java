@@ -1,9 +1,16 @@
 package me.outspending.chunk;
 
-import me.outspending.protocol.writer.PacketWriter;
-import org.jetbrains.annotations.NotNull;
+import java.util.concurrent.CompletableFuture;
 
-import java.util.BitSet;
+public interface Chunk {
+    void setBlock(int x, int y, int z, int blockID);
+    int getBlock(int x, int y, int z);
 
-public class Chunk {
+    ChunkSection getSection(int y);
+    ChunkSection[] getSections();
+
+    CompletableFuture<Chunk> load();
+    void unload();
+
+    boolean isLoaded();
 }
