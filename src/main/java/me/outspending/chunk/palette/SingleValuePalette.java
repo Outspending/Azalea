@@ -7,11 +7,11 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class IndirectPalette implements ChunkPalette {
-    private final byte bitsPerBlock;
+public class SingleValuePalette implements ChunkPalette {
+    private final int blockID;
 
-    public IndirectPalette(byte bitsPerBlock) {
-        this.bitsPerBlock = bitsPerBlock;
+    public SingleValuePalette(int blockID) {
+        this.blockID = blockID;
     }
 
     @Override
@@ -26,19 +26,16 @@ public class IndirectPalette implements ChunkPalette {
 
     @Override
     public byte getBitsPerBlock() {
-        return bitsPerBlock;
+        return 0;
     }
 
     @Override
     public void read(@NotNull PacketReader reader) {
-
+        // No Data
     }
 
     @Override
     public void write(@NotNull PacketWriter writer, int size) {
-        writer.writeVarInt(size);
-        for (int i = 0; i < size; i++) {
-            writer.writeVarInt(1);
-        }
+        writer.writeVarInt(blockID);
     }
 }

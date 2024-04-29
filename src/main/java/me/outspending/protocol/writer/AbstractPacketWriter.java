@@ -140,6 +140,15 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     }
 
     @Override
+    public void writeStream(ByteArrayOutputStream stream) {
+        try {
+            stream.writeTo(this.stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void writeToStream(OutputStream stream) {
         try {
             this.stream.writeTo(stream);

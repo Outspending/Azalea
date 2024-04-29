@@ -66,5 +66,6 @@ public interface PacketWriter {
     void writeByteArray(byte[] array);
     void writeLongArray(long[] array);
 
+    void writeStream(ByteArrayOutputStream stream);
     void writeToStream(OutputStream stream);
 }

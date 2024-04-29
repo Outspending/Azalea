@@ -4,12 +4,15 @@ import lombok.Getter;
 import me.outspending.chunk.ChunkSection;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
+import me.outspending.utils.MathUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 
+import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
 
 @Getter
 public class ClientChunkDataPacket extends ClientPacket {
+    public static final int BITS_PER_BLOCK = (int) Math.ceil(MathUtils.log2(384 + 1));
     public static final CompoundBinaryTag EMPTY_HEIGHTMAP = CompoundBinaryTag.builder()
             .put("MOTION_BLOCKING", CompoundBinaryTag.builder().putIntArray("MOTION_BLOCKING", new int[256]).build())
             .put("WORLD_SURFACE", CompoundBinaryTag.builder().putIntArray("WORLD_SURFACE", new int[256]).build())
@@ -45,15 +48,16 @@ public class ClientChunkDataPacket extends ClientPacket {
 
     @Override
     public void write(PacketWriter writer) {
+        PacketWriter dataWriter = PacketWriter.createNormalWriter();
+        for (ChunkSection section : this.data) {
+            section.write(dataWriter);
+        }
+
         writer.writeInt(this.chunkX);
         writer.writeInt(this.chunkZ);
         writer.writeNBTCompound(this.heightmaps);
-        writer.writeVarInt(this.data.length);
-
-        // Write the DATA field
-        for (ChunkSection section : this.data) {
-            section.write(writer);
-        }
+        writer.writeVarInt(dataWriter.getSize());
+        writer.writeStream(dataWriter.getStream());
 
         writer.writeVarInt(this.blockEntity.length);
         writer.writeArray(this.blockEntity, blockEntity -> {

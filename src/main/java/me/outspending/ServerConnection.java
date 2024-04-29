@@ -56,7 +56,7 @@ public class ServerConnection {
                     connection.sendPacket(new ClientKeepAlivePacket(System.currentTimeMillis()));
                 }
             }
-        }, 5, 5, TimeUnit.SECONDS);
+        }, 10, 10, TimeUnit.SECONDS);
 
         try {
             while (isRunning) {

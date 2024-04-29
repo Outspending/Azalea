@@ -8,10 +8,14 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class BlockStatePalette implements ChunkPalette {
-    private final IndirectPalette palette;
+    public int SIZE = 16;
+
+    private final ChunkPalette palette;
+    private final byte bitsPerEntry;
 
     public BlockStatePalette(byte bitsPerEntry) {
-        this.palette = new IndirectPalette(bitsPerEntry, (byte) 16);
+        this.palette = getPalette(bitsPerEntry);
+        this.bitsPerEntry = bitsPerEntry;
     }
 
     @Override
@@ -35,7 +39,35 @@ public class BlockStatePalette implements ChunkPalette {
     }
 
     @Override
-    public void write(@NotNull PacketWriter writer) {
-        palette.write(writer);
+    public void write(@NotNull PacketWriter writer, int size) {
+        int dataLength = (SIZE * SIZE * SIZE) * bitsPerEntry / 64;
+        long[] data = new long[dataLength];
+
+        writer.writeByte(bitsPerEntry);
+        palette.write(writer, dataLength);
+
+        int valueMask = ((1 << bitsPerEntry) - 1);
+
+        for (int y = 0; y < SIZE; y++) {
+            for (int z = 0; z < SIZE; z++) {
+                for (int x = 0; x < SIZE; x++) {
+                    int blockNumber = (((y * SIZE) + z) * SIZE) + x;
+                    int startLong = (blockNumber * bitsPerEntry) / 64;
+                    int startOffset = (blockNumber * bitsPerEntry) % 64;
+                    int endLong = ((blockNumber + 1) * bitsPerEntry - 1) / 64;
+
+                    long value = 0;
+                    value &= valueMask;
+
+                    data[startLong] |= (value << startOffset);
+                    if (startLong != endLong) {
+                        data[endLong] |= (value >> (64 - startOffset));
+                    }
+                }
+            }
+        }
+
+        writer.writeVarInt(dataLength);
+        writer.writeLongArray(data);
     }
 }

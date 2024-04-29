@@ -92,16 +92,6 @@ public class ClientConnection {
         try {
             PacketWriter writer = PacketWriter.createNormalWriter(packet);
             writer.writeToStream(socket.getOutputStream());
-
-            ByteArrayOutputStream stream = writer.getStream();
-            ByteBuffer buffer = ByteBuffer.wrap(stream.toByteArray());
-            PacketReader reader = PacketReader.createNormalReader(buffer);
-
-            logger.info("Sent Length: " + reader.getPacketLength());
-            logger.info("Sent ID: " + reader.getPacketID());
-            logger.info("Current State: " + state.name());
-
-            logger.info(Arrays.toString(reader.getAllBytes()));
         } catch (IOException e) {
             e.printStackTrace();
         }

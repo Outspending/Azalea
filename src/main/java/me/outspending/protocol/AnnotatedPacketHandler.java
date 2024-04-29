@@ -37,6 +37,8 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @SuppressWarnings("unchecked")
 public class AnnotatedPacketHandler {
@@ -125,28 +127,18 @@ public class AnnotatedPacketHandler {
     }
 
     private void sendChunks(@NotNull ClientConnection connection) {
-//        GroupedPacket group = new GroupedPacket();
-//        for (int x = 0; x < 5; x++) {
-//            for (int z = 0; z < 5; z++) {
-//                group.addPacket(new ClientChunkDataPacket(
-//                        x, z,
-//                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-//                        new ChunkSection[]{new ChunkSection(new BlockStatePalette((byte) 4), new BiomesPalette((byte) 2))},
-//                        new ClientChunkDataPacket.BlockEntity[0],
-//                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-//                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
-//                ));
-//            }
-//        }
-//        connection.sendGroupedPacket(group);
-
-        connection.sendPacket(new ClientChunkDataPacket(
-                0, 0,
-                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                new ChunkSection[]{new ChunkSection(new BlockStatePalette((byte) 4), new BiomesPalette((byte) 2))},
-                new ClientChunkDataPacket.BlockEntity[0],
-                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
-        ));
+        connection.sendPacket(new ClientCenterChunkPacket(0, 0));
+        for (int x = -5; x < 5; x++) {
+            for (int z = -5; z < 5; z++) {
+                connection.sendPacket(new ClientChunkDataPacket(
+                        x, z,
+                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+                        ChunkSection.createSections(),
+                        new ClientChunkDataPacket.BlockEntity[0],
+                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+                ));
+            }
+        }
     }
 }

@@ -41,8 +41,11 @@ public class CodecHandler {
                     0x15, ServerKeepAlivePacket::of,
                     0x17, SetPlayerPositionPacket::of,
                     0x18, SetPlayerPositionAndRotationPacket::of,
+                    0x19, PlayerRotationPacket::of,
                     0x20, PlayerAbilitiesPacket::of,
-                    0x22, PlayerCommandPacket::of
+                    0x22, PlayerCommandPacket::of,
+                    0x33, SwingArmPacket::of,
+                    0x2C, SetHeldItemPacket::of
             ))
             .build();
 }
