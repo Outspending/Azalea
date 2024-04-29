@@ -40,12 +40,17 @@ public class ClientConnection extends Connection {
     }
 
     private void run() {
+<<<<<<< Updated upstream
         isRunning = true;
         synchronized (socket) {
+=======
+        synchronized (this) {
+>>>>>>> Stashed changes
             try {
                 InputStream stream = socket.getInputStream();
 
                 while (isRunning) {
+<<<<<<< Updated upstream
                     int bytesRead = stream.read(BYTE_ARRAY);
                     if (bytesRead == -1) {
                         break;
@@ -58,6 +63,20 @@ public class ClientConnection extends Connection {
 
                 logger.info("Client disconnected: " + socket);
                 socket.close();
+=======
+                    int result = stream.read(BYTE_ARRAY);
+                    if (result == -1) {
+                        kick();
+                        return;
+                    }
+
+                    byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, result);
+                    ByteBuffer buffer = ByteBuffer.wrap(responseArray);
+
+                    PacketReader reader = PacketReader.createNormalReader(buffer);
+                    packetListener.read(ClientConnection.this, reader);
+                }
+>>>>>>> Stashed changes
             } catch (IOException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }

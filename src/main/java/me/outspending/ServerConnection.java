@@ -14,11 +14,23 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+<<<<<<< Updated upstream
+=======
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.*;
+>>>>>>> Stashed changes
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
 public class ServerConnection {
     private static final Logger logger = LoggerFactory.getLogger(ServerConnection.class);
+<<<<<<< Updated upstream
+=======
+    private static final ScheduledExecutorService keepAliveExecutor = Executors.newSingleThreadScheduledExecutor();
+    private static final ExecutorService clientExecutor = Executors.newCachedThreadPool();
+>>>>>>> Stashed changes
 
     private boolean isRunning = false;
 
@@ -42,10 +54,18 @@ public class ServerConnection {
                 Socket clientSocket = mainSocket.accept();
                 logger.info("Client connected: " + clientSocket);
 
-                new ClientConnection(clientSocket);
+                clientExecutor.submit(() -> {
+                    new ClientConnection(clientSocket);
+                });
             }
         } catch (IOException e) {
+<<<<<<< Updated upstream
             e.printStackTrace();
+=======
+            logger.error("Failed to accept connection", e);
+        } finally {
+            clientExecutor.shutdown();
+>>>>>>> Stashed changes
         }
     }
 
