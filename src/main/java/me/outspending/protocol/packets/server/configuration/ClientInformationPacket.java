@@ -1,23 +1,23 @@
 package me.outspending.protocol.packets.server.configuration;
 
 import lombok.Getter;
+import me.outspending.connection.GameState;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
-public class ClientInformationPacket extends ServerPacket {
-    private final String locale;
-    private final byte viewDistance;
-    private final int chatMode;
-    private final boolean chatColors;
-    private final byte skinParts;
-    private final int mainHand;
-    private final boolean textFiltering;
-    private final boolean serverListings;
-
-    public static ClientInformationPacket of(@NotNull PacketReader reader) {
+public record ClientInformationPacket(
+        String locale,
+        byte viewDistance,
+        int chatMode,
+        boolean chatColors,
+        byte skinParts,
+        int mainHand,
+        boolean textFiltering,
+        boolean serverListings
+) implements ServerPacket {
+    public static ClientInformationPacket read(PacketReader reader) {
         return new ClientInformationPacket(
                 reader.readString(),
                 reader.readByte(),
@@ -30,15 +30,13 @@ public class ClientInformationPacket extends ServerPacket {
         );
     }
 
-    public ClientInformationPacket(String locale, byte viewDistance, int chatMode, boolean chatColors, byte skinParts, int mainHand, boolean textFiltering, boolean serverListings) {
-        super(0x00);
-        this.locale = locale;
-        this.viewDistance = viewDistance;
-        this.chatMode = chatMode;
-        this.chatColors = chatColors;
-        this.skinParts = skinParts;
-        this.mainHand = mainHand;
-        this.textFiltering = textFiltering;
-        this.serverListings = serverListings;
+    @Override
+    public @NotNull GameState state() {
+        return GameState.CONFIGURATION;
+    }
+
+    @Override
+    public int id() {
+        return 0x00;
     }
 }

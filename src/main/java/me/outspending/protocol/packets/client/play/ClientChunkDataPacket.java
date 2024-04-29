@@ -2,49 +2,34 @@ package me.outspending.protocol.packets.client.play;
 
 import lombok.Getter;
 import me.outspending.chunk.ChunkSection;
+import me.outspending.connection.GameState;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import me.outspending.utils.MathUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
 
-@Getter
-public class ClientChunkDataPacket extends ClientPacket {
+public record ClientChunkDataPacket(
+        int chunkX,
+        int chunkZ,
+        CompoundBinaryTag heightmaps,
+        ChunkSection[] data,
+        BlockEntity[] blockEntity,
+        BitSet skyLightMask,
+        BitSet blockLightMask,
+        BitSet emptySkyLightMask,
+        BitSet emptyBlockLightMask,
+        Skylight[] skyLight,
+        Blocklight[] blockLight
+) implements ClientPacket {
     public static final int BITS_PER_BLOCK = (int) Math.ceil(MathUtils.log2(384 + 1));
     public static final CompoundBinaryTag EMPTY_HEIGHTMAP = CompoundBinaryTag.builder()
             .put("MOTION_BLOCKING", CompoundBinaryTag.builder().putIntArray("MOTION_BLOCKING", new int[256]).build())
             .put("WORLD_SURFACE", CompoundBinaryTag.builder().putIntArray("WORLD_SURFACE", new int[256]).build())
             .build();
-
-    private final int chunkX;
-    private final int chunkZ;
-    private final CompoundBinaryTag heightmaps;
-    private final ChunkSection[] data;
-    private final BlockEntity[] blockEntity;
-    private final BitSet skyLightMask;
-    private final BitSet blockLightMask;
-    private final BitSet emptySkyLightMask;
-    private final BitSet emptyBlockLightMask;
-    private final Skylight[] skyLight;
-    private final Blocklight[] blockLight;
-
-    public ClientChunkDataPacket(int chunkX, int chunkZ, CompoundBinaryTag heightmaps, ChunkSection[] data, BlockEntity[] blockEntity, BitSet skyLightMask, BitSet blockLightMask, BitSet emptySkyLightMask, BitSet emptyBlockLightMask, Skylight[] skyLight, Blocklight[] blockLight) {
-        super(0x25);
-
-        this.chunkX = chunkX;
-        this.chunkZ = chunkZ;
-        this.heightmaps = heightmaps;
-        this.data = data;
-        this.blockEntity = blockEntity;
-        this.skyLightMask = skyLightMask;
-        this.blockLightMask = blockLightMask;
-        this.emptySkyLightMask = emptySkyLightMask;
-        this.emptyBlockLightMask = emptyBlockLightMask;
-        this.skyLight = skyLight;
-        this.blockLight = blockLight;
-    }
 
     @Override
     public void write(PacketWriter writer) {
@@ -80,6 +65,16 @@ public class ClientChunkDataPacket extends ClientPacket {
             writer.writeVarInt(blockLight.blockLightArray.length);
             writer.writeByteArray(blockLight.blockLightArray);
         });
+    }
+
+    @Override
+    public @NotNull GameState state() {
+        return GameState.PLAY;
+    }
+
+    @Override
+    public int id() {
+        return 0x25;
     }
 
     public record BlockEntity(int packedXZ, short y, int type, CompoundBinaryTag data) {}

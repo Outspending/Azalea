@@ -3,19 +3,16 @@ package me.outspending.protocol;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
 import me.outspending.chunk.ChunkSection;
-import me.outspending.chunk.palette.BiomesPalette;
-import me.outspending.chunk.palette.BlockStatePalette;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.entity.Player;
 import me.outspending.position.Location;
 import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
-import me.outspending.protocol.packets.HandshakePacket;
+import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
 import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
-import me.outspending.protocol.packets.client.login.ClientSetCompressionPacket;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
@@ -24,9 +21,7 @@ import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
 import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
-import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.types.Packet;
-import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +32,6 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @SuppressWarnings("unchecked")
 public class AnnotatedPacketHandler {
@@ -65,7 +58,7 @@ public class AnnotatedPacketHandler {
 
     @PacketReceiver
     public void onHandshake(@NotNull ClientConnection client, @NotNull HandshakePacket packet) {
-        client.setState(packet.getNextState() == 2 ? GameState.LOGIN : GameState.STATUS);
+        client.setState(packet.nextState() == 2 ? GameState.LOGIN : GameState.STATUS);
     }
 
     @PacketReceiver
@@ -81,14 +74,14 @@ public class AnnotatedPacketHandler {
 
     @PacketReceiver
     public void onPingRequest(@NotNull ClientConnection client, @NotNull PingRequestPacket packet) {
-        client.sendPacket(new ClientPingResponsePacket(packet.getPayload()));
+        client.sendPacket(new ClientPingResponsePacket(packet.payload()));
     }
 
     @PacketReceiver
     public void onLoginStart(@NotNull ClientConnection client, @NotNull LoginStartPacket packet) {
         MinecraftServer server = client.getServer();
-        String name = packet.getName();
-        UUID uuid = packet.getUuid();
+        String name = packet.name();
+        UUID uuid = packet.uuid();
 
         server.getServerProcess().getPlayerManager().addPlayer(new Player(client, name, uuid));
         // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));

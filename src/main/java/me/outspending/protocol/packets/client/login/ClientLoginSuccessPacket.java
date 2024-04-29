@@ -1,6 +1,7 @@
 package me.outspending.protocol.packets.client.login;
 
 import lombok.Getter;
+import me.outspending.connection.GameState;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
@@ -9,12 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-@Getter
-public class ClientLoginSuccessPacket extends ClientPacket {
-    private final UUID uuid;
-    private final String username;
-    private final Property[] properties;
-
+public record ClientLoginSuccessPacket(UUID uuid, String username, Property[] properties) implements ClientPacket {
     public static @NotNull ClientLoginSuccessPacket of(@NotNull PacketReader reader) {
         return new ClientLoginSuccessPacket(
                 reader.readUUID(),
@@ -24,13 +20,6 @@ public class ClientLoginSuccessPacket extends ClientPacket {
                         propertyReader.readString(),
                         propertyReader.readBoolean() ? propertyReader.readString() : null
                 ), Property[]::new));
-    }
-
-    public ClientLoginSuccessPacket(UUID uuid, String username, Property[] properties) {
-        super(0x02);
-        this.uuid = uuid;
-        this.username = username;
-        this.properties = properties;
     }
 
     private void writeProperty(@NotNull Property property, @NotNull PacketWriter writer) {
@@ -49,6 +38,16 @@ public class ClientLoginSuccessPacket extends ClientPacket {
         writer.writeVarInt(this.properties.length);
         writer.writeArray(this.properties, property -> writeProperty(property, writer));
 
+    }
+
+    @Override
+    public @NotNull GameState state() {
+        return GameState.LOGIN;
+    }
+
+    @Override
+    public int id() {
+        return 0x02;
     }
 
     public record Property(@NotNull String name, @NotNull String value, @Nullable String signature) {

@@ -12,7 +12,7 @@ public class NormalPacketWriter extends AbstractPacketWriter {
         super(false);
 
         writeVarInt(getPacketLength(packet));
-        writeVarInt(packet.getId());
+        writeVarInt(packet.id());
         packet.write(this);
     }
 

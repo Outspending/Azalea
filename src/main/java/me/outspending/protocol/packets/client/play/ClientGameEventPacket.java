@@ -1,16 +1,13 @@
 package me.outspending.protocol.packets.client.play;
 
 import lombok.Getter;
+import me.outspending.connection.GameState;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
-public class ClientGameEventPacket extends ClientPacket {
-    private final byte event;
-    private final float value;
-
+public record ClientGameEventPacket(byte event, float value) implements ClientPacket {
     public static ClientGameEventPacket of(@NotNull PacketReader reader) {
         return new ClientGameEventPacket(
                 reader.readByte(),
@@ -18,15 +15,19 @@ public class ClientGameEventPacket extends ClientPacket {
         );
     }
 
-    public ClientGameEventPacket(byte event, float value) {
-        super(0x20);
-        this.event = event;
-        this.value = value;
-    }
-
     @Override
     public void write(PacketWriter writer) {
         writer.writeByte(this.event);
         writer.writeFloat(this.value);
+    }
+
+    @Override
+    public @NotNull GameState state() {
+        return GameState.PLAY;
+    }
+
+    @Override
+    public int id() {
+        return 0x20;
     }
 }

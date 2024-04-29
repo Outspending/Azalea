@@ -1,6 +1,6 @@
 package me.outspending.protocol;
 
-import me.outspending.protocol.packets.HandshakePacket;
+import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
 import me.outspending.protocol.types.Packet;

@@ -1,17 +1,14 @@
 package me.outspending.protocol.packets.client.play;
 
 import lombok.Getter;
+import me.outspending.connection.GameState;
 import me.outspending.position.Pos;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
+import org.jetbrains.annotations.NotNull;
 
-@Getter
-public class ClientSynchronizePlayerPosition extends ClientPacket {
-    private final Pos position;
-    private final byte flags;
-    private final int teleportID;
-
+public record ClientSynchronizePlayerPosition(Pos position, byte flags, int teleportID) implements ClientPacket {
     public static ClientSynchronizePlayerPosition of(PacketReader reader) {
         return new ClientSynchronizePlayerPosition(
                 new Pos(
@@ -26,13 +23,6 @@ public class ClientSynchronizePlayerPosition extends ClientPacket {
         );
     }
 
-    public ClientSynchronizePlayerPosition(Pos position, byte flags, int teleportID) {
-        super(0x3E);
-        this.position = position;
-        this.flags = flags;
-        this.teleportID = teleportID;
-    }
-
     @Override
     public void write(PacketWriter writer) {
         writer.writeDouble(this.position.x());
@@ -42,5 +32,15 @@ public class ClientSynchronizePlayerPosition extends ClientPacket {
         writer.writeFloat(this.position.pitch());
         writer.writeByte(this.flags);
         writer.writeVarInt(this.teleportID);
+    }
+
+    @Override
+    public @NotNull GameState state() {
+        return GameState.PLAY;
+    }
+
+    @Override
+    public int id() {
+        return 0x3E;
     }
 }

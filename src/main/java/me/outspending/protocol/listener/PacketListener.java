@@ -3,10 +3,11 @@ package me.outspending.protocol.listener;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.AnnotatedPacketHandler;
-import me.outspending.protocol.CodecHandler;
+import me.outspending.protocol.codec.CodecHandler;
 import me.outspending.protocol.reader.NormalPacketReader;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.Packet;
+import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class PacketListener {
         int id = reader.getPacketID();
         GameState state = connection.getState();
 
-        Function<PacketReader, Packet> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
+        Function<PacketReader, ServerPacket> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
         if (packetFunction == null) {
             logger.info(String.format("Unknown packet ID: %d, in state: %s", id, state.name()));
 //            logger.info("Disconnecting client from server: Invalid Packet");

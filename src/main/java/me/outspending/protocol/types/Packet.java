@@ -1,12 +1,9 @@
 package me.outspending.protocol.types;
 
-import lombok.Getter;
+import me.outspending.connection.GameState;
+import org.jetbrains.annotations.NotNull;
 
-@Getter
-public abstract class Packet {
-    private final int id;
-
-    public Packet(int id) {
-        this.id = id;
-    }
+public interface Packet {
+    @NotNull GameState state();
+    int id();
 }

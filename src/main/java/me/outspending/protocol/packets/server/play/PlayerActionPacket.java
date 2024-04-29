@@ -1,19 +1,14 @@
 package me.outspending.protocol.packets.server.play;
 
 import lombok.Getter;
+import me.outspending.connection.GameState;
 import me.outspending.position.Location;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
-public class PlayerActionPacket extends ServerPacket {
-    private final int status;
-    private final Location position;
-    private final byte face;
-    private final int sequence;
-
-    public static PlayerActionPacket of(@NotNull PacketReader reader) {
+public record PlayerActionPacket(int status, Location position, byte face, int sequence) implements ServerPacket {
+    public static PlayerActionPacket read(PacketReader reader) {
         return new PlayerActionPacket(
                 reader.readVarInt(),
                 reader.readLocation(),
@@ -22,12 +17,13 @@ public class PlayerActionPacket extends ServerPacket {
         );
     }
 
-    public PlayerActionPacket(int status, Location position, byte face, int sequence) {
-        super(0x21);
+    @Override
+    public @NotNull GameState state() {
+        return GameState.PLAY;
+    }
 
-        this.status = status;
-        this.position = position;
-        this.face = face;
-        this.sequence = sequence;
+    @Override
+    public int id() {
+        return 0x21;
     }
 }

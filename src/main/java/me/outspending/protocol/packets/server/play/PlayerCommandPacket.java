@@ -1,17 +1,13 @@
 package me.outspending.protocol.packets.server.play;
 
 import lombok.Getter;
+import me.outspending.connection.GameState;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
-public class PlayerCommandPacket extends ServerPacket {
-    private final int entityID;
-    private final int actionID;
-    private final int jumpBoost;
-
-    public static PlayerCommandPacket of(@NotNull PacketReader reader) {
+public record PlayerCommandPacket(int entityID, int actionID, int jumpBoost) implements ServerPacket {
+    public static PlayerCommandPacket read(PacketReader reader) {
         return new PlayerCommandPacket(
                 reader.readVarInt(),
                 reader.readVarInt(),
@@ -19,10 +15,13 @@ public class PlayerCommandPacket extends ServerPacket {
         );
     }
 
-    public PlayerCommandPacket(int entityID, int actionID, int jumpBoost) {
-        super(0x22);
-        this.entityID = entityID;
-        this.actionID = actionID;
-        this.jumpBoost = jumpBoost;
+    @Override
+    public @NotNull GameState state() {
+        return GameState.PLAY;
+    }
+
+    @Override
+    public int id() {
+        return 0x22;
     }
 }

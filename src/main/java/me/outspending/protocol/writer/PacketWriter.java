@@ -25,7 +25,7 @@ public interface PacketWriter {
 
     default int getPacketLength(ClientPacket packet) {
         PacketWriter writer = new NormalPacketWriter();
-        writer.writeVarInt(packet.getId());
+        writer.writeVarInt(packet.id());
         packet.write(writer);
 
         return writer.getSize();
