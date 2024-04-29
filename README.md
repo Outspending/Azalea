@@ -5,6 +5,7 @@ My WIP Minecraft Server Protocol
 - [ ] Chunk Loading / Unloading
 - [ ] Ticks
 - [ ] Multiplayer Support
+- [ ] Packet Compression
 - [ ] Block / Item Registry
 - [ ] Bossbars / Actionbars / Chat
 - [ ] Particles
