@@ -1,26 +1,31 @@
 package me.outspending.protocol;
 
-import com.google.common.base.Charsets;
-import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
-import me.outspending.connection.Connection;
+import me.outspending.NamespacedID;
+import me.outspending.chunk.ChunkSection;
+import me.outspending.chunk.palette.BiomesPalette;
+import me.outspending.chunk.palette.BlockStatePalette;
+import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
+import me.outspending.entity.Player;
 import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
-import me.outspending.protocol.packets.configuration.server.AcknowledgeFinishConfigurationPacket;
-import me.outspending.protocol.packets.configuration.client.FinishConfigurationPacket;
-import me.outspending.protocol.packets.configuration.client.RegistryDataPacket;
-import me.outspending.protocol.packets.handshaking.HandshakePacket;
-import me.outspending.protocol.packets.login.server.LoginAcknowledgedPacket;
-import me.outspending.protocol.packets.login.server.LoginStartPacket;
-import me.outspending.protocol.packets.login.client.LoginSuccessPacket;
-import me.outspending.protocol.packets.login.client.SetCompressionPacket;
-import me.outspending.protocol.packets.play.client.GameEventPacket;
-import me.outspending.protocol.packets.play.client.LoginPlayPacket;
-import me.outspending.protocol.packets.status.client.PingRequestPacket;
-import me.outspending.protocol.packets.status.client.StatusRequestPacket;
-import me.outspending.protocol.packets.status.server.PingResponsePacket;
-import me.outspending.protocol.packets.status.server.StatusResponsePacket;
+import me.outspending.protocol.packets.HandshakePacket;
+import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
+import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
+import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
+import me.outspending.protocol.packets.client.login.ClientSetCompressionPacket;
+import me.outspending.protocol.packets.client.play.*;
+import me.outspending.protocol.packets.server.status.PingRequestPacket;
+import me.outspending.protocol.packets.server.status.StatusRequestPacket;
+import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
+import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
+import me.outspending.protocol.packets.server.login.LoginStartPacket;
+import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
+import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
+import me.outspending.protocol.types.GroupedPacket;
+import me.outspending.protocol.types.Packet;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -28,11 +33,12 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.rmi.registry.Registry;
-import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @SuppressWarnings("unchecked")
 public class AnnotatedPacketHandler {
@@ -51,73 +57,91 @@ public class AnnotatedPacketHandler {
         }
     }
 
-    public void handle(@NotNull Connection connection, @NotNull Packet packet) throws InvocationTargetException, IllegalAccessException {
+    public void handle(@NotNull ClientConnection connection, @NotNull Packet packet) throws InvocationTargetException, IllegalAccessException {
         Method method = PACKET_HANDLERS.get(packet.getClass());
         if (method != null)
             method.invoke(this, connection, packet);
     }
 
     @PacketReceiver
-    public void onHandshake(@NotNull Connection client, @NotNull HandshakePacket packet) {
-        client.setState(packet.nextState() == 2 ? GameState.LOGIN : GameState.STATUS);
+    public void onHandshake(@NotNull ClientConnection client, @NotNull HandshakePacket packet) {
+        client.setState(packet.getNextState() == 2 ? GameState.LOGIN : GameState.STATUS);
     }
 
     @PacketReceiver
-    public void onStatusRequest(@NotNull Connection client, @NotNull StatusRequestPacket packet) {
+    public void onStatusRequest(@NotNull ClientConnection client, @NotNull StatusRequestPacket packet) {
         MinecraftServer server = client.getServer();
-        client.sendPacket(new StatusResponsePacket(
-                new StatusResponsePacket.Players(0, server.getMaxPlayers()),
-                new StatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
+        logger.info("Sending status response..");
+        client.sendPacket(new ClientStatusResponsePacket(
+                new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
+                new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
                 server.getDescription()
         ));
     }
 
     @PacketReceiver
-    public void onPingRequest(@NotNull Connection client, @NotNull PingRequestPacket packet) {
-        client.sendPacket(new PingResponsePacket(packet.payload()));
+    public void onPingRequest(@NotNull ClientConnection client, @NotNull PingRequestPacket packet) {
+        client.sendPacket(new ClientPingResponsePacket(packet.getPayload()));
     }
 
     @PacketReceiver
-    public void onLoginStart(@NotNull Connection client, @NotNull LoginStartPacket packet) {
-        client.sendPacket(new LoginSuccessPacket(packet.uuid(), packet.name(), new LoginSuccessPacket.Property[0]));
+    public void onLoginStart(@NotNull ClientConnection client, @NotNull LoginStartPacket packet) {
+        MinecraftServer server = client.getServer();
+        String name = packet.getName();
+        UUID uuid = packet.getUuid();
+
+        server.getServerProcess().getPlayerManager().addPlayer(new Player(client, name, uuid));
+        // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
+        client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
     }
 
     @PacketReceiver
-    public void onLoginAcknowledged(@NotNull Connection client, @NotNull LoginAcknowledgedPacket packet) {
+    public void onLoginAcknowledged(@NotNull ClientConnection client, @NotNull LoginAcknowledgedPacket packet) {
         client.setState(GameState.CONFIGURATION);
 
-        client.sendPacket(new RegistryDataPacket(client.getServer().REGISTRY_NBT));
-        client.sendPacket(new FinishConfigurationPacket());
+        client.sendPacket(new ClientRegistryDataPacket(client.getServer().REGISTRY_NBT));
+        client.sendPacket(new ClientFinishConfigurationPacket());
     }
 
     @PacketReceiver
-    public void onAcknowledgeConfiguration(@NotNull Connection client, @NotNull AcknowledgeFinishConfigurationPacket packet) {
+    public void onAcknowledgeConfiguration(@NotNull ClientConnection client, @NotNull AcknowledgeFinishConfigurationPacket packet) {
         logger.info("Configuration has finished!");
         client.setState(GameState.PLAY);
 
-        client.sendPacket(new LoginPlayPacket(
-                273,
-                false,
-                1,
-                new String[]{"minecraft:overworld"},
-                20,
-                10,
-                8,
-                false,
-                true,
-                false,
-                "minecraft:overworld",
-                "minecraft:overworld",
+        final NamespacedID overworld = new NamespacedID("overworld");
+        client.sendPacket(new ClientLoginPlayPacket(
+                273, false, 1,
+                new NamespacedID[]{overworld}, 20,
+                10, 8, false,
+                true, false,
+                overworld, overworld,
                 0L,
-                (byte) 1,
-                (byte) -1,
-                false,
-                false,
-                false,
-                "",
-                Location.ZERO,
+                (byte) 1, (byte) -1,
+                false, false, false,
+                null, null,
                 0
         ));
-        client.sendPacket(new GameEventPacket((byte) 0,0f));
+        client.sendPacket(new ClientGameEventPacket((byte) 13, 0f));
+
+        sendChunks(client);
+        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 64, 0, 0f, 0f), (byte) 0, 24));
+    }
+
+    private void sendChunks(@NotNull ClientConnection connection) {
+        connection.sendPacket(new ClientCenterChunkPacket(0, 0));
+        for (int x = -7; x < 7; x++) {
+            for (int z = -7; z < 7; z++) {
+                connection.sendPacket(new ClientChunkDataPacket(
+                        x, z,
+                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+                        ChunkSection.createSections(),
+                        new ClientChunkDataPacket.BlockEntity[0],
+                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+                ));
+
+                connection.sendPacket(new ClientBlockUpdatePacket(new Location(x, 64, z), 1));
+            }
+        }
     }
 }

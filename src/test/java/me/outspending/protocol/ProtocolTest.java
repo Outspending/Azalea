@@ -1,9 +1,10 @@
 package me.outspending.protocol;
 
-import me.outspending.protocol.packets.configuration.client.FinishConfigurationPacket;
-import me.outspending.protocol.packets.handshaking.HandshakePacket;
-import me.outspending.protocol.packets.login.client.LoginSuccessPacket;
-import me.outspending.protocol.packets.login.server.LoginStartPacket;
+import me.outspending.protocol.packets.HandshakePacket;
+import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
+import me.outspending.protocol.packets.server.login.LoginStartPacket;
+import me.outspending.protocol.types.Packet;
+import me.outspending.protocol.writer.PacketWriter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -17,7 +18,7 @@ public class ProtocolTest {
     public void test() {
         packets.add(new HandshakePacket(765, "localhost", (short) 25565, 1));
         packets.add(new LoginStartPacket("Outspending", UUID.randomUUID()));
-        packets.add(new FinishConfigurationPacket());
+        packets.add(new ClientFinishConfigurationPacket());
     }
 
     @Test
