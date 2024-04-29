@@ -11,6 +11,7 @@ My WIP Minecraft Server Protocol
 - [ ] Particles
 - [ ] Entities
 - [ ] Inventory Support
+- [ ] Lighting???
 - [ ] Chunk Saving
 - [ ] Improve performance / API
 - [ ] Final Touches
