@@ -51,31 +51,11 @@ public class ClientConnection {
     }
 
     private void run() {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-        isRunning = true;
         synchronized (socket) {
-=======
-        synchronized (this) {
->>>>>>> Stashed changes
             try {
                 InputStream stream = socket.getInputStream();
 
                 while (isRunning) {
-<<<<<<< Updated upstream
-                    int bytesRead = stream.read(BYTE_ARRAY);
-                    if (bytesRead == -1) {
-                        break;
-                    }
-
-                    byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, bytesRead);
-                    PacketReader reader = new PacketReader(responseArray);
-                    packetListener.read(this, reader);
-                }
-
-                logger.info("Client disconnected: " + socket);
-                socket.close();
-=======
                     int result = stream.read(BYTE_ARRAY);
                     if (result == -1) {
                         kick();
@@ -88,29 +68,9 @@ public class ClientConnection {
                     PacketReader reader = PacketReader.createNormalReader(buffer);
                     packetListener.read(ClientConnection.this, reader);
                 }
->>>>>>> Stashed changes
             } catch (IOException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
-=======
-        try {
-            InputStream stream = socket.getInputStream();
-
-            while (isRunning) {
-                int result = stream.read(BYTE_ARRAY);
-                if (result == -1) {
-                    kick();
-                    return;
-                }
-
-                byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, result);
-                ByteBuffer buffer = ByteBuffer.wrap(responseArray);
-
-                PacketReader reader = PacketReader.createNormalReader(buffer);
-                packetListener.read(ClientConnection.this, reader);
->>>>>>> 48fac1e8031c4b81d297560de9a4f1a5a847ad8e
             }
-        } catch (IOException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
         }
     }
 

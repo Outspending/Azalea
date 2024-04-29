@@ -17,37 +17,17 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-import java.nio.channels.AsynchronousServerSocketChannel;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
 import java.util.concurrent.*;
->>>>>>> Stashed changes
-=======
-import java.nio.channels.AsynchronousServerSocketChannel;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
->>>>>>> 48fac1e8031c4b81d297560de9a4f1a5a847ad8e
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
 public class ServerConnection {
     private static final Logger logger = LoggerFactory.getLogger(ServerConnection.class);
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
     private static final ScheduledExecutorService keepAliveExecutor = Executors.newSingleThreadScheduledExecutor();
     private static final ExecutorService clientExecutor = Executors.newCachedThreadPool();
->>>>>>> Stashed changes
-=======
-    private static final ScheduledExecutorService keepAliveExecutor = Executors.newSingleThreadScheduledExecutor();
->>>>>>> 48fac1e8031c4b81d297560de9a4f1a5a847ad8e
 
     private boolean isRunning = true;
 
@@ -86,17 +66,9 @@ public class ServerConnection {
                 });
             }
         } catch (IOException e) {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-            e.printStackTrace();
-=======
             logger.error("Failed to accept connection", e);
         } finally {
             clientExecutor.shutdown();
->>>>>>> Stashed changes
-=======
-            logger.error("Failed to accept connection", e);
->>>>>>> 48fac1e8031c4b81d297560de9a4f1a5a847ad8e
         }
     }
 
