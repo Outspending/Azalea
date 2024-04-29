@@ -47,6 +47,7 @@ public class CodecHandler {
                     Map.entry(0x22, PlayerCommandPacket::of),
                     Map.entry(0x33, SwingArmPacket::of),
                     Map.entry(0x35, UseItemOnPacket::of),
+                    Map.entry(0x2F, SetCreativeModeSlotPacket::of),
                     Map.entry(0x2C, SetHeldItemPacket::of)
             ))
             .build();

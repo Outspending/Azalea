@@ -2,6 +2,8 @@ package me.outspending.protocol;
 
 import com.google.common.graph.Network;
 import me.outspending.NamespacedID;
+import me.outspending.Slot;
+import me.outspending.block.ItemStack;
 import me.outspending.position.Location;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -322,6 +324,33 @@ public interface NetworkTypes {
             VARINT_TYPE.write(stream, type.cardinality());
             for (int i = 0; i < type.length(); i++) {
                 BOOLEAN_TYPE.write(stream, type.get(i));
+            }
+        }
+    };
+
+    NetworkType<Slot> SLOT_TYPE = new NetworkType<>() {
+        @Override
+        public Slot read(ByteBuffer buffer) {
+            if (BOOLEAN_TYPE.read(buffer)) {
+                ItemStack stack = new ItemStack(
+                        VARINT_TYPE.read(buffer),
+                        BYTE_TYPE.read(buffer),
+                        NBTCOMPOUND_TYPE.read(buffer)
+                );
+                return new Slot(true, stack);
+            }
+
+            return new Slot(false, null);
+        }
+
+        @Override
+        public void write(ByteArrayOutputStream stream, Slot type) {
+            BOOLEAN_TYPE.write(stream, type.isPresent());
+            if (type.isPresent()) {
+                ItemStack item = type.getItem();
+
+                VARINT_TYPE.write(stream, item.getCount());
+                NBTCOMPOUND_TYPE.write(stream, item.getItemNBT());
             }
         }
     };

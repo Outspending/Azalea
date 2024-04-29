@@ -1,6 +1,7 @@
 package me.outspending.protocol.writer;
 
 import me.outspending.NamespacedID;
+import me.outspending.Slot;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.types.ClientPacket;
@@ -52,7 +53,7 @@ public interface PacketWriter {
     void writeVarInt(int i);
     void writeVarLong(long l);
     // writeEntityMetaData
-    // writeSlot
+    void writeSlot(@NotNull Slot slot);
     void writeNBTCompound(@NotNull CompoundBinaryTag tag);
     void writeLocation(@NotNull Location location);
     // writeAngle

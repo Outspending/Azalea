@@ -18,8 +18,8 @@ public record ChunkSection(BlockStatePalette blockStatesPalette, BiomesPalette b
 
     public void write(@NotNull PacketWriter writer) {
         writer.writeShort((short) 0);
-        blockStatesPalette.write(writer, 0);
-        biomesPalette.write(writer, 0);
+        blockStatesPalette.write(writer);
+        biomesPalette.write(writer);
     }
 
 }

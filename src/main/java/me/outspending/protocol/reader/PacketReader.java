@@ -1,6 +1,7 @@
 package me.outspending.protocol.reader;
 
 import me.outspending.NamespacedID;
+import me.outspending.Slot;
 import me.outspending.position.Location;
 import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.NetworkType;
@@ -62,7 +63,7 @@ public interface PacketReader {
     int readVarInt();
     long readVarLong();
     // readEntityMetaData
-    // readSlot
+    @Nullable Slot readSlot();
     @Nullable CompoundBinaryTag readNBTCompound();
     @Nullable Location readLocation();
     // readAngle

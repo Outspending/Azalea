@@ -1,6 +1,7 @@
 package me.outspending.protocol.writer;
 
 import me.outspending.NamespacedID;
+import me.outspending.Slot;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
@@ -130,6 +131,11 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     @Override
     public void writeBitSet(@NotNull BitSet bitSet) {
         NetworkTypes.BITSET_TYPE.write(stream, bitSet);
+    }
+
+    @Override
+    public void writeSlot(@NotNull Slot slot) {
+        NetworkTypes.SLOT_TYPE.write(stream, slot);
     }
 
     @Override
