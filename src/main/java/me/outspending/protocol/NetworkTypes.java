@@ -265,12 +265,13 @@ public interface NetworkTypes {
             int x = (int) (value >> 38);
             int y = (int) (value << 52 >> 52);
             int z = (int) (value << 26 >> 38);
+
             return new Location(x, y, z);
         }
 
         @Override
         public void write(ByteArrayOutputStream stream, Location type) {
-            stream.write(((type.x() & 0x3FFFFFF) << 38) | ((type.z() & 0x3FFFFFF) << 12) | (type.y() & 0xFFF));
+            LONG_TYPE.write(stream, (((long) (type.x() & 0x3FFFFFF) << 38) | ((long) (type.z() & 0x3FFFFFF) << 12) | (type.y() & 0xFFF)));
         }
     };
 

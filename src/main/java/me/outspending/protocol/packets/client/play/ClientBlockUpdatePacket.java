@@ -21,6 +21,7 @@ public class ClientBlockUpdatePacket extends ClientPacket {
 
     public ClientBlockUpdatePacket(Location position, int blockID) {
         super(0x09);
+
         this.position = position;
         this.blockID = blockID;
     }

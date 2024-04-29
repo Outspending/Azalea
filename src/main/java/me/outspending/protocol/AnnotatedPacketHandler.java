@@ -91,6 +91,7 @@ public class AnnotatedPacketHandler {
         UUID uuid = packet.getUuid();
 
         server.getServerProcess().getPlayerManager().addPlayer(new Player(client, name, uuid));
+        // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
         client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
     }
 
@@ -128,8 +129,8 @@ public class AnnotatedPacketHandler {
 
     private void sendChunks(@NotNull ClientConnection connection) {
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
-        for (int x = -5; x < 5; x++) {
-            for (int z = -5; z < 5; z++) {
+        for (int x = -7; x < 7; x++) {
+            for (int z = -7; z < 7; z++) {
                 connection.sendPacket(new ClientChunkDataPacket(
                         x, z,
                         ClientChunkDataPacket.EMPTY_HEIGHTMAP,
@@ -138,6 +139,8 @@ public class AnnotatedPacketHandler {
                         new BitSet(), new BitSet(), new BitSet(), new BitSet(),
                         new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
                 ));
+
+                connection.sendPacket(new ClientBlockUpdatePacket(new Location(x, 64, z), 1));
             }
         }
     }

@@ -36,16 +36,18 @@ public class CodecHandler {
                     0x01, PluginMessageConfigurationPacket::of,
                     0x02, AcknowledgeFinishConfigurationPacket::of
             ))
-            .packetType(GameState.PLAY, Map.of(
-                    0x00, ConfirmTeleportPacket::of,
-                    0x15, ServerKeepAlivePacket::of,
-                    0x17, SetPlayerPositionPacket::of,
-                    0x18, SetPlayerPositionAndRotationPacket::of,
-                    0x19, PlayerRotationPacket::of,
-                    0x20, PlayerAbilitiesPacket::of,
-                    0x22, PlayerCommandPacket::of,
-                    0x33, SwingArmPacket::of,
-                    0x2C, SetHeldItemPacket::of
+            .packetType(GameState.PLAY, Map.ofEntries(
+                    Map.entry(0x00, ConfirmTeleportPacket::of),
+                    Map.entry(0x15, ServerKeepAlivePacket::of),
+                    Map.entry(0x17, SetPlayerPositionPacket::of),
+                    Map.entry(0x18, SetPlayerPositionAndRotationPacket::of),
+                    Map.entry(0x19, PlayerRotationPacket::of),
+                    Map.entry(0x20, PlayerAbilitiesPacket::of),
+                    Map.entry(0x21, PlayerActionPacket::of),
+                    Map.entry(0x22, PlayerCommandPacket::of),
+                    Map.entry(0x33, SwingArmPacket::of),
+                    Map.entry(0x35, UseItemOnPacket::of),
+                    Map.entry(0x2C, SetHeldItemPacket::of)
             ))
             .build();
 }
