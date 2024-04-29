@@ -9,14 +9,14 @@ import me.outspending.utils.AdventureUtils;
 import me.outspending.utils.ResourceUtils;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -26,11 +26,13 @@ public class MinecraftServer {
 
     public static MinecraftServer instance;
     public static final int PROTOCOL = 765;
+    public static final int COMPRESSION_THRESHOLD = 256;
     public static final String VERSION = "Testing 1.20.4";
 
     private final String host;
     private final int port;
     private final ServerConnection serverConnection;
+    private final ServerProcess serverProcess;
 
     private int maxPlayers = 20;
     private Component description = AdventureUtils.serializeString("Woah, an MOTD for my mc protocol!");
@@ -48,7 +50,10 @@ public class MinecraftServer {
     public static @Nullable MinecraftServer init(@NotNull String address, int port) {
         try {
             final ServerConnection connection = new ServerConnection(address, port);
-            final MinecraftServer server = new MinecraftServer(address, port, connection);
+            final MinecraftServer server = new MinecraftServer(
+                    address, port,
+                    connection, new ServerProcess()
+            );
 
             MinecraftServer.instance = server;
             server.loadRegistry();
