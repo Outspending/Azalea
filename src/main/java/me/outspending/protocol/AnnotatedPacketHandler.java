@@ -88,6 +88,7 @@ public class AnnotatedPacketHandler {
         UUID uuid = packet.uuid();
 
         server.getServerProcess().getPlayerManager().addPlayer(new Player(client, name, uuid));
+
         // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
         client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
     }

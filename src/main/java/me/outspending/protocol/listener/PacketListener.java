@@ -36,7 +36,7 @@ public class PacketListener {
         Packet readPacket = packetFunction.apply(reader);
         packetHandler.handle(connection, readPacket);
 
-        logger.info("INCOMING PACKET: " + readPacket);
+        logger.debug("INCOMING PACKET: " + readPacket);
 
         read(connection, readPacket);
 

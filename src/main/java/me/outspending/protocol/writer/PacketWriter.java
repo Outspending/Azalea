@@ -70,4 +70,6 @@ public interface PacketWriter {
     void writePacket(@NotNull ClientPacket packet);
     void writeToStream(OutputStream stream);
     void clear();
+
+    ByteBuffer get();
 }

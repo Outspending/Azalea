@@ -1,5 +1,6 @@
 package me.outspending.protocol.writer;
 
+import it.unimi.dsi.fastutil.Pair;
 import me.outspending.NamespacedID;
 import me.outspending.Slot;
 import me.outspending.block.ItemStack;
@@ -181,30 +182,34 @@ public abstract class AbstractPacketWriter implements PacketWriter {
         }
     }
 
-    private int getPacketLength(@NotNull ClientPacket packet) {
+    private Pair<Integer, PacketWriter> getPacketLength(@NotNull ClientPacket packet) {
         PacketWriter writer = PacketWriter.createNormalWriter();
 
         writer.writeVarInt(packet.id());
         packet.write(writer);
 
-        return writer.getSize();
+        return Pair.of(writer.getBuffer().position(), writer);
     }
 
     @Override
     public void writePacket(@NotNull ClientPacket packet) {
         PacketWriter writer = PacketWriter.createNormalWriter();
+        Pair<Integer, PacketWriter> length = getPacketLength(packet);
 
-        writer.writeVarInt(getPacketLength(packet));
-        writer.writeVarInt(packet.id());
-        packet.write(writer);
-
-        PacketReader reader = PacketReader.createNormalReader(writer.getBuffer());
-        System.out.println(reader.getPacketID());
-        System.out.println(reader.getPacketLength());
+        writer.writeVarInt(length.left());
+        writer.writeByteBuffer(length.right().getBuffer());
     }
 
     @Override
     public void clear() {
         buffer.reset();
+    }
+
+    @Override
+    public ByteBuffer get() {
+        ByteBuffer changed = ByteBuffer.allocate(buffer.position());
+        changed.put(buffer);
+
+        return buffer;
     }
 }
