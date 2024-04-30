@@ -181,24 +181,26 @@ public abstract class AbstractPacketWriter implements PacketWriter {
         }
     }
 
+    private int getPacketLength(@NotNull ClientPacket packet) {
+        PacketWriter writer = PacketWriter.createNormalWriter();
+
+        writer.writeVarInt(packet.id());
+        packet.write(writer);
+
+        return writer.getSize();
+    }
+
     @Override
     public void writePacket(@NotNull ClientPacket packet) {
-        int currentPosition = buffer.position();
-        buffer.position(currentPosition + 3);
+        PacketWriter writer = PacketWriter.createNormalWriter();
 
-        int idPosition = buffer.position();
-        writeVarInt(packet.id());
-        packet.write(this);
+        writer.writeVarInt(getPacketLength(packet));
+        writer.writeVarInt(packet.id());
+        packet.write(writer);
 
-        int packetLength = buffer.position() - idPosition;
-        buffer.position(currentPosition);
-        writeVarInt(packetLength);
-        buffer.position(currentPosition + 3 + packetLength);
-
-        System.out.println(packetLength);
-        PacketReader reader = PacketReader.createNormalReader(buffer);
-        System.out.println("Packet ID: " + reader.getPacketID());
-        System.out.println("Packet Length: " + reader.getPacketLength());
+        PacketReader reader = PacketReader.createNormalReader(writer.getBuffer());
+        System.out.println(reader.getPacketID());
+        System.out.println(reader.getPacketLength());
     }
 
     @Override
