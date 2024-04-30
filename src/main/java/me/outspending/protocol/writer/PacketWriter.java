@@ -2,6 +2,7 @@ package me.outspending.protocol.writer;
 
 import me.outspending.NamespacedID;
 import me.outspending.Slot;
+import me.outspending.block.ItemStack;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.types.ClientPacket;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -23,19 +25,11 @@ public interface PacketWriter {
         return new NormalPacketWriter(packet);
     }
 
-    default int getPacketLength(ClientPacket packet) {
-        PacketWriter writer = new NormalPacketWriter();
-        writer.writeVarInt(packet.id());
-        packet.write(writer);
-
-        return writer.getSize();
-    }
-
     <T> void write(@NotNull NetworkType<T> type, T value);
     boolean isCompressed();
 
     int getSize();
-    ByteArrayOutputStream getStream();
+    ByteBuffer getBuffer();
 
     void writeBoolean(boolean b);
     void writeByte(byte b);
@@ -53,7 +47,7 @@ public interface PacketWriter {
     void writeVarInt(int i);
     void writeVarLong(long l);
     // writeEntityMetaData
-    void writeSlot(@NotNull Slot slot);
+    void writeSlot(@NotNull ItemStack itemStack);
     void writeNBTCompound(@NotNull CompoundBinaryTag tag);
     void writeLocation(@NotNull Location location);
     // writeAngle
@@ -65,9 +59,15 @@ public interface PacketWriter {
     <T extends Enum<?>> void writeEnum(@NotNull T e);
 
     void writeByteArray(byte[] array);
+    void writeByteBuffer(ByteBuffer buffer);
     void writeByteArray(byte[] array, int offset, int length);
     void writeLongArray(long[] array);
 
+    void write(int b);
+
     void writeStream(ByteArrayOutputStream stream);
+
+    void writePacket(@NotNull ClientPacket packet);
     void writeToStream(OutputStream stream);
+    void clear();
 }

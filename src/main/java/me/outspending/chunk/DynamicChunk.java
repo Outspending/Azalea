@@ -8,17 +8,12 @@ public class DynamicChunk extends AbstractChunk {
     }
 
     @Override
-    public ChunkSection getSection(int y) {
-        return null;
-    }
-
-    @Override
     public CompletableFuture<Chunk> load() {
         return chunkMap.loadChunk(chunkX, chunkZ);
     }
 
     @Override
     public void unload() {
-
+        chunkMap.unloadChunk(chunkX, chunkZ);
     }
 }

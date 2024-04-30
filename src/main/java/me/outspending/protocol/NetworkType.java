@@ -1,5 +1,7 @@
 package me.outspending.protocol;
 
+import me.outspending.protocol.reader.PacketReader;
+import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,5 +14,5 @@ public interface NetworkType<T> {
     @Nullable T read(ByteBuffer buffer);
 
     @Contract("null, _ -> fail; _, null -> fail")
-    void write(ByteArrayOutputStream stream, T type);
+    void write(ByteBuffer buffer, T type);
 }

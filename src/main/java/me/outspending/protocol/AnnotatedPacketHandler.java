@@ -2,6 +2,9 @@ package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
+import me.outspending.chunk.AbstractChunk;
+import me.outspending.chunk.Chunk;
+import me.outspending.chunk.ChunkMap;
 import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
@@ -32,6 +35,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unchecked")
 public class AnnotatedPacketHandler {
@@ -121,20 +125,16 @@ public class AnnotatedPacketHandler {
     }
 
     private void sendChunks(@NotNull ClientConnection connection) {
+        ChunkMap map = AbstractChunk.chunkMap;
+
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
+        long time = System.currentTimeMillis();
         for (int x = -7; x < 7; x++) {
             for (int z = -7; z < 7; z++) {
-                connection.sendPacket(new ClientChunkDataPacket(
-                        x, z,
-                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                        ChunkSection.createSections(),
-                        new ClientChunkDataPacket.BlockEntity[0],
-                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
-                ));
-
-                connection.sendPacket(new ClientBlockUpdatePacket(new Location(x, 64, z), 1));
+                CompletableFuture<Chunk> chunk = map.loadChunk(x, z);
+                chunk.thenAccept(connection::sendChunkData);
             }
         }
+        logger.info("Took " + (System.currentTimeMillis() - time) + "ms to send chunks");
     }
 }

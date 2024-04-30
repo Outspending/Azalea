@@ -7,8 +7,8 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ChunkLoader {
     default ChunkSection[] generateChunkSections() {
-        ChunkSection[] sections = new ChunkSection[16];
-        for (int i = 0; i < 16; i++) {
+        ChunkSection[] sections = new ChunkSection[24];
+        for (int i = 0; i < 24; i++) {
             sections[i] = new ChunkSection(new BlockStatePalette((byte) 15), new BiomesPalette((byte) 2));
         }
 

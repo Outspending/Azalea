@@ -1,6 +1,7 @@
 package me.outspending.protocol.packets.client.play;
 
 import lombok.Getter;
+import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.types.ClientPacket;
@@ -16,7 +17,7 @@ public record ClientChunkDataPacket(
         int chunkX,
         int chunkZ,
         CompoundBinaryTag heightmaps,
-        ChunkSection[] data,
+        Chunk chunk,
         BlockEntity[] blockEntity,
         BitSet skyLightMask,
         BitSet blockLightMask,
@@ -34,15 +35,14 @@ public record ClientChunkDataPacket(
     @Override
     public void write(PacketWriter writer) {
         PacketWriter dataWriter = PacketWriter.createNormalWriter();
-        for (ChunkSection section : this.data) {
-            section.write(dataWriter);
-        }
+
+        chunk.write(dataWriter);
 
         writer.writeInt(this.chunkX);
         writer.writeInt(this.chunkZ);
         writer.writeNBTCompound(this.heightmaps);
         writer.writeVarInt(dataWriter.getSize());
-        writer.writeStream(dataWriter.getStream());
+        writer.writeByteBuffer(dataWriter.getBuffer());
 
         writer.writeVarInt(this.blockEntity.length);
         writer.writeArray(this.blockEntity, blockEntity -> {

@@ -1,5 +1,8 @@
 package me.outspending.chunk;
 
+import me.outspending.protocol.writer.PacketWriter;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.CompletableFuture;
 
 public interface Chunk {
@@ -11,6 +14,11 @@ public interface Chunk {
 
     CompletableFuture<Chunk> load();
     void unload();
+
+    int getChunkX();
+    int getChunkZ();
+
+    void write(@NotNull PacketWriter writer);
 
     boolean isLoaded();
 }

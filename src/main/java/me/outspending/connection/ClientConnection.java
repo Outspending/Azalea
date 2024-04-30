@@ -6,31 +6,34 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
+import me.outspending.chunk.Chunk;
 import me.outspending.protocol.PacketDecoder;
 import me.outspending.protocol.PacketEncoder;
 import me.outspending.protocol.listener.PacketListener;
 import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
+import me.outspending.protocol.packets.client.play.ClientChunkDataPacket;
 import me.outspending.protocol.packets.client.play.ClientLoginPlayPacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.types.ServerPacket;
+import me.outspending.protocol.writer.NormalPacketWriter;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.Channels;
 import java.nio.channels.CompletionHandler;
+import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.concurrent.CompletableFuture;
 
 @Getter(AccessLevel.PUBLIC)
@@ -40,6 +43,7 @@ public class ClientConnection {
     private static final byte[] BYTE_ARRAY = new byte[32767];
 
     private final Socket socket;
+    private final WritableByteChannel writableChannel;
 
     public final MinecraftServer server;
     public GameState state = GameState.HANDSHAKE;
@@ -47,8 +51,10 @@ public class ClientConnection {
     public PacketListener packetListener;
     public boolean isRunning = true;
 
+    @SneakyThrows
     public ClientConnection(Socket socket) {
         this.socket = socket;
+        this.writableChannel = Channels.newChannel(socket.getOutputStream());
         this.server = MinecraftServer.getInstance();
         this.packetListener = new PacketListener();
 
@@ -91,16 +97,30 @@ public class ClientConnection {
         return socket.isConnected() && isRunning;
     }
 
-    public void sendRegistryPacket() {
-        sendPacket(new ClientRegistryDataPacket(MinecraftServer.getInstance().REGISTRY_NBT));
+    public void sendChunkData(Chunk chunk) {
+        sendPacket(new ClientChunkDataPacket(
+                chunk.getChunkX(), chunk.getChunkZ(),
+                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+                chunk, new ClientChunkDataPacket.BlockEntity[0],
+                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+                new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+        ));
+    }
+
+    public void sendChunkData(Chunk[] chunks) {
+        for (Chunk chunk : chunks) {
+            sendChunkData(chunk);
+        }
     }
 
     @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (!isOnline()) return;
 
-        PacketEncoder encoder = new PacketEncoder(packet);
-        encoder.encode(socket.getOutputStream());
+        synchronized (writableChannel) {
+            PacketWriter writer = PacketWriter.createNormalWriter(packet);
+            writableChannel.write(writer.getBuffer());
+        }
     }
 
     public void sendGroupedPacket(@NotNull GroupedPacket packet) {

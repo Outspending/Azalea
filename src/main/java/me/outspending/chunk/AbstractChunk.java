@@ -9,19 +9,13 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter @Setter(AccessLevel.MODULE)
 public abstract class AbstractChunk implements Chunk {
-    protected static final ChunkMap chunkMap = new ChunkMap();
+    public static final ChunkMap chunkMap = new ChunkMap(); // TODO: Very bad practice, fix this later. Mostly for testing
 
     protected final ChunkSection[] sections;
     protected final int chunkX;
     protected final int chunkZ;
 
     protected boolean isLoaded = false;
-
-    protected AbstractChunk(int chunkX, int chunkZ) {
-        this.sections = ChunkSection.createSections();
-        this.chunkX = chunkX;
-        this.chunkZ = chunkZ;
-    }
 
     protected AbstractChunk(int chunkX, int chunkZ, ChunkSection[] sections) {
         this.sections = sections;
@@ -50,7 +44,8 @@ public abstract class AbstractChunk implements Chunk {
         section.setBlock(x, y, z, blockID);
     }
 
-    protected void write(@NotNull PacketWriter writer) {
+    @Override
+    public void write(@NotNull PacketWriter writer) {
         for (ChunkSection chunkSection : sections) {
             chunkSection.write(writer);
         }

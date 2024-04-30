@@ -4,6 +4,7 @@ import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.types.ClientPacket;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class NormalPacketWriter extends AbstractPacketWriter {
@@ -11,9 +12,7 @@ public class NormalPacketWriter extends AbstractPacketWriter {
     public NormalPacketWriter(ClientPacket packet) {
         super(false);
 
-        writeVarInt(getPacketLength(packet));
-        writeVarInt(packet.id());
-        packet.write(this);
+        writePacket(packet);
     }
 
     public NormalPacketWriter() {
