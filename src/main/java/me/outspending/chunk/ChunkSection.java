@@ -1,17 +1,27 @@
 package me.outspending.chunk;
 
-import me.outspending.chunk.palette.BiomesPalette;
-import me.outspending.chunk.palette.BlockStatePalette;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import me.outspending.chunk.palette.Palette;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record ChunkSection(BlockStatePalette blockStatesPalette, BiomesPalette biomesPalette) {
+public class ChunkSection {
+    private final Int2IntOpenHashMap blocks = new Int2IntOpenHashMap(4096);
+
+    private final Palette blockPalette;
+    private final Palette biomesPalette;
+
+    public ChunkSection(Palette blockPalette, Palette biomesPalette) {
+        this.blockPalette = blockPalette;
+        this.biomesPalette = biomesPalette;
+    }
+
     public void setBlock(int x, int y, int z, int blockID) {
-        blockStatesPalette.set(x, y, z, blockID);
+        blocks.put(getCoordIndex(x, y, z), blockID);
     }
 
     public int getBlock(int x, int y, int z) {
-        return blockStatesPalette.get(x, y, z);
+        return blocks.get(getCoordIndex(x, y, z));
     }
 
     public void fill(int blockID) {
@@ -24,9 +34,13 @@ public record ChunkSection(BlockStatePalette blockStatesPalette, BiomesPalette b
         }
     }
 
-    void write(@NotNull PacketWriter writer) {
-        writer.writeShort((short) 0);
-        blockStatesPalette.write(writer);
+    private int getCoordIndex(int x, int y, int z) {
+        return (y * 16 + z) * 16 + x;
+    }
+
+    public void write(@NotNull PacketWriter writer) {
+        writer.writeShort((short) blocks.size());
+        blockPalette.write(writer);
         biomesPalette.write(writer);
     }
 

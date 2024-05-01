@@ -1,7 +1,7 @@
 package me.outspending.chunk;
 
-import me.outspending.chunk.palette.BiomesPalette;
-import me.outspending.chunk.palette.BlockStatePalette;
+import me.outspending.chunk.palette.IndirectPalette;
+import me.outspending.chunk.palette.SingleValuePalette;
 import me.outspending.utils.MathUtils;
 
 import java.util.concurrent.CompletableFuture;
@@ -12,7 +12,7 @@ public interface ChunkLoader {
     default ChunkSection[] generateChunkSections() {
         ChunkSection[] sections = new ChunkSection[24];
         for (int i = 0; i < 24; i++) {
-            sections[i] = new ChunkSection(new BlockStatePalette(BITS_PER_BLOCK), new BiomesPalette((byte) 3));
+            sections[i] = new ChunkSection(new IndirectPalette((byte) 8, 4098), new SingleValuePalette((byte) 3, 0));
         }
 
         return sections;
