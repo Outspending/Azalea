@@ -1,6 +1,7 @@
 package me.outspending.protocol.packets.client.play;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.outspending.NamespacedID;
 import me.outspending.connection.GameState;
 import me.outspending.position.Location;
@@ -8,6 +9,8 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 public record ClientLoginPlayPacket(
         int entityID,
@@ -59,6 +62,7 @@ public record ClientLoginPlayPacket(
         );
     }
 
+    @SneakyThrows
     @Override
     public void write(PacketWriter writer) {
         writer.writeInt(this.entityID);
@@ -84,11 +88,6 @@ public record ClientLoginPlayPacket(
             writer.writeLocation(this.deathLocation);
         }
         writer.writeVarInt(this.portalCooldown);
-    }
-
-    @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
     }
 
     @Override

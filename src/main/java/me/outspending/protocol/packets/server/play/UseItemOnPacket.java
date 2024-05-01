@@ -22,11 +22,6 @@ public record UseItemOnPacket(int hand, Location position, int face, float curso
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x35;
     }

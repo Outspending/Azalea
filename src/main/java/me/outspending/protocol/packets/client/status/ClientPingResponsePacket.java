@@ -19,11 +19,6 @@ public record ClientPingResponsePacket(long payload) implements ClientPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.STATUS;
-    }
-
-    @Override
     public int id() {
         return 0x01;
     }

@@ -15,11 +15,6 @@ public record ConfirmTeleportPacket(int teleportID) implements ServerPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x00;
     }

@@ -6,6 +6,8 @@ import me.outspending.chunk.palette.writer.IndirectPaletteWriter;
 import me.outspending.chunk.palette.writer.PaletteWriter;
 import me.outspending.protocol.writer.PacketWriter;
 
+import java.io.IOException;
+
 @Getter
 public non-sealed class BlockStatePalette extends AbstractPalette {
     private final PaletteWriter paletteWriter;
@@ -32,7 +34,7 @@ public non-sealed class BlockStatePalette extends AbstractPalette {
                     int startOffset = (blockNumber * bitsPerEntry) % 64;
                     int endLong = ((blockNumber + 1) * bitsPerEntry - 1) / 64;
 
-                    long value = 0;
+                    long value = 1;
 
                     values[startLong] |= (value << startOffset);
                     if (startLong != endLong) {
@@ -50,4 +52,5 @@ public non-sealed class BlockStatePalette extends AbstractPalette {
         writer.writeVarInt(count());
         writer.writeLongArray(data());
     }
+
 }

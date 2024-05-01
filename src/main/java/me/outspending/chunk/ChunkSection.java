@@ -14,6 +14,16 @@ public record ChunkSection(BlockStatePalette blockStatesPalette, BiomesPalette b
         return blockStatesPalette.get(x, y, z);
     }
 
+    public void fill(int blockID) {
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 16; y++) {
+                for (int z = 0; z < 16; z++) {
+                    setBlock(x, y, z, blockID);
+                }
+            }
+        }
+    }
+
     void write(@NotNull PacketWriter writer) {
         writer.writeShort((short) 0);
         blockStatesPalette.write(writer);
