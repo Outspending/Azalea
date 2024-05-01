@@ -17,8 +17,11 @@ public interface Chunk {
 
     int getChunkX();
     int getChunkZ();
-
-    void write(@NotNull PacketWriter writer);
-
     boolean isLoaded();
+
+    default void write(@NotNull PacketWriter writer) {
+        for (ChunkSection chunkSection : getSections()) {
+            chunkSection.write(writer);
+        }
+    }
 }

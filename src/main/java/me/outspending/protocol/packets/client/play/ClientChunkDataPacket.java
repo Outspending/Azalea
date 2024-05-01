@@ -23,7 +23,6 @@ public record ClientChunkDataPacket(
         Skylight[] skyLight,
         Blocklight[] blockLight
 ) implements ClientPacket {
-    public static final int BITS_PER_BLOCK = (int) Math.ceil(MathUtils.log2(384 + 1));
     public static final CompoundBinaryTag EMPTY_HEIGHTMAP = CompoundBinaryTag.builder()
             .put("MOTION_BLOCKING", CompoundBinaryTag.builder().putIntArray("MOTION_BLOCKING", new int[256]).build())
             .put("WORLD_SURFACE", CompoundBinaryTag.builder().putIntArray("WORLD_SURFACE", new int[256]).build())

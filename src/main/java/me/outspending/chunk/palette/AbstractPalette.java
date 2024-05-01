@@ -16,7 +16,7 @@ public sealed abstract class AbstractPalette implements Palette permits BiomesPa
         this.values = new long[count];
         this.bitsPerEntry = bitsPerEntry;
         this.size = size;
-        this.blocks = new Int2IntOpenHashMap();
+        this.blocks = new Int2IntOpenHashMap(size);
     }
 
     @Override

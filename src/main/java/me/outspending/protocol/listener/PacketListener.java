@@ -39,7 +39,7 @@ public class PacketListener {
         read(connection, readPacket);
 
         if (reader.hasAnotherPacket()) {
-            logger.info("Reading remaining bytes");
+            logger.info("Reading remaining bytes for packet: " + id);
             byte[] remaining = reader.getRemainingBytes();
             ByteBuffer buffer = ByteBuffer.allocate(remaining.length);
             buffer.put(remaining);

@@ -11,6 +11,7 @@ import me.outspending.connection.GameState;
 import me.outspending.entity.Player;
 import me.outspending.position.Location;
 import me.outspending.position.Pos;
+import me.outspending.processes.PlayerManager;
 import me.outspending.protocol.annotations.PacketReceiver;
 import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
@@ -66,15 +67,11 @@ public class AnnotatedPacketHandler {
     @PacketReceiver
     public void onStatusRequest(@NotNull ClientConnection client, @NotNull StatusRequestPacket packet) {
         MinecraftServer server = client.getServer();
-        logger.info("Sending status response..");
-        logger.info("1");
         client.sendPacket(new ClientStatusResponsePacket(
                 new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
                 new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
                 server.getDescription()
         ));
-
-        logger.info("2");
     }
 
     @PacketReceiver
@@ -88,10 +85,12 @@ public class AnnotatedPacketHandler {
         String name = packet.name();
         UUID uuid = packet.uuid();
 
-        server.getServerProcess().getPlayerManager().addPlayer(new Player(client, name, uuid));
+        Player connectedPlayer = new Player(client, name, uuid);
+        server.getServerProcess().getPlayerManager().addPlayer(connectedPlayer);
 
         // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
         client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
+        // client.sendPacket(new ClientAddPlayerInfoPacket(connectedPlayer));
     }
 
     @PacketReceiver
@@ -131,15 +130,13 @@ public class AnnotatedPacketHandler {
 
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
 
-        List<Chunk> loadedChunks = new ArrayList<>();
         long time = System.currentTimeMillis();
         for (int x = -7; x < 7; x++) {
             for (int z = -7; z < 7; z++) {
                 CompletableFuture<Chunk> chunk = map.loadChunk(x, z);
-                chunk.thenAccept(loadedChunks::add);
+                chunk.thenAccept(connection::sendChunkData);
             }
         }
-        connection.sendChunkData(loadedChunks);
         logger.info("Took " + (System.currentTimeMillis() - time) + "ms to send chunks");
     }
 }

@@ -3,8 +3,6 @@ package me.outspending.chunk;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import me.outspending.protocol.writer.PacketWriter;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter @Setter(AccessLevel.MODULE)
@@ -42,13 +40,6 @@ public abstract class AbstractChunk implements Chunk {
         if (section == null) return;
 
         section.setBlock(x, y, z, blockID);
-    }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        for (ChunkSection chunkSection : sections) {
-            chunkSection.write(writer);
-        }
     }
 
     public boolean isLoaded() {

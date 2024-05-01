@@ -23,8 +23,8 @@ import java.util.BitSet;
 import java.util.UUID;
 
 public abstract class AbstractPacketWriter implements PacketWriter {
-    private final ByteArrayOutputStream byteStream;
-    private final DataOutputStream stream;
+    protected final ByteArrayOutputStream byteStream;
+    protected final DataOutputStream stream;
 
     private final boolean isCompressed;
 

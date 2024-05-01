@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public interface Palette {
     static Palette blockPalette() {
-        return new BlockStatePalette((byte) 15);
+        return new BlockStatePalette((byte) 8);
     }
 
     static Palette getPalette(byte bitsPerEntry) {
