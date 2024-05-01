@@ -1,8 +1,6 @@
 package me.outspending.protocol.packets.client.play;
 
-import lombok.Getter;
 import me.outspending.chunk.Chunk;
-import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
@@ -10,7 +8,6 @@ import me.outspending.utils.MathUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
 
 public record ClientChunkDataPacket(
@@ -42,7 +39,7 @@ public record ClientChunkDataPacket(
         writer.writeInt(this.chunkZ);
         writer.writeNBTCompound(this.heightmaps);
         writer.writeVarInt(dataWriter.getSize());
-        writer.writeByteBuffer(dataWriter.getBuffer());
+        writer.writeByteArray(dataWriter.getStream().toByteArray());
 
         writer.writeVarInt(this.blockEntity.length);
         writer.writeArray(this.blockEntity, blockEntity -> {
@@ -65,11 +62,6 @@ public record ClientChunkDataPacket(
             writer.writeVarInt(blockLight.blockLightArray.length);
             writer.writeByteArray(blockLight.blockLightArray);
         });
-    }
-
-    @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
     }
 
     @Override

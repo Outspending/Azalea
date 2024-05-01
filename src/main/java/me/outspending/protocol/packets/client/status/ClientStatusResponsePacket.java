@@ -24,11 +24,6 @@ public record ClientStatusResponsePacket(Players players, Version version, Strin
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.STATUS;
-    }
-
-    @Override
     public int id() {
         return 0x00;
     }

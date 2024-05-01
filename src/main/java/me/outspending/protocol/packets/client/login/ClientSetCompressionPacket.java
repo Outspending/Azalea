@@ -18,11 +18,6 @@ public record ClientSetCompressionPacket(int threshold) implements ClientPacket 
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.LOGIN;
-    }
-
-    @Override
     public int id() {
         return 0x03;
     }

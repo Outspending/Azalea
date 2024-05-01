@@ -21,11 +21,6 @@ public record SetPlayerPositionPacket(Pos position, boolean isGround) implements
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x17;
     }

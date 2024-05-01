@@ -24,6 +24,7 @@ import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
 import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
+import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.types.Packet;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -31,10 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unchecked")
@@ -69,11 +67,14 @@ public class AnnotatedPacketHandler {
     public void onStatusRequest(@NotNull ClientConnection client, @NotNull StatusRequestPacket packet) {
         MinecraftServer server = client.getServer();
         logger.info("Sending status response..");
+        logger.info("1");
         client.sendPacket(new ClientStatusResponsePacket(
                 new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
                 new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
                 server.getDescription()
         ));
+
+        logger.info("2");
     }
 
     @PacketReceiver
@@ -129,13 +130,16 @@ public class AnnotatedPacketHandler {
         ChunkMap map = AbstractChunk.chunkMap;
 
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
+
+        List<Chunk> loadedChunks = new ArrayList<>();
         long time = System.currentTimeMillis();
         for (int x = -7; x < 7; x++) {
             for (int z = -7; z < 7; z++) {
                 CompletableFuture<Chunk> chunk = map.loadChunk(x, z);
-                chunk.thenAccept(connection::sendChunkData);
+                chunk.thenAccept(loadedChunks::add);
             }
         }
+        connection.sendChunkData(loadedChunks);
         logger.info("Took " + (System.currentTimeMillis() - time) + "ms to send chunks");
     }
 }

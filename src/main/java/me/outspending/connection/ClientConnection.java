@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
 import me.outspending.chunk.Chunk;
 import me.outspending.protocol.listener.PacketListener;
+import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
 import me.outspending.protocol.packets.client.play.ClientChunkDataPacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
@@ -23,6 +24,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -31,7 +35,6 @@ public class ClientConnection {
     private static final byte[] BYTE_ARRAY = new byte[32767];
 
     private final Socket socket;
-    private final WritableByteChannel writableChannel;
 
     public final MinecraftServer server;
     public GameState state = GameState.HANDSHAKE;
@@ -42,7 +45,6 @@ public class ClientConnection {
     @SneakyThrows
     public ClientConnection(Socket socket) {
         this.socket = socket;
-        this.writableChannel = Channels.newChannel(socket.getOutputStream());
         this.server = MinecraftServer.getInstance();
         this.packetListener = new PacketListener();
 
@@ -85,6 +87,16 @@ public class ClientConnection {
         return socket.isConnected() && isRunning;
     }
 
+    public void sendBundled() {
+        sendPacket(new ClientBundleDelimiterPacket());
+    }
+
+    public void sendBundled(Runnable runnable) {
+        sendBundled();
+        runnable.run();
+        sendBundled();
+    }
+
     public void sendChunkData(Chunk chunk) {
         sendPacket(new ClientChunkDataPacket(
                 chunk.getChunkX(), chunk.getChunkZ(),
@@ -95,7 +107,7 @@ public class ClientConnection {
         ));
     }
 
-    public void sendChunkData(Chunk[] chunks) {
+    public void sendChunkData(List<Chunk> chunks) {
         for (Chunk chunk : chunks) {
             sendChunkData(chunk);
         }
@@ -105,15 +117,20 @@ public class ClientConnection {
     public void sendPacket(@NotNull ClientPacket packet) {
         if (!isOnline()) return;
 
-        synchronized (writableChannel) {
+        synchronized (socket) {
             PacketWriter writer = PacketWriter.createNormalWriter(packet);
-            writableChannel.write(writer.get());
+            OutputStream stream = socket.getOutputStream();
+
+            stream.write(writer.toByteArray());
+            writer.flush();
         }
     }
 
     public void sendGroupedPacket(@NotNull GroupedPacket packet) {
-        for (ClientPacket entryPacket : packet.getPackets()) {
-            sendPacket(entryPacket);
-        }
+        sendBundled(() -> {
+            for (ClientPacket entryPacket : packet.getPackets()) {
+                sendPacket(entryPacket);
+            }
+        });
     }
 }

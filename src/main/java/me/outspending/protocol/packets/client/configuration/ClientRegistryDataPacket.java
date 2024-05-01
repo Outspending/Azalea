@@ -23,11 +23,6 @@ public record ClientRegistryDataPacket(CompoundBinaryTag compound) implements Cl
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.CONFIGURATION;
-    }
-
-    @Override
     public int id() {
         return 0x05;
     }

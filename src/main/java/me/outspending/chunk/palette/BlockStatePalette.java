@@ -6,6 +6,8 @@ import me.outspending.chunk.palette.writer.IndirectPaletteWriter;
 import me.outspending.chunk.palette.writer.PaletteWriter;
 import me.outspending.protocol.writer.PacketWriter;
 
+import java.io.IOException;
+
 @Getter
 public non-sealed class BlockStatePalette extends AbstractPalette {
     private final PaletteWriter paletteWriter;

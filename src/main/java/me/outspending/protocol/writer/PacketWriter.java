@@ -10,6 +10,8 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
@@ -25,11 +27,11 @@ public interface PacketWriter {
         return new NormalPacketWriter(packet);
     }
 
-    <T> void write(@NotNull NetworkType<T> type, T value);
+    <T> void write(@NotNull NetworkType<T> type, T value) throws IOException;
     boolean isCompressed();
 
     int getSize();
-    ByteBuffer getBuffer();
+    ByteArrayOutputStream getStream();
 
     void writeBoolean(boolean b);
     void writeByte(byte b);
@@ -37,7 +39,7 @@ public interface PacketWriter {
     void writeShort(short s);
     void writeUnsignedShort(int s);
     void writeInt(int i);
-    void writeLong(long l); 
+    void writeLong(long l);
     void writeFloat(float f);
     void writeDouble(double d);
     void writeString(@NotNull String s);
@@ -59,17 +61,11 @@ public interface PacketWriter {
     <T extends Enum<?>> void writeEnum(@NotNull T e);
 
     void writeByteArray(byte[] array);
-    void writeByteBuffer(ByteBuffer buffer);
     void writeByteArray(byte[] array, int offset, int length);
     void writeLongArray(long[] array);
 
-    void write(int b);
+    void write(int b) throws IOException;
 
-    void writeStream(ByteArrayOutputStream stream);
-
-    void writePacket(@NotNull ClientPacket packet);
-    void writeToStream(OutputStream stream);
-    void clear();
-
-    ByteBuffer get();
+    byte[] toByteArray();
+    void flush();
 }

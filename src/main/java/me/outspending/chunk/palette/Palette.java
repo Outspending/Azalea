@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.Contract;
 
+import java.io.IOException;
+
 public interface Palette {
     static Palette blockPalette() {
         return new BlockStatePalette((byte) 15);
@@ -21,5 +23,5 @@ public interface Palette {
     Int2IntOpenHashMap blocks();
 
     @Contract("null -> fail")
-    void write(PacketWriter writer);
+    void write(PacketWriter writer) throws IOException;
 }

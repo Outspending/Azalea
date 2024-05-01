@@ -17,11 +17,6 @@ public record SetCreativeModeSlotPacket(short slotNum, ItemStack slot) implement
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x2F;
     }

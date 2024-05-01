@@ -22,11 +22,6 @@ public record ClientGameEventPacket(byte event, float value) implements ClientPa
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x20;
     }

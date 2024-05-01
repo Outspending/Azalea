@@ -36,11 +36,10 @@ public class PacketListener {
         Packet readPacket = packetFunction.apply(reader);
         packetHandler.handle(connection, readPacket);
 
-        logger.debug("INCOMING PACKET: " + readPacket);
-
         read(connection, readPacket);
 
         if (reader.hasAnotherPacket()) {
+            logger.info("Reading remaining bytes");
             byte[] remaining = reader.getRemainingBytes();
             ByteBuffer buffer = ByteBuffer.allocate(remaining.length);
             buffer.put(remaining);

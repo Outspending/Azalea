@@ -16,11 +16,6 @@ public record HandshakePacket(int protocolVersion, String serverAddress, short s
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.HANDSHAKE;
-    }
-
-    @Override
     public int id() {
         return 0x00;
     }

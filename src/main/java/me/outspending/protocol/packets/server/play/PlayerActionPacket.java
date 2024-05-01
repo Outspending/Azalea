@@ -18,11 +18,6 @@ public record PlayerActionPacket(int status, Location position, byte face, int s
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x21;
     }

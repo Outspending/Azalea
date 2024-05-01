@@ -35,11 +35,6 @@ public record ClientSynchronizePlayerPosition(Pos position, byte flags, int tele
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x3E;
     }

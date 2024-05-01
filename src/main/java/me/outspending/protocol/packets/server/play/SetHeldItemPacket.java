@@ -12,11 +12,6 @@ public record SetHeldItemPacket(short slot) implements ServerPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x2C;
     }

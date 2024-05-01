@@ -12,9 +12,7 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
@@ -32,8 +30,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Boolean type) {
-            buffer.put(type ? (byte) 0x01 : (byte) 0x00);
+        public void write(DataOutputStream stream, Boolean type) throws IOException {
+            stream.writeByte(type ? (byte) 0x01 : (byte) 0x00);
         }
     };
 
@@ -44,8 +42,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Byte type) {
-            buffer.put(type);
+        public void write(DataOutputStream stream, Byte type) throws IOException {
+            stream.writeByte(type);
         }
     };
 
@@ -56,8 +54,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Integer type) {
-            buffer.put((byte) (type & 0xFF));
+        public void write(DataOutputStream stream, Integer type) throws IOException {
+            stream.write(type & 0xFF);
         }
     };
 
@@ -68,8 +66,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Short type) {
-            buffer.putShort(type);
+        public void write(DataOutputStream stream, Short type) throws IOException {
+            stream.writeShort(type);
         }
     };
 
@@ -80,8 +78,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Integer type) {
-            buffer.putShort((short) (type & 0xFFFF));
+        public void write(DataOutputStream stream, Integer type) throws IOException {
+            stream.writeShort(type & 0xFFFF);
         }
     };
 
@@ -92,8 +90,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Integer type) {
-            buffer.putInt(type);
+        public void write(DataOutputStream stream, Integer type) throws IOException {
+            stream.writeInt(type);
         }
     };
 
@@ -104,8 +102,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Long type) {
-            buffer.putLong(type);
+        public void write(DataOutputStream stream, Long type) throws IOException {
+            stream.writeLong(type);
         }
     };
 
@@ -116,8 +114,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Float type) {
-            buffer.putFloat(type);
+        public void write(DataOutputStream stream, Float type) throws IOException {
+            stream.writeFloat(type);
         }
     };
 
@@ -128,8 +126,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Double type) {
-            buffer.putDouble(type);
+        public void write(DataOutputStream stream, Double type) throws IOException {
+            stream.writeDouble(type);
         }
     };
 
@@ -143,10 +141,11 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, String type) {
+        public void write(DataOutputStream stream, String type) throws IOException {
             byte[] bytes = type.getBytes(StandardCharsets.UTF_8);
-            VARINT_TYPE.write(buffer, bytes.length);
-            buffer.put(bytes);
+
+            VARINT_TYPE.write(stream, bytes.length);
+            stream.write(bytes);
         }
     };
 
@@ -163,8 +162,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, NamespacedID type) {
-            STRING_TYPE.write(buffer, type.toString());
+        public void write(DataOutputStream stream, NamespacedID type) throws IOException {
+            STRING_TYPE.write(stream, type.toString());
         }
     };
 
@@ -190,14 +189,14 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Integer type) {
+        public void write(DataOutputStream stream, Integer type) throws IOException {
             while (true) {
                 if ((type & ~SEGMENT_BITS) == 0) {
-                    buffer.put(type.byteValue());
+                    stream.writeByte(type.byteValue());
                     return;
                 }
 
-                buffer.put((byte) ((byte) (type & SEGMENT_BITS) | CONTINUE_BIT));
+                stream.writeByte((byte) ((byte) (type & SEGMENT_BITS) | CONTINUE_BIT));
                 type >>>= 7;
             }
         }
@@ -225,14 +224,14 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Long type) {
+        public void write(DataOutputStream stream, Long type) throws IOException {
             while (true) {
                 if ((type & ~((long) SEGMENT_BITS)) == 0) {
-                    buffer.put(type.byteValue());
+                    stream.writeByte(type.byteValue());
                     return;
                 }
 
-                buffer.put((byte) ((byte) (type & SEGMENT_BITS) | CONTINUE_BIT));
+                stream.writeByte((byte) ((byte) (type & SEGMENT_BITS) | CONTINUE_BIT));
 
                 type >>>= 7;
             }
@@ -252,15 +251,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, CompoundBinaryTag type) {
-            try {
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                BinaryTagIO.writer().writeNameless(type, stream);
-
-                buffer.put(stream.toByteArray());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        public void write(DataOutputStream stream, CompoundBinaryTag type) throws IOException {
+            BinaryTagIO.writer().writeNameless(type, (OutputStream) stream);
         }
     };
 
@@ -276,8 +268,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, Location type) {
-            LONG_TYPE.write(buffer, (((long) (type.x() & 0x3FFFFFF) << 38) | ((long) (type.z() & 0x3FFFFFF) << 12) | (type.y() & 0xFFF)));
+        public void write(DataOutputStream stream, Location type) throws IOException {
+            stream.writeLong((((long) (type.x() & 0x3FFFFFF) << 38) | ((long) (type.z() & 0x3FFFFFF) << 12) | (type.y() & 0xFFF)));
         }
     };
 
@@ -288,22 +280,9 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, UUID type) {
-            buffer.putLong(type.getMostSignificantBits());
-            buffer.putLong(type.getLeastSignificantBits());
-        }
-    };
-
-    NetworkType<Optional<?>> OPTIONAL_TYPE = new NetworkType<>() {
-        @Override
-        public Optional<?> read(ByteBuffer buffer) {
-            return Optional.ofNullable(buffer);
-        }
-
-        @Override
-        public void write(ByteBuffer buffer, Optional<?> type) {
-            buffer.put((byte) (type.isPresent() ? 0x01 : 0x00));
-            type.ifPresent(o -> buffer.put((byte) o));
+        public void write(DataOutputStream stream, UUID type) throws IOException {
+            stream.writeLong(type.getMostSignificantBits());
+            stream.writeLong(type.getLeastSignificantBits());
         }
     };
 
@@ -320,10 +299,10 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, BitSet type) {
-            VARINT_TYPE.write(buffer, type.cardinality());
+        public void write(DataOutputStream stream, BitSet type) throws IOException {
+            VARINT_TYPE.write(stream, type.cardinality());
             for (int i = 0; i < type.length(); i++) {
-                BOOLEAN_TYPE.write(buffer, type.get(i));
+                BOOLEAN_TYPE.write(stream, type.get(i));
             }
         }
     };
@@ -343,10 +322,10 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, ItemStack type) {
-            BOOLEAN_TYPE.write(buffer, true);
-            VARINT_TYPE.write(buffer, type.getCount());
-            NBTCOMPOUND_TYPE.write(buffer, type.getItemNBT());
+        public void write(DataOutputStream stream, ItemStack type) throws IOException {
+            BOOLEAN_TYPE.write(stream, true);
+            VARINT_TYPE.write(stream, type.getCount());
+            NBTCOMPOUND_TYPE.write(stream, type.getItemNBT());
         }
     };
 
@@ -359,8 +338,8 @@ public interface NetworkTypes {
         }
 
         @Override
-        public void write(ByteBuffer buffer, byte[] type) {
-            buffer.put(type);
+        public void write(DataOutputStream stream, byte[] type) throws IOException {
+            stream.write(type);
         }
     };
 }
