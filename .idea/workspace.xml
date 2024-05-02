@@ -5,9 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34330daf-35c6-4617-a853-b62dfcb4f763" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/DirectPalette.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/IndirectPalette.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/SingleValuePalette.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
@@ -15,12 +12,12 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/TestingGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/TestingGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/AbstractPalette.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/AbstractPalette.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/BiomesPalette.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/BlockStatePalette.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/DirectPalette.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/DirectPalette.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/IndirectPalette.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/IndirectPalette.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/Palette.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/Palette.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/writer/DirectPaletteWriter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/writer/IndirectPaletteWriter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/writer/PaletteWriter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/SingleValuePalette.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/SingleValuePalette.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/AnnotatedPacketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/AnnotatedPacketHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientChunkDataPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientChunkDataPacket.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -148,7 +145,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "chunk-system",
+    "git-widget-placeholder": "#3 on chunk-system",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/projects/java/ServerImpl",
@@ -171,7 +168,7 @@
       <command value="gradle test" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Application.Main (1)">
     <configuration name="Main (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="me.outspending.Main" />
       <module name="me.outspending.ServerImpl.main" />

@@ -90,7 +90,6 @@ public class AnnotatedPacketHandler {
 
         // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
         client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
-        // client.sendPacket(new ClientAddPlayerInfoPacket(connectedPlayer));
     }
 
     @PacketReceiver
@@ -134,7 +133,10 @@ public class AnnotatedPacketHandler {
         for (int x = -7; x < 7; x++) {
             for (int z = -7; z < 7; z++) {
                 CompletableFuture<Chunk> chunk = map.loadChunk(x, z);
-                chunk.thenAccept(connection::sendChunkData);
+                chunk.thenAccept(connection::sendChunkData).exceptionally(throwable -> {
+                    throwable.printStackTrace();
+                    return null;
+                });
             }
         }
         logger.info("Took " + (System.currentTimeMillis() - time) + "ms to send chunks");

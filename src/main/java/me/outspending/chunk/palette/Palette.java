@@ -6,11 +6,9 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public interface Palette {
-    int count();
     int bitsPerEntry();
-    long[] data();
-
-    void write(@NotNull PacketWriter writer);
+    void write(@NotNull PacketWriter writer, @NotNull Consumer<Palette> paletteConsumer);
 }
