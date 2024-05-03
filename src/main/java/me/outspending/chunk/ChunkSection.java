@@ -31,11 +31,11 @@ public class ChunkSection implements Writable {
             }
 
             this.data = new long[SECTION_SIZE / GLOBAL_PALETTE_BIT_SIZE];
-            for (int i = 0; i < (SECTION_SIZE / GLOBAL_PALETTE_BIT_SIZE); i++) {
+            for (int i = 0; i < SECTION_SIZE; i++) {
                 if (palette != null) {
-                    data[i] |= (long) palette.indexOf(types[i]) << (i * GLOBAL_PALETTE_BIT_SIZE);
+                    data[i / BLOCKS_PER_LONG] |= (long) palette.indexOf(types[i]) << (i * GLOBAL_PALETTE_BIT_SIZE);
                 } else {
-                    data[i] |= (long) types[i] << (i * GLOBAL_PALETTE_BIT_SIZE);
+                    data[i / BLOCKS_PER_LONG] |= (long) types[i] << (i * GLOBAL_PALETTE_BIT_SIZE);
                 }
             }
         } catch (Exception e) {

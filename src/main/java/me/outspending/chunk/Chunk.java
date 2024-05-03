@@ -5,6 +5,8 @@ import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 @Getter
 public class Chunk implements Writable {
 
@@ -12,12 +14,17 @@ public class Chunk implements Writable {
     private final int chunkZ;
     private final ChunkSection[] chunkSections;
 
+    private int[] initializeArray() {
+        int[] array = new int[4096];
+        Arrays.fill(array, 1);
+        return array;
+    }
+
     private ChunkSection[] generateSections() {
         ChunkSection[] generated = new ChunkSection[24];
         for (int i = 0; i < 24; i++) {
-            generated[i] = new ChunkSection(new int[4096]);
+            generated[i] = new ChunkSection(initializeArray());
         }
-
         return generated;
     }
 
