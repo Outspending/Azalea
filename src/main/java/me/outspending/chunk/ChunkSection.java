@@ -7,16 +7,9 @@ import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-<<<<<<< HEAD
 public class ChunkSection implements Writable {
     private static final int SECTION_SIZE = 16 * 16 * 16;
-    private static final int GLOBAL_PALETTE_BIT_SIZE = 8; // Indirect
-=======
-import java.util.function.Consumer;
-
-public class ChunkSection {
-    private final Int2IntOpenHashMap blocks = new Int2IntOpenHashMap();
->>>>>>> d1297cbc1e6a7b24c078895117bac97b585c7cc2
+    private static final byte GLOBAL_PALETTE_BIT_SIZE = 8; // Indirect
 
     private int count;
     private IntList palette;
@@ -55,12 +48,15 @@ public class ChunkSection {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-<<<<<<< HEAD
         if (this.isEmpty()) {
             return;
         }
 
-        writer.writeVarInt(GLOBAL_PALETTE_BIT_SIZE);
+        // Block Count
+        writer.writeShort((short) 0);
+
+        // Block Palette
+        writer.writeByte(GLOBAL_PALETTE_BIT_SIZE);
         if (palette != null) {
             writer.writeVarInt(palette.size());
             IntListIterator iterator = palette.iterator();
@@ -71,46 +67,13 @@ public class ChunkSection {
 
         writer.writeVarInt(data.length);
         for (long datum : data) {
-            writer.writeVarLong(datum);
+            writer.writeLong(datum);
         }
-=======
-        writer.writeShort((short) blocks.size());
-        blockPalette.write(writer, palette -> {
-            int dataLength = (16*16*16) * palette.bitsPerEntry() / 64;
-            long[] data = new long[dataLength];
 
-            int individualValueMask = (1 << palette.bitsPerEntry()) - 1;
+        // Biome Palette
+        writer.writeByte((byte) 0);
+        writer.writeVarInt(0);
 
-            for (int y = 0; y < 16; y++) {
-                for (int z = 0; z < 16; z++) {
-                    for (int x = 0; x < 16; x++) {
-                        int blockNumber = (((y * 16) + z) * 16) + x;
-                        int startLong = (blockNumber * palette.bitsPerEntry()) / 64;
-                        int startBit = (blockNumber * palette.bitsPerEntry()) % 64;
-                        int endLong = ((blockNumber + 1) * palette.bitsPerEntry() - 1) / 64;
-
-                        long value = blocks.get(getCoordIndex(x, y, z));
-                        value &= individualValueMask;
-
-                        data[startLong] |= value << startBit;
-                        if (startLong != endLong) {
-                            data[endLong] = (value >> (64 - startBit));
-                        }
-                    }
-                }
-            }
-
-            writer.writeVarInt(dataLength);
-            writer.writeLongArray(data);
-        });
-
-        biomesPalette.write(writer, palette ->  {
-            for (int z = 0; z < 16; z++) {
-                for (int x = 0; x < 16; x++) {
-                    writer.writeInt(127);
-                }
-            }
-        });
->>>>>>> d1297cbc1e6a7b24c078895117bac97b585c7cc2
+        writer.writeVarInt(0);
     }
 }
