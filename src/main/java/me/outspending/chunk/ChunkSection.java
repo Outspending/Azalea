@@ -28,12 +28,12 @@ public class ChunkSection implements Writable {
             }
         }
 
-        this.data = new long[SECTION_SIZE];
+        this.data = new long[SECTION_SIZE / GLOBAL_PALETTE_BIT_SIZE];
         for (int i = 0; i < SECTION_SIZE; i++) {
             if (palette != null) {
-                data[i] = palette.indexOf(types[i]);
+                data[i] |= palette.indexOf(types[i]) << (i * GLOBAL_PALETTE_BIT_SIZE);
             } else {
-                data[i] = types[i];
+                data[i] |= types[i] << (i * GLOBAL_PALETTE_BIT_SIZE);
             }
         }
     }
@@ -48,10 +48,6 @@ public class ChunkSection implements Writable {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-        if (this.isEmpty()) {
-            return;
-        }
-
         // Block Count
         writer.writeShort((short) 0);
 

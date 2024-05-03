@@ -22,7 +22,7 @@ public class Chunk implements Writable {
     }
 
     public Chunk(int chunkX, int chunkZ) {
-        this.chunkSections = generateSections();
+        chunkSections = generateSections();
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
     }
