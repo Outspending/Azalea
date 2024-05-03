@@ -8,6 +8,7 @@ import me.outspending.utils.MathUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.BitSet;
 
 public record ClientChunkDataPacket(
