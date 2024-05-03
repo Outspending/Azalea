@@ -1,47 +1,69 @@
 package me.outspending.chunk;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import me.outspending.chunk.palette.Palette;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntListIterator;
+import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public class ChunkSection {
-    private final Int2IntOpenHashMap blocks = new Int2IntOpenHashMap(4096);
+public class ChunkSection implements Writable {
+    private static final int SECTION_SIZE = 16 * 16 * 16;
+    private static final int GLOBAL_PALETTE_BIT_SIZE = 8; // Indirect
 
-    private final Palette blockPalette;
-    private final Palette biomesPalette;
+    private int count;
+    private IntList palette;
+    private long[] data;
 
-    public ChunkSection(Palette blockPalette, Palette biomesPalette) {
-        this.blockPalette = blockPalette;
-        this.biomesPalette = biomesPalette;
-    }
+    private void loadArray(int[] types) {
+        this.count = 0;
+        this.palette = new IntArrayList();
+        for (int type : types) {
+            if (type != 0) {
+                count++;
+            }
 
-    public void setBlock(int x, int y, int z, int blockID) {
-        blocks.put(getCoordIndex(x, y, z), blockID);
-    }
+            if (!palette.contains(type)) {
+                palette.add(type);
+            }
+        }
 
-    public int getBlock(int x, int y, int z) {
-        return blocks.get(getCoordIndex(x, y, z));
-    }
-
-    public void fill(int blockID) {
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
-                for (int z = 0; z < 16; z++) {
-                    setBlock(x, y, z, blockID);
-                }
+        this.data = new long[SECTION_SIZE];
+        for (int i = 0; i < SECTION_SIZE; i++) {
+            if (palette != null) {
+                data[i] = palette.indexOf(types[i]);
+            } else {
+                data[i] = types[i];
             }
         }
     }
 
-    private int getCoordIndex(int x, int y, int z) {
-        return (y * 16 + z) * 16 + x;
+    public ChunkSection(int[] types) {
+        loadArray(types);
     }
 
+    public boolean isEmpty() {
+        return this.count == 0;
+    }
+
+    @Override
     public void write(@NotNull PacketWriter writer) {
-        writer.writeShort((short) blocks.size());
-        blockPalette.write(writer);
-        biomesPalette.write(writer);
-    }
+        if (this.isEmpty()) {
+            return;
+        }
 
+        writer.writeVarInt(GLOBAL_PALETTE_BIT_SIZE);
+        if (palette != null) {
+            writer.writeVarInt(palette.size());
+            IntListIterator iterator = palette.iterator();
+            while (iterator.hasNext()) {
+                writer.writeVarInt(iterator.nextInt());
+            }
+        }
+
+        writer.writeVarInt(data.length);
+        for (long datum : data) {
+            writer.writeVarLong(datum);
+        }
+    }
 }

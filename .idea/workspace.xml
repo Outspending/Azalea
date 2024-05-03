@@ -5,22 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34330daf-35c6-4617-a853-b62dfcb4f763" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/DirectPalette.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/IndirectPalette.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/SingleValuePalette.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/Writable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/utils/WriterUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/TestingGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/TestingGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/AbstractPalette.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/AbstractPalette.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/BiomesPalette.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/BlockStatePalette.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/Palette.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/Palette.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/writer/DirectPaletteWriter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/writer/IndirectPaletteWriter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/writer/PaletteWriter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/AbstractChunk.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/Chunk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkGenerator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkLoader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/DynamicChunk.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/DynamicChunkLoader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/LightType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/TestingGenerator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/AbstractPalette.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/DirectPalette.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/IndirectPalette.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/Palette.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/palette/SingleValuePalette.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/AnnotatedPacketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/AnnotatedPacketHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,33 +136,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main (1).executor": "Profiler#1",
-    "Application.Main.executor": "Run",
-    "Downloaded.Files.Path.Enabled": "false",
-    "Gradle.Build ServerImpl.executor": "Run",
-    "Gradle.ServerImpl [:Main.main()].executor": "Run",
-    "Gradle.ServerImpl [clean].executor": "Run",
-    "Gradle.ServerImpl [test].executor": "Run",
-    "Gradle.ServerTest.executor": "Run",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "chunk-system",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/projects/java/ServerImpl",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main (1).executor&quot;: &quot;Profiler#1&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Gradle.Build ServerImpl.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ServerImpl [:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ServerImpl [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ServerImpl [test].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ServerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;chunk-system&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/projects/java/ServerImpl&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\projects\java\ServerImpl\src\main\resources" />
@@ -267,7 +275,6 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.69" />
         <option value="jdk-21.0.2-corretto-21.0.2-4caba194b151-51586f01" />
       </set>
     </attachedChunks>
@@ -330,8 +337,14 @@
       <workItem from="1714372181550" duration="14751000" />
       <workItem from="1714429785295" duration="11097000" />
       <workItem from="1714480770377" duration="363000" />
+      <workItem from="1714703369883" duration="758000" />
+      <workItem from="1714704166678" duration="1149000" />
+      <workItem from="1714705440851" duration="231000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

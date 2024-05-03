@@ -2,16 +2,11 @@ package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
-import me.outspending.chunk.AbstractChunk;
 import me.outspending.chunk.Chunk;
-import me.outspending.chunk.ChunkMap;
-import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.entity.Player;
-import me.outspending.position.Location;
 import me.outspending.position.Pos;
-import me.outspending.processes.PlayerManager;
 import me.outspending.protocol.annotations.PacketReceiver;
 import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
@@ -25,7 +20,6 @@ import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
 import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
-import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.types.Packet;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -126,15 +120,14 @@ public class AnnotatedPacketHandler {
     }
 
     private void sendChunks(@NotNull ClientConnection connection) {
-        ChunkMap map = AbstractChunk.chunkMap;
-
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
 
         long time = System.currentTimeMillis();
         for (int x = -7; x < 7; x++) {
             for (int z = -7; z < 7; z++) {
-                CompletableFuture<Chunk> chunk = map.loadChunk(x, z);
-                chunk.thenAccept(connection::sendChunkData);
+                Chunk chunk = new Chunk(x, z);
+
+                connection.sendChunkData(chunk);
             }
         }
         logger.info("Took " + (System.currentTimeMillis() - time) + "ms to send chunks");
