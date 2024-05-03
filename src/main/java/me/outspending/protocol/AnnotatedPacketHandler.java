@@ -122,13 +122,19 @@ public class AnnotatedPacketHandler {
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
 
         long time = System.currentTimeMillis();
-        for (int x = -7; x < 7; x++) {
-            for (int z = -7; z < 7; z++) {
-                Chunk chunk = new Chunk(x, z);
+//        for (int x = -7; x < 7; x++) {
+//            for (int z = -7; z < 7; z++) {
+//                Chunk chunk = new Chunk(x, z);
+//                chunk.getChunkSections()[3].fill(1);
+//
+//                connection.sendChunkData(chunk);
+//            }
+//        }
+        Chunk chunk = new Chunk(0, 0);
+        chunk.getChunkSections()[3].fill(1);
 
-                connection.sendChunkData(chunk);
-            }
-        }
+        connection.sendChunkData(chunk);
+
         logger.info("Took " + (System.currentTimeMillis() - time) + "ms to send chunks");
     }
 }

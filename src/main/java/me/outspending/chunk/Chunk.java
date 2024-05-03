@@ -15,14 +15,14 @@ public class Chunk implements Writable {
     private ChunkSection[] generateSections() {
         ChunkSection[] generated = new ChunkSection[24];
         for (int i = 0; i < 24; i++) {
-            generated[i] = new ChunkSection(new int[]{0, 1});
+            generated[i] = new ChunkSection(new int[4096]);
         }
 
         return generated;
     }
 
     public Chunk(int chunkX, int chunkZ) {
-        chunkSections = generateSections();
+        this.chunkSections = generateSections();
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
     }
