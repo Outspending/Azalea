@@ -7,6 +7,7 @@ import me.outspending.chunk.Chunk;
 import me.outspending.connection.ClientConnection;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
+import net.kyori.adventure.text.Component;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,16 +23,28 @@ public class Player implements TickingEntity {
     private World world;
     private Pos position;
 
-    public Player(ClientConnection connection, int entityID, String username, UUID uuid) {
+    public Player(ClientConnection connection, String username, UUID uuid) {
         this.connection = connection;
-        this.entityID = entityID;
+        this.entityID = EntityCounter.getNextEntityID();
         this.username = username;
         this.uuid = uuid;
+    }
+
+    public Player(ClientConnection connection, GameProfile profile) {
+        this(connection, profile.getUsername(), profile.getUuid());
     }
 
     public void setWorld(World world) {
         this.world = world;
         world.addEntity(this);
+    }
+
+    public void kick(String reason) {
+        connection.kick(reason);
+    }
+
+    public void kick(Component component) {
+        connection.kick(component);
     }
 
     @Override

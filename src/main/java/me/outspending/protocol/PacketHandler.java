@@ -3,27 +3,28 @@ package me.outspending.protocol;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
 import me.outspending.chunk.Chunk;
-import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
+import me.outspending.entity.GameProfile;
 import me.outspending.entity.Player;
-import me.outspending.position.Location;
+import me.outspending.entity.Property;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.PlayerJoinEvent;
+import me.outspending.events.types.Event;
 import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
-import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
 import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
 import me.outspending.protocol.packets.client.play.*;
-import me.outspending.protocol.packets.server.status.PingRequestPacket;
-import me.outspending.protocol.packets.server.status.StatusRequestPacket;
+import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
+import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
+import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
-import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
-import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
+import me.outspending.protocol.packets.server.status.PingRequestPacket;
+import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.types.Packet;
 import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -32,18 +33,16 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@SuppressWarnings("unchecked")
-public class AnnotatedPacketHandler {
-    private static final Logger logger = LoggerFactory.getLogger(AnnotatedPacketHandler.class);
+public record PacketHandler(GameProfile profile) {
+    private static final Logger logger = LoggerFactory.getLogger(PacketHandler.class);
     private static final Map<Class<? extends Packet>, Method> PACKET_HANDLERS = new HashMap<>();
 
     static {
-        for (Method method : AnnotatedPacketHandler.class.getMethods()) {
+        for (Method method : PacketHandler.class.getMethods()) {
             if (method.isAnnotationPresent(PacketReceiver.class)) {
                 Class<?>[] params = method.getParameterTypes();
                 if (params.length == 2) {
@@ -83,16 +82,14 @@ public class AnnotatedPacketHandler {
 
     @PacketReceiver
     public void onLoginStart(@NotNull ClientConnection client, @NotNull LoginStartPacket packet) {
-        MinecraftServer server = client.getServer();
         String name = packet.name();
         UUID uuid = packet.uuid();
 
-        Player connectedPlayer = new Player(client, 0, name, uuid);
-        server.getServerProcess().getPlayerManager().addPlayer(connectedPlayer);
-        EventExecutor.emitEvent(new PlayerJoinEvent(connectedPlayer));
+        profile.setUsername(name);
+        profile.setUuid(uuid);
 
         // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
-        client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
+        client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new Property[0]));
     }
 
     @PacketReceiver
@@ -108,6 +105,16 @@ public class AnnotatedPacketHandler {
         logger.info("Configuration has finished!");
         client.setState(GameState.PLAY);
 
+        final Player player = new Player(client, profile);
+        client.getServer().getServerProcess().getPlayerManager().addPlayer(player);
+        EventExecutor.emitEvent(new PlayerJoinEvent(player));
+
+        if (player.getWorld() == null) {
+            logger.error("Player's world is null, cannot spawn in. Make sure to set the world on PlayerJoinEvent!");
+            player.kick("Failed to join world");
+            return;
+        }
+
         final NamespacedID overworld = new NamespacedID("overworld");
         client.sendPacket(new ClientLoginPlayPacket(
                 273, false, 1,
@@ -122,6 +129,9 @@ public class AnnotatedPacketHandler {
                 0
         ));
         client.sendPacket(new ClientGameEventPacket((byte) 13, 0f));
+
+        client.sendPacket(new ClientSetTickingStatePacket(20, false));
+        client.sendPacket(new ClientStepTickPacket(0));
 
         sendChunks(client);
         client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 64, 0, 0f, 0f), (byte) 0, 24));

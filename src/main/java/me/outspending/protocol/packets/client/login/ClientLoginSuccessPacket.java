@@ -2,6 +2,7 @@ package me.outspending.protocol.packets.client.login;
 
 import lombok.Getter;
 import me.outspending.connection.GameState;
+import me.outspending.entity.Property;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
@@ -43,11 +44,5 @@ public record ClientLoginSuccessPacket(UUID uuid, String username, Property[] pr
     @Override
     public int id() {
         return 0x02;
-    }
-
-    public record Property(@NotNull String name, @NotNull String value, @Nullable String signature) {
-        public boolean isSigned() {
-            return signature != null;
-        }
     }
 }

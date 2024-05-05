@@ -6,6 +6,9 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
 import me.outspending.chunk.Chunk;
+import me.outspending.chunk.light.Blocklight;
+import me.outspending.chunk.light.Skylight;
+import me.outspending.entity.BlockEntity;
 import me.outspending.protocol.listener.PacketListener;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
@@ -117,9 +120,9 @@ public class ClientConnection {
         sendPacket(new ClientChunkDataPacket(
                 chunk.getChunkX(), chunk.getChunkZ(),
                 ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                chunk, new ClientChunkDataPacket.BlockEntity[0],
+                chunk, new BlockEntity[0],
                 new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+                new Skylight[0], new Blocklight[0]
         ));
     }
 

@@ -1,14 +1,13 @@
 package me.outspending.protocol.packets.client.play;
 
 import me.outspending.chunk.Chunk;
-import me.outspending.connection.GameState;
+import me.outspending.chunk.light.Blocklight;
+import me.outspending.chunk.light.Skylight;
+import me.outspending.entity.BlockEntity;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
-import me.outspending.utils.MathUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.BitSet;
 
 public record ClientChunkDataPacket(
@@ -43,10 +42,10 @@ public record ClientChunkDataPacket(
 
         writer.writeVarInt(this.blockEntity.length);
         writer.writeArray(this.blockEntity, blockEntity -> {
-            writer.writeUnsignedByte(blockEntity.packedXZ);
-            writer.writeShort(blockEntity.y);
-            writer.writeVarInt(blockEntity.type);
-            writer.writeNBTCompound(blockEntity.data);
+            writer.writeUnsignedByte(blockEntity.packedXZ());
+            writer.writeShort(blockEntity.y());
+            writer.writeVarInt(blockEntity.type());
+            writer.writeNBTCompound(blockEntity.data());
         });
         writer.writeBitSet(this.skyLightMask);
         writer.writeBitSet(this.blockLightMask);
@@ -54,26 +53,18 @@ public record ClientChunkDataPacket(
         writer.writeBitSet(this.emptyBlockLightMask);
         writer.writeVarInt(this.skyLight.length);
         writer.writeArray(this.skyLight, skyLight -> {
-            writer.writeVarInt(skyLight.skyLightArray.length);
-            writer.writeByteArray(skyLight.skyLightArray);
+            writer.writeVarInt(skyLight.skyLightArray().length);
+            writer.writeByteArray(skyLight.skyLightArray());
         });
         writer.writeVarInt(this.blockLight.length);
         writer.writeArray(this.blockLight, blockLight -> {
-            writer.writeVarInt(blockLight.blockLightArray.length);
-            writer.writeByteArray(blockLight.blockLightArray);
+            writer.writeVarInt(blockLight.blockLightArray().length);
+            writer.writeByteArray(blockLight.blockLightArray());
         });
     }
 
     @Override
     public int id() {
         return 0x25;
-    }
-
-    public record BlockEntity(int packedXZ, short y, int type, CompoundBinaryTag data) {}
-    public record Skylight(int length, byte[] skyLightArray) {
-        public static final Skylight EMPTY = new Skylight(2048, new byte[2048]);
-    }
-    public record Blocklight(int length, byte[] blockLightArray) {
-        public static final Blocklight EMPTY = new Blocklight(2048, new byte[2048]);
     }
 }

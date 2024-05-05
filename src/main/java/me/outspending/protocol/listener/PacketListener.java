@@ -3,24 +3,22 @@ package me.outspending.protocol.listener;
 import lombok.SneakyThrows;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
-import me.outspending.protocol.AnnotatedPacketHandler;
+import me.outspending.entity.GameProfile;
+import me.outspending.protocol.PacketHandler;
 import me.outspending.protocol.codec.CodecHandler;
 import me.outspending.protocol.reader.NormalPacketReader;
 import me.outspending.protocol.reader.PacketReader;
-import me.outspending.protocol.types.ClientPacket;
-import me.outspending.protocol.types.Packet;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.function.Function;
 
 public class PacketListener {
     private static final Logger logger = LoggerFactory.getLogger(PacketListener.class);
-    private static final AnnotatedPacketHandler packetHandler = new AnnotatedPacketHandler();
+    private static final PacketHandler handler = new PacketHandler(GameProfile.EMPTY);
 
     @SneakyThrows
     public void read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
@@ -35,7 +33,7 @@ public class PacketListener {
             return;
         }
         ServerPacket readPacket = packetFunction.apply(reader);
-        packetHandler.handle(connection, readPacket);
+        handler.handle(connection, readPacket);
 
         read(connection, readPacket);
 
