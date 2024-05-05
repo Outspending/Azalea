@@ -2,16 +2,14 @@ package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
+import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.entity.Player;
-<<<<<<< Updated upstream
 import me.outspending.position.Location;
-=======
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.PlayerJoinEvent;
->>>>>>> Stashed changes
 import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
 import me.outspending.protocol.packets.server.HandshakePacket;
@@ -27,6 +25,7 @@ import me.outspending.protocol.packets.server.login.LoginStartPacket;
 import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
 import me.outspending.protocol.types.Packet;
+import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,14 +87,10 @@ public class AnnotatedPacketHandler {
         String name = packet.name();
         UUID uuid = packet.uuid();
 
-<<<<<<< Updated upstream
-        server.getServerProcess().getPlayerManager().addPlayer(new Player(client, name, uuid));
-=======
         Player connectedPlayer = new Player(client, 0, name, uuid);
         server.getServerProcess().getPlayerManager().addPlayer(connectedPlayer);
         EventExecutor.emitEvent(new PlayerJoinEvent(connectedPlayer));
 
->>>>>>> Stashed changes
         // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
         client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
     }
@@ -134,23 +129,13 @@ public class AnnotatedPacketHandler {
 
     private void sendChunks(@NotNull ClientConnection connection) {
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
+
+        final World world = World.create("testing");
         for (int x = -7; x < 7; x++) {
             for (int z = -7; z < 7; z++) {
-<<<<<<< Updated upstream
-                connection.sendPacket(new ClientChunkDataPacket(
-                        x, z,
-                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                        ChunkSection.createSections(),
-                        new ClientChunkDataPacket.BlockEntity[0],
-                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
-                ));
-=======
-                Chunk chunk = new Chunk(x, z);
-                chunk.getChunkSections()[4].fill(1); // should be stone
->>>>>>> Stashed changes
+                Chunk chunk = world.getChunk(x, z);
+                connection.sendChunkData(chunk);
 
-                connection.sendPacket(new ClientBlockUpdatePacket(new Location(x, 64, z), 1));
             }
         }
     }

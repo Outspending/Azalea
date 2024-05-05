@@ -7,13 +7,15 @@ import me.outspending.entity.Entity;
 import me.outspending.entity.Player;
 import me.outspending.entity.TickingEntity;
 import me.outspending.position.Pos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 public class WorldImpl implements World {
-    private final ChunkMap chunkMap = new ChunkMap();
+
+    private final ChunkMap chunkMap = new ChunkMap(this);
     private final List<Entity> entities = new ArrayList<>();
     private final List<Player> players = new ArrayList<>();
 
@@ -24,12 +26,12 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public List<Entity> getAllEntities() {
+    public @NotNull List<Entity> getAllEntities() {
         return entities;
     }
 
     @Override
-    public void addEntity(Entity entity) {
+    public void addEntity(@NotNull Entity entity) {
         if (entity instanceof Player player) {
             players.add(player);
         } else {
@@ -38,7 +40,7 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public void removeEntity(Entity entity) {
+    public void removeEntity(@NotNull Entity entity) {
         if (entity instanceof Player player) {
             players.remove(player);
         } else {
@@ -47,17 +49,17 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public List<Chunk> getLoadedChunks() {
+    public @NotNull List<Chunk> getLoadedChunks() {
         return chunkMap.getAllChunks();
     }
 
     @Override
-    public List<Chunk> getChunksInDistance(Pos position, int distance) {
+    public @NotNull List<Chunk> getChunksInDistance(@NotNull Pos position, int distance) {
         return List.of();
     }
 
     @Override
-    public Chunk getChunk(int x, int z) {
+    public @NotNull Chunk getChunk(int x, int z) {
         return chunkMap.getChunk(x, z);
     }
 
@@ -69,4 +71,5 @@ public class WorldImpl implements World {
 
         players.forEach(player -> player.tick(time));
     }
+
 }

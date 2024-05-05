@@ -5,16 +5,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-<<<<<<< Updated upstream
-import me.outspending.utils.AdventureUtils;
-=======
+import me.outspending.connection.ServerConnection;
 import me.outspending.entity.Player;
->>>>>>> Stashed changes
 import me.outspending.utils.ResourceUtils;
 import me.outspending.world.World;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -42,7 +38,7 @@ public class MinecraftServer {
     private final TickHandler tickHandler = new TickHandler();
 
     private int maxPlayers = 20;
-    private Component description = AdventureUtils.serializeString("Woah, an MOTD for my mc protocol!");
+    private String description = "Woah, an MOTD for my mc protocol!";
 
     public CompoundBinaryTag REGISTRY_NBT;
 

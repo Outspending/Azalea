@@ -2,19 +2,13 @@ package me.outspending.entity;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-<<<<<<< Updated upstream
-=======
 import lombok.Setter;
-import me.outspending.Tickable;
 import me.outspending.chunk.Chunk;
->>>>>>> Stashed changes
 import me.outspending.connection.ClientConnection;
 import me.outspending.position.Pos;
-import me.outspending.protocol.packets.client.play.ClientUpdateEntityPositionAndRotationPacket;
-import me.outspending.utils.PacketUtils;
 import me.outspending.world.World;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter @Setter(AccessLevel.MODULE)
@@ -34,8 +28,6 @@ public class Player implements TickingEntity {
         this.username = username;
         this.uuid = uuid;
     }
-<<<<<<< Updated upstream
-=======
 
     public void setWorld(World world) {
         this.world = world;
@@ -55,5 +47,4 @@ public class Player implements TickingEntity {
     @Override
     public void tick(long time) {
     }
->>>>>>> Stashed changes
 }

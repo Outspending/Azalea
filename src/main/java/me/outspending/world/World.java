@@ -5,38 +5,39 @@ import me.outspending.chunk.Chunk;
 import me.outspending.entity.Entity;
 import me.outspending.entity.Player;
 import me.outspending.position.Pos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Predicate;
 
 public interface World extends Tickable {
-    static World create(String name) {
+    static @NotNull World create(@NotNull String name) {
         return new WorldImpl(name);
     }
 
-    List<Entity> getAllEntities();
+    @NotNull List<Entity> getAllEntities();
 
-    default List<Entity> getAllEntities(Predicate<Entity> predicate) {
+    default @NotNull List<Entity> getAllEntities(@NotNull Predicate<Entity> predicate) {
         return getAllEntities().stream()
                 .filter(predicate)
                 .toList();
     }
 
-    String getName();
+    @NotNull String getName();
 
-    List<Player> getPlayers();
+    @NotNull List<Player> getPlayers();
 
-    void addEntity(Entity entity);
+    void addEntity(@NotNull Entity entity);
 
-    void removeEntity(Entity entity);
+    void removeEntity(@NotNull Entity entity);
 
-    List<Chunk> getLoadedChunks();
+    @NotNull List<Chunk> getLoadedChunks();
 
-    List<Chunk> getChunksInDistance(Pos position, int distance);
+    @NotNull List<Chunk> getChunksInDistance(@NotNull Pos position, int distance);
 
-    Chunk getChunk(int x, int z);
+    @NotNull Chunk getChunk(int x, int z);
 
-    default Chunk getChunk(Pos position) {
+    default @NotNull Chunk getChunk(@NotNull Pos position) {
         return getChunk((int) position.x(), (int) position.z());
     }
 }

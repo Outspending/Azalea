@@ -1,11 +1,10 @@
-package me.outspending;
+package me.outspending.connection;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import me.outspending.connection.ClientConnection;
-import me.outspending.connection.GameState;
+import me.outspending.MinecraftServer;
 import me.outspending.entity.Player;
 import me.outspending.processes.PlayerManager;
 import me.outspending.protocol.packets.client.play.ClientKeepAlivePacket;

@@ -1,21 +1,31 @@
 package me.outspending.chunk;
 
-import me.outspending.chunk.palette.BiomesPalette;
-import me.outspending.chunk.palette.BlockStatePalette;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntListIterator;
+import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record ChunkSection(BlockStatePalette blockStatesPalette, BiomesPalette biomesPalette) {
+public class ChunkSection implements Writable {
 
-<<<<<<< Updated upstream
-    public static ChunkSection[] createSections() {
-        ChunkSection[] sections = new ChunkSection[24];
-        for (int i = 0; i < 24; i++) {
-            sections[i] = new ChunkSection(new BlockStatePalette((byte) 15), new BiomesPalette((byte) 2));
-=======
-    private int count;
+    private static final int CHUNK_SECTION_SIZE = 24;
+    private static final int SECTION_SIZE = 16 * 16 * 16;
+    private static final byte GLOBAL_PALETTE_BIT_SIZE = 8; // Indirect
+    private static final int BLOCKS_PER_LONG = 64 / GLOBAL_PALETTE_BIT_SIZE;
+
+    private short count;
     private IntList palette;
     private long[] data;
+
+    public static ChunkSection[] generateChunkSections() {
+        ChunkSection[] sections = new ChunkSection[CHUNK_SECTION_SIZE];
+        for (int i = 0; i < CHUNK_SECTION_SIZE; i++) {
+            sections[i] = new ChunkSection(new int[SECTION_SIZE]);
+        }
+
+        return sections;
+    }
 
     private void loadArray(int[] types) {
         try {
@@ -44,14 +54,9 @@ public record ChunkSection(BlockStatePalette blockStatesPalette, BiomesPalette b
             }
         } catch (Exception e) {
             e.printStackTrace();
->>>>>>> Stashed changes
         }
-
-        return sections;
     }
 
-<<<<<<< Updated upstream
-=======
     public ChunkSection(int[] types) {
         loadArray(types);
     }
@@ -71,6 +76,9 @@ public record ChunkSection(BlockStatePalette blockStatesPalette, BiomesPalette b
         int offset = GLOBAL_PALETTE_BIT_SIZE * (index % BLOCKS_PER_LONG);
         l &= ~(mask << offset);
         l |= ((long) blockID << offset);
+
+        if (blockID == 0) this.count--;
+        else this.count++;
 
         this.data[index / BLOCKS_PER_LONG] = l;
     }
@@ -96,11 +104,30 @@ public record ChunkSection(BlockStatePalette blockStatesPalette, BiomesPalette b
     }
 
     @Override
->>>>>>> Stashed changes
     public void write(@NotNull PacketWriter writer) {
-        writer.writeShort((short) 0);
-        blockStatesPalette.write(writer);
-        biomesPalette.write(writer);
+        // Block Count
+        writer.writeShort(this.count);
+
+        // Block Palette
+        writer.writeByte(GLOBAL_PALETTE_BIT_SIZE);
+        if (palette != null) {
+            writer.writeVarInt(palette.size());
+            IntListIterator iterator = palette.iterator();
+            while (iterator.hasNext()) {
+                writer.writeVarInt(iterator.nextInt());
+            }
+        }
+
+        writer.writeVarInt(data.length);
+        for (long datum : data) {
+            writer.writeLong(datum);
+        }
+
+        // Biome Palette
+        writer.writeByte((byte) 0);
+        writer.writeVarInt(0);
+
+        writer.writeVarInt(0);
     }
 
 }

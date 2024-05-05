@@ -1,42 +1,43 @@
 package me.outspending.chunk;
 
-import me.outspending.protocol.writer.PacketWriter;
+import me.outspending.entity.Entity;
+import me.outspending.protocol.Writable;
+import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.BitSet;
+import java.util.List;
 
-<<<<<<< Updated upstream
-public class Chunk {
-=======
-@Getter
-public class Chunk implements Writable {
-    private static final ChunkMap CHUNK_MAP = new ChunkMap();
+public interface Chunk extends Writable {
 
-    private final int chunkX;
-    private final int chunkZ;
-    private final ChunkSection[] chunkSections;
-
-    private ChunkSection[] generateSections() {
-        ChunkSection[] generated = new ChunkSection[24];
-        for (int i = 0; i < 24; i++) {
-            generated[i] = new ChunkSection(new int[4096]);
-        }
-        return generated;
+    static @NotNull Chunk create(int chunkX, int chunkZ, @NotNull World world, @NotNull ChunkSection[] sections) {
+        return new ChunkImpl(chunkX, chunkZ, world, sections);
     }
 
-    public Chunk(int chunkX, int chunkZ) {
-        this.chunkSections = generateSections();
-        this.chunkX = chunkX;
-        this.chunkZ = chunkZ;
-
-        CHUNK_MAP.saveChunk(chunkX, chunkZ, this);
+    static @NotNull Chunk create(int chunkX, int chunkZ, @NotNull World world) {
+        return new ChunkImpl(chunkX, chunkZ, world);
     }
 
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        for (ChunkSection section : chunkSections) {
-            section.write(writer);
-        }
+    default int getChunkIndex(int x, int z) {
+        return (x << 4) | z;
     }
->>>>>>> Stashed changes
+
+    void setBlock(int x, int y, int z, int blockID);
+
+    int getBlock(int x, int y, int z);
+
+    @NotNull ChunkSection[] getSections();
+
+    @NotNull World getWorld();
+
+    int getChunkX();
+
+    int getChunkZ();
+
+    @Nullable ChunkSection getSectionAt(int y);
+
+    @NotNull List<Entity> getEntities();
+
+    void unload();
+
 }

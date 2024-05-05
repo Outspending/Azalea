@@ -1,8 +1,5 @@
 package me.outspending.entity;
 
-<<<<<<< Updated upstream
-public interface Entity {
-=======
 import me.outspending.chunk.Chunk;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
@@ -27,5 +24,4 @@ public interface Entity {
     default double distance(Pos position) {
         return getPosition().distance(position);
     }
->>>>>>> Stashed changes
 }

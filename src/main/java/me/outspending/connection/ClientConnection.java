@@ -107,12 +107,6 @@ public class ClientConnection {
         ));
     }
 
-    public void sendChunkData(List<Chunk> chunks) {
-        for (Chunk chunk : chunks) {
-            sendChunkData(chunk);
-        }
-    }
-
     @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (!isOnline()) return;
