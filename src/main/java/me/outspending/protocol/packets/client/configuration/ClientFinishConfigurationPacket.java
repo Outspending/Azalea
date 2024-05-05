@@ -12,7 +12,7 @@ public record ClientFinishConfigurationPacket() implements ClientPacket {
     }
 
     @Override
-    public void write(PacketWriter writer) {}
+    public void write(@NotNull PacketWriter writer) {}
 
     @Override
     public int id() {

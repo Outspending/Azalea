@@ -7,6 +7,7 @@ import me.outspending.entity.BlockEntity;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.BitSet;
 
@@ -29,7 +30,7 @@ public record ClientChunkDataPacket(
             .build();
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         PacketWriter dataWriter = PacketWriter.createNormalWriter();
 
         chunk.write(dataWriter);

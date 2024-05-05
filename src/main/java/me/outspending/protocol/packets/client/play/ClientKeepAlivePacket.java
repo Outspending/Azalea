@@ -13,7 +13,7 @@ public record ClientKeepAlivePacket(long keepAliveID) implements ClientPacket {
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeLong(keepAliveID);
     }
 

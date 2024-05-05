@@ -24,7 +24,7 @@ public record ClientSynchronizePlayerPosition(Pos position, byte flags, int tele
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeDouble(this.position.x());
         writer.writeDouble(this.position.y());
         writer.writeDouble(this.position.z());

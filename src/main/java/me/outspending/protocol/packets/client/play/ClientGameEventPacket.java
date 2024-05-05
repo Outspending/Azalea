@@ -16,7 +16,7 @@ public record ClientGameEventPacket(byte event, float value) implements ClientPa
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeByte(this.event);
         writer.writeFloat(this.value);
     }

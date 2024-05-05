@@ -6,12 +6,14 @@ import it.unimi.dsi.fastutil.ints.IntListIterator;
 import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChunkSection implements Writable {
-
+    private static final Logger logger = LoggerFactory.getLogger(ChunkSection.class);
     private static final int CHUNK_SECTION_SIZE = 24;
     private static final int SECTION_SIZE = 16 * 16 * 16;
-    private static final byte GLOBAL_PALETTE_BIT_SIZE = 8; // Indirect
+    private static final byte GLOBAL_PALETTE_BIT_SIZE = 8;
     private static final int BLOCKS_PER_LONG = 64 / GLOBAL_PALETTE_BIT_SIZE;
 
     private short count;
@@ -88,8 +90,6 @@ public class ChunkSection implements Writable {
     }
 
     public void fill(int blockID) {
-        if (!palette.contains(blockID)) return;
-
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 16; y++) {
                 for (int z = 0; z < 16; z++) {
@@ -105,6 +105,7 @@ public class ChunkSection implements Writable {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
+
         // Block Count
         writer.writeShort(this.count);
 
@@ -126,7 +127,6 @@ public class ChunkSection implements Writable {
         // Biome Palette
         writer.writeByte((byte) 0);
         writer.writeVarInt(0);
-
         writer.writeVarInt(0);
     }
 

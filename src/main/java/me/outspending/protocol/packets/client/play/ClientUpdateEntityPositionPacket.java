@@ -17,7 +17,7 @@ public record ClientUpdateEntityPositionPacket(int entityID, short deltaX, short
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeVarInt(entityID);
         writer.writeShort(deltaX);
         writer.writeShort(deltaY);

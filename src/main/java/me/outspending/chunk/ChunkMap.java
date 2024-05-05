@@ -19,12 +19,12 @@ public final class ChunkMap {
     }
 
     private int getChunkIndex(int x, int z) {
-        return (x << 4) | z;
+        return (x << 16) | (z & 0xFFFF);
     }
 
     public @NotNull Chunk getChunk(int x, int z) {
         int index = getChunkIndex(x, z);
-        return storedChunks.get(index) != null ? storedChunks.get(index) : loadChunk(x, z);
+        return storedChunks.containsKey(index) ? storedChunks.get(index) : loadChunk(x, z);
     }
 
     public @NotNull Chunk loadChunk(int x, int z) {

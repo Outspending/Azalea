@@ -14,7 +14,7 @@ public record ClientDisconnectPlayPacket(CompoundBinaryTag reason) implements Cl
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeNBTCompound(this.reason);
     }
 

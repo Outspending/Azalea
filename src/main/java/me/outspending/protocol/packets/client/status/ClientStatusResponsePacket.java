@@ -5,6 +5,7 @@ import lombok.Getter;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
+import org.jetbrains.annotations.NotNull;
 
 public record ClientStatusResponsePacket(Players players, Version version, String description) implements ClientPacket {
     public String toJson() {
@@ -12,7 +13,7 @@ public record ClientStatusResponsePacket(Players players, Version version, Strin
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeString(this.toJson());
     }
 

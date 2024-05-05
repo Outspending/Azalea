@@ -12,7 +12,7 @@ import net.kyori.adventure.text.Component;
 import java.util.List;
 import java.util.UUID;
 
-@Getter @Setter(AccessLevel.MODULE)
+@Getter @Setter
 public class Player implements TickingEntity {
     private final ClientConnection connection;
 

@@ -19,7 +19,7 @@ public record ClientUpdateEntityPositionAndRotationPacket(int entityID, short de
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeVarInt(entityID);
         writer.writeShort(deltaX);
         writer.writeShort(deltaY);

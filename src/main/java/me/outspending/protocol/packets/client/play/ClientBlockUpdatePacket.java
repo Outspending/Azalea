@@ -17,7 +17,7 @@ public record ClientBlockUpdatePacket(Location position, int blockID) implements
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeLocation(this.position);
         writer.writeVarInt(this.blockID);
     }

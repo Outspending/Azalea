@@ -13,7 +13,7 @@ public record ClientSetCompressionPacket(int threshold) implements ClientPacket 
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeVarInt(this.threshold);
     }
 

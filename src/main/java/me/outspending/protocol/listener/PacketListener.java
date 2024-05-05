@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 public class PacketListener {
     private static final Logger logger = LoggerFactory.getLogger(PacketListener.class);
-    private static final PacketHandler handler = new PacketHandler(GameProfile.EMPTY);
+    private static final PacketHandler handler = new PacketHandler();
 
     @SneakyThrows
     public void read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {

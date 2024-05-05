@@ -3,13 +3,16 @@ package me.outspending.protocol;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
 import me.outspending.chunk.Chunk;
+import me.outspending.chunk.ChunkMap;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.entity.GameProfile;
 import me.outspending.entity.Player;
 import me.outspending.entity.Property;
 import me.outspending.events.EventExecutor;
+import me.outspending.events.event.ChunkSwitchEvent;
 import me.outspending.events.event.PlayerJoinEvent;
+import me.outspending.events.event.PlayerMoveEvent;
 import me.outspending.events.types.Event;
 import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
@@ -23,6 +26,8 @@ import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
+import me.outspending.protocol.packets.server.play.SetPlayerPositionAndRotationPacket;
+import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.types.Packet;
@@ -37,9 +42,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public record PacketHandler(GameProfile profile) {
+public class PacketHandler {
     private static final Logger logger = LoggerFactory.getLogger(PacketHandler.class);
     private static final Map<Class<? extends Packet>, Method> PACKET_HANDLERS = new HashMap<>();
+
+    private Player loadedPlayer;
 
     static {
         for (Method method : PacketHandler.class.getMethods()) {
@@ -85,8 +92,7 @@ public record PacketHandler(GameProfile profile) {
         String name = packet.name();
         UUID uuid = packet.uuid();
 
-        profile.setUsername(name);
-        profile.setUuid(uuid);
+        loadedPlayer = new Player(client, name, uuid);
 
         // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
         client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new Property[0]));
@@ -105,13 +111,12 @@ public record PacketHandler(GameProfile profile) {
         logger.info("Configuration has finished!");
         client.setState(GameState.PLAY);
 
-        final Player player = new Player(client, profile);
-        client.getServer().getServerProcess().getPlayerManager().addPlayer(player);
-        EventExecutor.emitEvent(new PlayerJoinEvent(player));
+        client.getServer().getServerProcess().getPlayerManager().addPlayer(loadedPlayer);
+        EventExecutor.emitEvent(new PlayerJoinEvent(loadedPlayer));
 
-        if (player.getWorld() == null) {
+        if (loadedPlayer.getWorld() == null) {
             logger.error("Player's world is null, cannot spawn in. Make sure to set the world on PlayerJoinEvent!");
-            player.kick("Failed to join world");
+            loadedPlayer.kick("Failed to join world");
             return;
         }
 
@@ -128,25 +133,53 @@ public record PacketHandler(GameProfile profile) {
                 null, null,
                 0
         ));
+        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 64, 0, 0f, 0f), (byte) 0, 24));
         client.sendPacket(new ClientGameEventPacket((byte) 13, 0f));
 
         client.sendPacket(new ClientSetTickingStatePacket(20, false));
         client.sendPacket(new ClientStepTickPacket(0));
 
         sendChunks(client);
-        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 64, 0, 0f, 0f), (byte) 0, 24));
+    }
+
+    @PacketReceiver
+    public void onPlayerMove(@NotNull ClientConnection connection, @NotNull SetPlayerPositionPacket packet) {
+        handleMove(packet.position(), loadedPlayer.getPosition());
+    }
+
+    @PacketReceiver
+    public void onPlayerMoveAndRotation(@NotNull ClientConnection connection, @NotNull SetPlayerPositionAndRotationPacket packet) {
+        handleMove(packet.position(), loadedPlayer.getPosition());
+    }
+
+    private void handleMove(Pos to, Pos from) {
+        final World world = loadedPlayer.getWorld();
+
+        EventExecutor.emitEvent(new PlayerMoveEvent(loadedPlayer, to));
+        loadedPlayer.setPosition(to);
+
+        // Check if the player is moving within chunks
+        Chunk fromChunk = world.getChunk(from);
+        Chunk toChunk = world.getChunk(to);
+        if (!fromChunk.equals(toChunk)) {
+            EventExecutor.emitEvent(new ChunkSwitchEvent(loadedPlayer, to, fromChunk, toChunk));
+        }
     }
 
     private void sendChunks(@NotNull ClientConnection connection) {
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
 
-        final World world = World.create("testing");
-        for (int x = -7; x < 7; x++) {
-            for (int z = -7; z < 7; z++) {
+        long start = System.currentTimeMillis();
+        World world = loadedPlayer.getWorld();
+        for (int x = -14; x < 14; x++) {
+            for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
-                connection.sendChunkData(chunk);
+                chunk.getSections()[5].fill(1);
 
+                connection.sendChunkData(chunk);
             }
         }
+
+        logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
     }
 }

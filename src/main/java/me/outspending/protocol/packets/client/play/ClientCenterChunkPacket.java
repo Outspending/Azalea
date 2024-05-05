@@ -16,7 +16,7 @@ public record ClientCenterChunkPacket(int chunkX, int chunkZ) implements ClientP
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeVarInt(this.chunkX);
         writer.writeVarInt(this.chunkZ);
     }

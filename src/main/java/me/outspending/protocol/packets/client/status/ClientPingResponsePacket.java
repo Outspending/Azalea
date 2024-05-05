@@ -14,7 +14,7 @@ public record ClientPingResponsePacket(long payload) implements ClientPacket {
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeLong(this.payload);
     }
 

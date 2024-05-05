@@ -64,7 +64,7 @@ public record ClientLoginPlayPacket(
 
     @SneakyThrows
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeInt(this.entityID);
         writer.writeBoolean(this.isHardcore);
         writer.writeVarInt(this.dimensionCount);

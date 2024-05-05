@@ -1,6 +1,7 @@
 package me.outspending.world;
 
 import lombok.Getter;
+import me.outspending.MinecraftServer;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkMap;
 import me.outspending.entity.Entity;
@@ -23,6 +24,8 @@ public class WorldImpl implements World {
 
     public WorldImpl(String name) {
         this.name = name;
+
+        MinecraftServer.getInstance().getServerProcess().getWorldManager().addWorld(this);
     }
 
     @Override

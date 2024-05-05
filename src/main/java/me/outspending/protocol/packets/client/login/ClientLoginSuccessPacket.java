@@ -32,7 +32,7 @@ public record ClientLoginSuccessPacket(UUID uuid, String username, Property[] pr
     }
 
     @Override
-    public void write(PacketWriter writer) {
+    public void write(@NotNull PacketWriter writer) {
         writer.writeUUID(this.uuid);
         writer.writeString(this.username);
 

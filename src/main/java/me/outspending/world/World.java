@@ -38,6 +38,6 @@ public interface World extends Tickable {
     @NotNull Chunk getChunk(int x, int z);
 
     default @NotNull Chunk getChunk(@NotNull Pos position) {
-        return getChunk((int) position.x(), (int) position.z());
+        return getChunk((int) position.x() >> 4, (int) position.z() >> 4);
     }
 }
