@@ -3,17 +3,15 @@ package me.outspending.protocol;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
 import me.outspending.chunk.Chunk;
-import me.outspending.chunk.ChunkMap;
+import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
-import me.outspending.entity.GameProfile;
 import me.outspending.entity.Player;
 import me.outspending.entity.Property;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.ChunkSwitchEvent;
 import me.outspending.events.event.PlayerJoinEvent;
 import me.outspending.events.event.PlayerMoveEvent;
-import me.outspending.events.types.Event;
 import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
@@ -31,6 +29,7 @@ import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.types.Packet;
+import me.outspending.utils.PacketUtils;
 import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -40,6 +39,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public class PacketHandler {
@@ -158,6 +158,11 @@ public class PacketHandler {
         EventExecutor.emitEvent(new PlayerMoveEvent(loadedPlayer, to));
         loadedPlayer.setPosition(to);
 
+        short deltaX = (short) (to.x() - from.x());
+        short deltaY = (short) (to.y() - from.y());
+        short deltaZ = (short) (to.z() - from.z());
+        PacketUtils.sendPacketWithinDistance(new ClientUpdateEntityPositionPacket(loadedPlayer.getEntityID(), deltaX, deltaY, deltaZ, false), to, 50);
+
         // Check if the player is moving within chunks
         Chunk fromChunk = world.getChunk(from);
         Chunk toChunk = world.getChunk(to);
@@ -169,12 +174,21 @@ public class PacketHandler {
     private void sendChunks(@NotNull ClientConnection connection) {
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
 
+        Random random = new Random();
+
         long start = System.currentTimeMillis();
         World world = loadedPlayer.getWorld();
         for (int x = -14; x < 14; x++) {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
-                chunk.getSections()[5].fill(1);
+                ChunkSection section = chunk.getSectionAt(45);
+                for (int xX = 0; xX < 16; xX++) {
+                    for (int yY = 0; yY < 16; yY++) {
+                        for (int zZ = 0; zZ < 16; zZ++) {
+                            section.setBlock(xX, yY, zZ, random.nextInt(100));
+                        }
+                    }
+                }
 
                 connection.sendChunkData(chunk);
             }
