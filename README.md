@@ -4,6 +4,7 @@ My WIP Minecraft Server Protocol
 - [x] Working Protocol
 - [ ] Chunk Loading / Unloading *(Delayed)*
 - [x] Ticks
+- [ ] World System
 - [ ] Multiplayer Support
 - [ ] Packet Compression
 - [ ] Block / Item Registry
