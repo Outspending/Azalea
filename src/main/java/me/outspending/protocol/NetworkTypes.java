@@ -9,6 +9,8 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -340,6 +342,32 @@ public interface NetworkTypes {
         @Override
         public void write(DataOutputStream stream, byte[] type) throws IOException {
             stream.write(type);
+        }
+    };
+
+    NetworkType<Component> TEXT_COMPONENT_TYPE = new NetworkType<>() {
+        @Override
+        public @Nullable Component read(ByteBuffer buffer) {
+            return null;
+        }
+
+        @Override
+        public void write(DataOutputStream stream, Component type) throws IOException {
+
+        }
+    };
+
+    NetworkType<Component> JSON_TEXT_COMPONENT_TYPE = new NetworkType<>() {
+        @Override
+        public @NotNull Component read(ByteBuffer buffer) {
+            final String json = STRING_TYPE.read(buffer);
+            return GsonComponentSerializer.gson().deserialize(json);
+        }
+
+        @Override
+        public void write(DataOutputStream stream, Component type) throws IOException {
+            final String json = GsonComponentSerializer.gson().serialize(type);
+            STRING_TYPE.write(stream, json);
         }
     };
 }

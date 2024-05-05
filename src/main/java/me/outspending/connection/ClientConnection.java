@@ -7,12 +7,16 @@ import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
 import me.outspending.chunk.Chunk;
 import me.outspending.protocol.listener.PacketListener;
+import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
+import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
 import me.outspending.protocol.packets.client.play.ClientChunkDataPacket;
+import me.outspending.protocol.packets.client.play.ClientPlayDisconnectPacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.writer.PacketWriter;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +46,6 @@ public class ClientConnection {
     public PacketListener packetListener;
     public boolean isRunning = true;
 
-    @SneakyThrows
     public ClientConnection(Socket socket) {
         this.socket = socket;
         this.server = MinecraftServer.getInstance();
@@ -58,7 +61,7 @@ public class ClientConnection {
             while (isRunning) {
                 int result = stream.read(BYTE_ARRAY);
                 if (result == -1) {
-                    kick();
+                    kick("Connection closed by remote host");
                     return;
                 }
 
@@ -73,7 +76,20 @@ public class ClientConnection {
         }
     }
 
-    public void kick() {
+    public void kick(String reason) {
+        kick(Component.text(reason));
+    }
+
+    public void kick(Component reason) {
+        switch (state) {
+            case LOGIN -> sendPacket(new ClientLoginDisconnectPacket(reason));
+            case CONFIGURATION -> sendPacket(new ClientConfigurationDisconnectPacket(reason));
+            case PLAY -> sendPacket(new ClientPlayDisconnectPacket(reason));
+            default -> {
+                // Do Nothing
+            }
+        }
+
         try {
             logger.info("Client disconnected: " + socket.getInetAddress());
             socket.close();

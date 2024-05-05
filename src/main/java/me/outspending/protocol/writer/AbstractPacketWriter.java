@@ -1,5 +1,6 @@
 package me.outspending.protocol.writer;
 
+import com.google.common.graph.Network;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.SneakyThrows;
 import me.outspending.NamespacedID;
@@ -11,6 +12,7 @@ import me.outspending.protocol.NetworkTypes;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
@@ -172,6 +174,18 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     @SneakyThrows
     public void writeSlot(@NotNull ItemStack itemStack) {
         NetworkTypes.SLOT_TYPE.write(stream, itemStack);
+    }
+
+    @Override
+    @SneakyThrows
+    public void writeJSONTextComponent(@NotNull Component component) {
+        NetworkTypes.JSON_TEXT_COMPONENT_TYPE.write(stream, component);
+    }
+
+    @Override
+    @SneakyThrows
+    public void writeTextComponent(@NotNull Component component) {
+        NetworkTypes.TEXT_COMPONENT_TYPE.write(stream, component);
     }
 
     @Override

@@ -7,6 +7,7 @@ import me.outspending.position.Location;
 import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.NetworkType;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,8 +61,8 @@ public interface PacketReader {
     float readFloat();
     double readDouble();
     @Nullable String readString();
-    // readTextComponent
-    // readJSONTextComponent
+    @NotNull Component readTextComponent();
+    @Nullable Component readJSONTextComponent();
     @Nullable NamespacedID readNamespacedKey();
     int readVarInt();
     long readVarLong();

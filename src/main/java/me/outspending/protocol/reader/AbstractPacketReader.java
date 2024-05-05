@@ -8,6 +8,7 @@ import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -127,6 +128,16 @@ public abstract class AbstractPacketReader implements PacketReader {
     @Override
     public @Nullable ItemStack readSlot() {
         return NetworkTypes.SLOT_TYPE.read(buffer);
+    }
+
+    @Override
+    public @Nullable Component readJSONTextComponent() {
+        return NetworkTypes.JSON_TEXT_COMPONENT_TYPE.read(buffer);
+    }
+
+    @Override
+    public @NotNull Component readTextComponent() {
+        return NetworkTypes.TEXT_COMPONENT_TYPE.read(buffer);
     }
 
     @Override
