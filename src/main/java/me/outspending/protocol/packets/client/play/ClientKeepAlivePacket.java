@@ -18,11 +18,6 @@ public record ClientKeepAlivePacket(long keepAliveID) implements ClientPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x24;
     }

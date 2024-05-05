@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
-import me.outspending.NamespacedID;
+import me.outspending.chunk.Chunk;
 import me.outspending.protocol.listener.PacketListener;
-import me.outspending.protocol.packets.client.play.ClientLoginPlayPacket;
-import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
+import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
+import me.outspending.protocol.packets.client.play.ClientChunkDataPacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.GroupedPacket;
@@ -17,16 +17,16 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
+import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -42,6 +42,7 @@ public class ClientConnection {
     public PacketListener packetListener;
     public boolean isRunning = true;
 
+    @SneakyThrows
     public ClientConnection(Socket socket) {
         this.socket = socket;
         this.server = MinecraftServer.getInstance();
@@ -51,26 +52,24 @@ public class ClientConnection {
     }
 
     private void run() {
-        synchronized (socket) {
-            try {
-                InputStream stream = socket.getInputStream();
+        try {
+            InputStream stream = socket.getInputStream();
 
-                while (isRunning) {
-                    int result = stream.read(BYTE_ARRAY);
-                    if (result == -1) {
-                        kick();
-                        return;
-                    }
-
-                    byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, result);
-                    ByteBuffer buffer = ByteBuffer.wrap(responseArray);
-
-                    PacketReader reader = PacketReader.createNormalReader(buffer);
-                    packetListener.read(ClientConnection.this, reader);
+            while (isRunning) {
+                int result = stream.read(BYTE_ARRAY);
+                if (result == -1) {
+                    kick();
+                    return;
                 }
-            } catch (IOException | InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
+
+                byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, result);
+                ByteBuffer buffer = ByteBuffer.wrap(responseArray);
+
+                PacketReader reader = PacketReader.createNormalReader(buffer);
+                packetListener.read(ClientConnection.this, reader);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -88,20 +87,50 @@ public class ClientConnection {
         return socket.isConnected() && isRunning;
     }
 
+    public void sendBundled() {
+        sendPacket(new ClientBundleDelimiterPacket());
+    }
+
+    public void sendBundled(Runnable runnable) {
+        sendBundled();
+        runnable.run();
+        sendBundled();
+    }
+
+    public void sendChunkData(Chunk chunk) {
+        sendPacket(new ClientChunkDataPacket(
+                chunk.getChunkX(), chunk.getChunkZ(),
+                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
+                chunk, new ClientChunkDataPacket.BlockEntity[0],
+                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+                new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
+        ));
+    }
+
+    public void sendChunkData(List<Chunk> chunks) {
+        for (Chunk chunk : chunks) {
+            sendChunkData(chunk);
+        }
+    }
+
+    @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (!isOnline()) return;
 
-        try {
+        synchronized (socket) {
             PacketWriter writer = PacketWriter.createNormalWriter(packet);
-            writer.writeToStream(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
+            OutputStream stream = socket.getOutputStream();
+
+            stream.write(writer.toByteArray());
+            writer.flush();
         }
     }
 
     public void sendGroupedPacket(@NotNull GroupedPacket packet) {
-        for (ClientPacket entryPacket : packet.getPackets()) {
-            sendPacket(entryPacket);
-        }
+        sendBundled(() -> {
+            for (ClientPacket entryPacket : packet.getPackets()) {
+                sendPacket(entryPacket);
+            }
+        });
     }
 }

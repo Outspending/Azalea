@@ -22,11 +22,6 @@ public record SetPlayerPositionAndRotationPacket(Pos position, boolean onGround)
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x18;
     }

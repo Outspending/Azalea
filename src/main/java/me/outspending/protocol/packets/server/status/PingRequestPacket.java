@@ -11,11 +11,6 @@ public record PingRequestPacket(long payload) implements ServerPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.STATUS;
-    }
-
-    @Override
     public int id() {
         return 0x01;
     }

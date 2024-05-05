@@ -41,11 +41,6 @@ public record ClientLoginSuccessPacket(UUID uuid, String username, Property[] pr
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.LOGIN;
-    }
-
-    @Override
     public int id() {
         return 0x02;
     }

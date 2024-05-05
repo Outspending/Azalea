@@ -46,7 +46,8 @@ public class CodecHandler {
                     Map.entry(0x22, PlayerCommandPacket::read),
                     Map.entry(0x21, PlayerActionPacket::read),
                     Map.entry(0x20, PlayerAbilitiesPacket::read),
-                    Map.entry(0x00, ConfirmTeleportPacket::read)
+                    Map.entry(0x00, ConfirmTeleportPacket::read),
+                    Map.entry(0x1E, PingRequestPlayPacket::read)
             ))
             .build();
 }

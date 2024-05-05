@@ -19,11 +19,6 @@ public record ClientDisconnectPlayPacket(CompoundBinaryTag reason) implements Cl
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x1B;
     }

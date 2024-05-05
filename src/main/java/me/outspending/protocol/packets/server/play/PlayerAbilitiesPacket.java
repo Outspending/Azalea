@@ -12,11 +12,6 @@ public record PlayerAbilitiesPacket(byte flags) implements ServerPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x20;
     }

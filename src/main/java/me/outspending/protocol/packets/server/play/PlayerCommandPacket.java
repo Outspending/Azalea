@@ -16,11 +16,6 @@ public record PlayerCommandPacket(int entityID, int actionID, int jumpBoost) imp
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x22;
     }

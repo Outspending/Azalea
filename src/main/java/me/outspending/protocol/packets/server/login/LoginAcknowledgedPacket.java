@@ -12,11 +12,6 @@ public record LoginAcknowledgedPacket() implements ServerPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.LOGIN;
-    }
-
-    @Override
     public int id() {
         return 0x03;
     }
