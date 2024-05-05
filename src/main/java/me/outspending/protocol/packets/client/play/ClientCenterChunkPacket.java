@@ -22,11 +22,6 @@ public record ClientCenterChunkPacket(int chunkX, int chunkZ) implements ClientP
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x52;
     }

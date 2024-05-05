@@ -5,11 +5,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import me.outspending.utils.AdventureUtils;
 import me.outspending.utils.ResourceUtils;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -23,8 +21,8 @@ import java.io.InputStream;
 @RequiredArgsConstructor
 public class MinecraftServer {
     private static final Logger logger = LoggerFactory.getLogger(MinecraftServer.class);
+    private static MinecraftServer instance;
 
-    public static MinecraftServer instance;
     public static final int PROTOCOL = 765;
     public static final int COMPRESSION_THRESHOLD = 256;
     public static final String VERSION = "Testing 1.20.4";
@@ -35,7 +33,7 @@ public class MinecraftServer {
     private final ServerProcess serverProcess;
 
     private int maxPlayers = 20;
-    private Component description = AdventureUtils.serializeString("Woah, an MOTD for my mc protocol!");
+    private String description = "Woah, an MOTD for my mc protocol!";
 
     public CompoundBinaryTag REGISTRY_NBT;
 

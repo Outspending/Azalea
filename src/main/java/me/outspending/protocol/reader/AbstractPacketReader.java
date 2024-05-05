@@ -3,6 +3,7 @@ package me.outspending.protocol.reader;
 import lombok.Getter;
 import me.outspending.NamespacedID;
 import me.outspending.Slot;
+import me.outspending.block.ItemStack;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
@@ -124,7 +125,7 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
-    public @Nullable Slot readSlot() {
+    public @Nullable ItemStack readSlot() {
         return NetworkTypes.SLOT_TYPE.read(buffer);
     }
 

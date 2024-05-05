@@ -18,11 +18,6 @@ public record LoginStartPacket(String name, UUID uuid) implements ServerPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.LOGIN;
-    }
-
-    @Override
     public int id() {
         return 0x00;
     }

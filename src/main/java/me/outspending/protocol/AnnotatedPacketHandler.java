@@ -2,11 +2,10 @@ package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
-import me.outspending.chunk.ChunkSection;
+import me.outspending.chunk.Chunk;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.entity.Player;
-import me.outspending.position.Location;
 import me.outspending.position.Pos;
 import me.outspending.protocol.annotations.PacketReceiver;
 import me.outspending.protocol.packets.server.HandshakePacket;
@@ -28,10 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unchecked")
 public class AnnotatedPacketHandler {
@@ -64,7 +61,6 @@ public class AnnotatedPacketHandler {
     @PacketReceiver
     public void onStatusRequest(@NotNull ClientConnection client, @NotNull StatusRequestPacket packet) {
         MinecraftServer server = client.getServer();
-        logger.info("Sending status response..");
         client.sendPacket(new ClientStatusResponsePacket(
                 new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
                 new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
@@ -83,7 +79,9 @@ public class AnnotatedPacketHandler {
         String name = packet.name();
         UUID uuid = packet.uuid();
 
-        server.getServerProcess().getPlayerManager().addPlayer(new Player(client, name, uuid));
+        Player connectedPlayer = new Player(client, name, uuid);
+        server.getServerProcess().getPlayerManager().addPlayer(connectedPlayer);
+
         // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
         client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new ClientLoginSuccessPacket.Property[0]));
     }
@@ -122,19 +120,16 @@ public class AnnotatedPacketHandler {
 
     private void sendChunks(@NotNull ClientConnection connection) {
         connection.sendPacket(new ClientCenterChunkPacket(0, 0));
+
+        long time = System.currentTimeMillis();
         for (int x = -7; x < 7; x++) {
             for (int z = -7; z < 7; z++) {
-                connection.sendPacket(new ClientChunkDataPacket(
-                        x, z,
-                        ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                        ChunkSection.createSections(),
-                        new ClientChunkDataPacket.BlockEntity[0],
-                        new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                        new ClientChunkDataPacket.Skylight[0], new ClientChunkDataPacket.Blocklight[0]
-                ));
+                Chunk chunk = new Chunk(x, z);
+                chunk.getChunkSections()[3].fill(1);
 
-                connection.sendPacket(new ClientBlockUpdatePacket(new Location(x, 64, z), 1));
+                connection.sendChunkData(chunk);
             }
         }
+        logger.info("Took " + (System.currentTimeMillis() - time) + "ms to send chunks");
     }
 }

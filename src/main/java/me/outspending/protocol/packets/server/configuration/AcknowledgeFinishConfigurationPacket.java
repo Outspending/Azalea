@@ -12,11 +12,6 @@ public record AcknowledgeFinishConfigurationPacket() implements ServerPacket {
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.CONFIGURATION;
-    }
-
-    @Override
     public int id() {
         return 0x02;
     }

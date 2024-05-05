@@ -2,6 +2,7 @@ package me.outspending.protocol.writer;
 
 import me.outspending.NamespacedID;
 import me.outspending.Slot;
+import me.outspending.block.ItemStack;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.types.ClientPacket;
@@ -9,7 +10,10 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -23,15 +27,7 @@ public interface PacketWriter {
         return new NormalPacketWriter(packet);
     }
 
-    default int getPacketLength(ClientPacket packet) {
-        PacketWriter writer = new NormalPacketWriter();
-        writer.writeVarInt(packet.id());
-        packet.write(writer);
-
-        return writer.getSize();
-    }
-
-    <T> void write(@NotNull NetworkType<T> type, T value);
+    <T> void write(@NotNull NetworkType<T> type, T value) throws IOException;
     boolean isCompressed();
 
     int getSize();
@@ -43,7 +39,7 @@ public interface PacketWriter {
     void writeShort(short s);
     void writeUnsignedShort(int s);
     void writeInt(int i);
-    void writeLong(long l); 
+    void writeLong(long l);
     void writeFloat(float f);
     void writeDouble(double d);
     void writeString(@NotNull String s);
@@ -53,7 +49,7 @@ public interface PacketWriter {
     void writeVarInt(int i);
     void writeVarLong(long l);
     // writeEntityMetaData
-    void writeSlot(@NotNull Slot slot);
+    void writeSlot(@NotNull ItemStack itemStack);
     void writeNBTCompound(@NotNull CompoundBinaryTag tag);
     void writeLocation(@NotNull Location location);
     // writeAngle
@@ -65,8 +61,11 @@ public interface PacketWriter {
     <T extends Enum<?>> void writeEnum(@NotNull T e);
 
     void writeByteArray(byte[] array);
+    void writeByteArray(byte[] array, int offset, int length);
     void writeLongArray(long[] array);
 
-    void writeStream(ByteArrayOutputStream stream);
-    void writeToStream(OutputStream stream);
+    void write(int b) throws IOException;
+
+    byte[] toByteArray();
+    void flush();
 }

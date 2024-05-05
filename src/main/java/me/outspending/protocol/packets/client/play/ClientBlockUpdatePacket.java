@@ -23,11 +23,6 @@ public record ClientBlockUpdatePacket(Location position, int blockID) implements
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x09;
     }

@@ -14,11 +14,6 @@ public record PluginMessageConfigurationPacket(String channel, byte[] data) impl
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.CONFIGURATION;
-    }
-
-    @Override
     public int id() {
         return 0x01;
     }

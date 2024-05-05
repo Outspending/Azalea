@@ -16,11 +16,6 @@ public record PlayerRotationPacket(float yaw, float pitch, boolean onGround) imp
     }
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.PLAY;
-    }
-
-    @Override
     public int id() {
         return 0x19;
     }

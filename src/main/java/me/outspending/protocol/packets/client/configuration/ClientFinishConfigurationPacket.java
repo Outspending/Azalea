@@ -15,11 +15,6 @@ public record ClientFinishConfigurationPacket() implements ClientPacket {
     public void write(PacketWriter writer) {}
 
     @Override
-    public @NotNull GameState state() {
-        return GameState.CONFIGURATION;
-    }
-
-    @Override
     public int id() {
         return 0x02;
     }
