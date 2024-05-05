@@ -6,6 +6,7 @@ import me.outspending.protocol.AnnotatedPacketHandler;
 import me.outspending.protocol.codec.CodecHandler;
 import me.outspending.protocol.reader.NormalPacketReader;
 import me.outspending.protocol.reader.PacketReader;
+import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.Packet;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class PacketListener {
 //            connection.kick();
             return;
         }
-        Packet readPacket = packetFunction.apply(reader);
+        ServerPacket readPacket = packetFunction.apply(reader);
         packetHandler.handle(connection, readPacket);
 
         read(connection, readPacket);
@@ -46,7 +47,7 @@ public class PacketListener {
         }
     }
 
-    public void read(@NotNull ClientConnection connection, @NotNull Packet packet) {
+    public void read(@NotNull ClientConnection connection, @NotNull ServerPacket packet) {
 
     }
 }

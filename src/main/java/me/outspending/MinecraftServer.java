@@ -5,8 +5,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+<<<<<<< Updated upstream
 import me.outspending.utils.AdventureUtils;
+=======
+import me.outspending.entity.Player;
+>>>>>>> Stashed changes
 import me.outspending.utils.ResourceUtils;
+import me.outspending.world.World;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
@@ -17,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -33,6 +39,7 @@ public class MinecraftServer {
     private final int port;
     private final ServerConnection serverConnection;
     private final ServerProcess serverProcess;
+    private final TickHandler tickHandler = new TickHandler();
 
     private int maxPlayers = 20;
     private Component description = AdventureUtils.serializeString("Woah, an MOTD for my mc protocol!");
@@ -77,6 +84,18 @@ public class MinecraftServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Player getPlayer(@NotNull String username) {
+        return serverProcess.getPlayerManager().getPlayer(username);
+    }
+
+    public Player getPlayer(@NotNull UUID uuid) {
+        return serverProcess.getPlayerManager().getPlayer(uuid);
+    }
+
+    public World getWorld(@NotNull String name) {
+        return serverProcess.getWorldManager().getWorld(name);
     }
 
     public void start() {
