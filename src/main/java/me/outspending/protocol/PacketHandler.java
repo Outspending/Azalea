@@ -6,6 +6,7 @@ import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
+import me.outspending.entity.Entity;
 import me.outspending.entity.Player;
 import me.outspending.entity.Property;
 import me.outspending.events.EventExecutor;
@@ -37,10 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class PacketHandler {
     private static final Logger logger = LoggerFactory.getLogger(PacketHandler.class);
@@ -111,14 +109,14 @@ public class PacketHandler {
         logger.info("Configuration has finished!");
         client.setState(GameState.PLAY);
 
-        client.getServer().getServerProcess().getPlayerManager().addPlayer(loadedPlayer);
         EventExecutor.emitEvent(new PlayerJoinEvent(loadedPlayer));
-
         if (loadedPlayer.getWorld() == null) {
             logger.error("Player's world is null, cannot spawn in. Make sure to set the world on PlayerJoinEvent!");
             loadedPlayer.kick("Failed to join world");
             return;
         }
+
+        client.getServer().getServerProcess().getPlayerManager().addPlayer(loadedPlayer);
 
         final NamespacedID overworld = new NamespacedID("overworld");
         client.sendPacket(new ClientLoginPlayPacket(
@@ -134,34 +132,42 @@ public class PacketHandler {
                 0
         ));
         client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 64, 0, 0f, 0f), (byte) 0, 24));
+
+        loadedPlayer.updateViewers();
+
+
+        loadedPlayer.getViewers().forEach(viewer -> {
+            loadedPlayer.sendAddPlayerPacket(viewer);
+            viewer.sendAddPlayerPacket(loadedPlayer);
+        });
+
         client.sendPacket(new ClientGameEventPacket((byte) 13, 0f));
 
         client.sendPacket(new ClientSetTickingStatePacket(20, false));
         client.sendPacket(new ClientStepTickPacket(0));
 
-        sendChunks(client);
+        sendChunks();
     }
 
     @PacketReceiver
     public void onPlayerMove(@NotNull ClientConnection connection, @NotNull SetPlayerPositionPacket packet) {
-        handleMove(packet.position(), loadedPlayer.getPosition());
+        handleMove(packet.position(), loadedPlayer.getPosition(), packet.isGround());
     }
 
     @PacketReceiver
     public void onPlayerMoveAndRotation(@NotNull ClientConnection connection, @NotNull SetPlayerPositionAndRotationPacket packet) {
-        handleMove(packet.position(), loadedPlayer.getPosition());
+        handleMove(packet.position(), loadedPlayer.getPosition(), packet.onGround());
     }
 
-    private void handleMove(Pos to, Pos from) {
+    private void handleMove(Pos to, Pos from, boolean onGround) {
         final World world = loadedPlayer.getWorld();
 
         EventExecutor.emitEvent(new PlayerMoveEvent(loadedPlayer, to));
+
+        loadedPlayer.setOnGround(onGround);
         loadedPlayer.setPosition(to);
 
-        short deltaX = (short) (to.x() - from.x());
-        short deltaY = (short) (to.y() - from.y());
-        short deltaZ = (short) (to.z() - from.z());
-        PacketUtils.sendPacketWithinDistance(new ClientUpdateEntityPositionPacket(loadedPlayer.getEntityID(), deltaX, deltaY, deltaZ, false), to, 50);
+        loadedPlayer.getViewers().forEach(viewer -> viewer.sendPlayerMovementPacket(loadedPlayer, to, from));
 
         // Check if the player is moving within chunks
         Chunk fromChunk = world.getChunk(from);
@@ -171,29 +177,20 @@ public class PacketHandler {
         }
     }
 
-    private void sendChunks(@NotNull ClientConnection connection) {
-        connection.sendPacket(new ClientCenterChunkPacket(0, 0));
-
-        Random random = new Random();
+    private void sendChunks() {
+        loadedPlayer.sendPacket(new ClientCenterChunkPacket(0, 0));
 
         long start = System.currentTimeMillis();
         World world = loadedPlayer.getWorld();
-        for (int x = -14; x < 14; x++) {
-            for (int z = -14; z < 14; z++) {
+        for (int x = -4; x < 4; x++) {
+            for (int z = -4; z < 4; z++) {
                 Chunk chunk = world.getChunk(x, z);
-                ChunkSection section = chunk.getSectionAt(45);
-                for (int xX = 0; xX < 16; xX++) {
-                    for (int yY = 0; yY < 16; yY++) {
-                        for (int zZ = 0; zZ < 16; zZ++) {
-                            section.setBlock(xX, yY, zZ, random.nextInt(100));
-                        }
-                    }
-                }
+                chunk.getSections()[4].fill(1);
 
-                connection.sendChunkData(chunk);
+                loadedPlayer.sendChunkData(chunk);
             }
         }
 
-        logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
+        logger.info("Finished sending {} chunks in: {}MS", 8*8, System.currentTimeMillis() - start);
     }
 }

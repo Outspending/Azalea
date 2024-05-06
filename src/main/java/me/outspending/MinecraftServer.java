@@ -18,7 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -92,6 +94,14 @@ public class MinecraftServer {
 
     public World getWorld(@NotNull String name) {
         return serverProcess.getWorldManager().getWorld(name);
+    }
+
+    public Collection<Player> getAllPlayers() {
+        return serverProcess.getPlayerManager().getAllPlayers();
+    }
+
+    public Collection<Player> getAllPlayers(Predicate<Player> playerPredicate) {
+        return serverProcess.getPlayerManager().getAllPlayers(playerPredicate);
     }
 
     public void start() {

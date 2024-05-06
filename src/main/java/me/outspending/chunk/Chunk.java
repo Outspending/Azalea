@@ -1,6 +1,7 @@
 package me.outspending.chunk;
 
 import me.outspending.entity.Entity;
+import me.outspending.position.Pos;
 import me.outspending.protocol.Writable;
 import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,13 @@ public interface Chunk extends Writable {
 
     int getChunkZ();
 
+    int getHighestBlock(int x, int z);
+
     @Nullable ChunkSection getSectionAt(int y);
+
+    @NotNull ChunkSection[] getSectionsBelow(int y);
+
+    @NotNull ChunkSection[] getSectionsAbove(int y);
 
     @NotNull List<Entity> getEntities();
 

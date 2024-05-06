@@ -8,6 +8,7 @@ import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public final class ChunkMap {
 

@@ -5,6 +5,7 @@ import me.outspending.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public final class PlayerManager {
     private final Map<UUID, Player> players = new HashMap<>();
@@ -22,6 +23,12 @@ public final class PlayerManager {
 
     public Player getPlayer(UUID uuid) {
         return players.get(uuid);
+    }
+
+    public Collection<Player> getAllPlayers(Predicate<Player> playerPredicate) {
+        return players.values().stream()
+                .filter(playerPredicate)
+                .toList();
     }
 
     public Collection<Player> getAllPlayers() {

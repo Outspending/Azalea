@@ -6,11 +6,8 @@ import it.unimi.dsi.fastutil.ints.IntListIterator;
 import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ChunkSection implements Writable {
-    private static final Logger logger = LoggerFactory.getLogger(ChunkSection.class);
     private static final int CHUNK_SECTION_SIZE = 24;
     private static final int SECTION_SIZE = 16 * 16 * 16;
     private static final byte GLOBAL_PALETTE_BIT_SIZE = 8;
@@ -87,6 +84,17 @@ public class ChunkSection implements Writable {
 
     public long getBlock(int x, int y, int z) {
         return this.data[getBlockIndex(x, y, z)];
+    }
+
+    public long getHighestBlockAt(int x, int z) {
+        for (int y = 16; y > 0; y--) {
+            long block = getBlock(x, y, z);
+            if (block != 0) {
+                return block;
+            }
+        }
+        
+        return 16;
     }
 
     public void fill(int blockID) {

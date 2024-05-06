@@ -1,6 +1,5 @@
 package me.outspending.chunk;
 
-import lombok.Getter;
 import me.outspending.entity.Entity;
 import me.outspending.position.Pos;
 import me.outspending.protocol.writer.PacketWriter;
@@ -8,6 +7,8 @@ import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public record ChunkImpl(int chunkX, int chunkZ, World world, ChunkSection[] sections) implements Chunk {
@@ -51,8 +52,46 @@ public record ChunkImpl(int chunkX, int chunkZ, World world, ChunkSection[] sect
     }
 
     @Override
+    public int getHighestBlock(int x, int z) {
+        List<ChunkSection> revSections = Arrays.asList(sections);
+        Collections.reverse(revSections);
+
+        int index = 0;
+        for (ChunkSection section : revSections) {
+            long highestBlock = section.getHighestBlockAt(x, z);
+            index += (int) highestBlock;
+
+            if (highestBlock != 16)
+                return index;
+        }
+
+        return index;
+    }
+
+    @Override
     public @Nullable ChunkSection getSectionAt(int y) {
         return sections[y >> 4];
+    }
+
+    @Override
+    public @NotNull ChunkSection[] getSectionsBelow(int y) {
+        int delta = Math.max(0, y / 16);
+        ChunkSection[] belowSections = new ChunkSection[delta];
+        if (delta > 0) {
+            System.arraycopy(sections, 0, belowSections, 0, delta);
+        }
+        return belowSections;
+    }
+
+    @Override
+    public @NotNull ChunkSection[] getSectionsAbove(int y) {
+        int delta = Math.max(0, y / 16);
+        int aboveSize = Math.max(0, 16 - delta);
+        ChunkSection[] aboveSections = new ChunkSection[aboveSize];
+        if (aboveSize > 0) {
+            System.arraycopy(sections, delta, aboveSections, 0, aboveSize);
+        }
+        return aboveSections;
     }
 
     @Override

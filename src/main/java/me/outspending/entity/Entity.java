@@ -6,10 +6,7 @@ import me.outspending.world.World;
 
 import java.util.List;
 
-public interface Entity {
-    List<Chunk> getChunksInDistance(int distance);
-
-    List<Chunk> getLoadedChunks();
+public interface Entity extends Viewable {
 
     Pos getPosition();
 
@@ -24,4 +21,5 @@ public interface Entity {
     default double distance(Pos position) {
         return getPosition().distance(position);
     }
+
 }

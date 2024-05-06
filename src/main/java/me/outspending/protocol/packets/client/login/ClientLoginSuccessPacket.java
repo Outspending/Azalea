@@ -23,22 +23,15 @@ public record ClientLoginSuccessPacket(UUID uuid, String username, Property[] pr
                 ), Property[]::new));
     }
 
-    private void writeProperty(@NotNull Property property, @NotNull PacketWriter writer) {
-        writer.writeString(property.name());
-        writer.writeString(property.value());
-        if (property.isSigned()) {
-            writer.writeString(property.signature());
-        }
-    }
-
     @Override
     public void write(@NotNull PacketWriter writer) {
         writer.writeUUID(this.uuid);
         writer.writeString(this.username);
 
         writer.writeVarInt(this.properties.length);
-        writer.writeArray(this.properties, property -> writeProperty(property, writer));
-
+        for (Property property : properties) {
+            property.write(writer);
+        }
     }
 
     @Override

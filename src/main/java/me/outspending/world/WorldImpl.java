@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
 public class WorldImpl implements World {
@@ -54,11 +55,6 @@ public class WorldImpl implements World {
     @Override
     public @NotNull List<Chunk> getLoadedChunks() {
         return chunkMap.getAllChunks();
-    }
-
-    @Override
-    public @NotNull List<Chunk> getChunksInDistance(@NotNull Pos position, int distance) {
-        return List.of();
     }
 
     @Override

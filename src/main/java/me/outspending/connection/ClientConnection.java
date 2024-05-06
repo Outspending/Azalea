@@ -15,11 +15,13 @@ import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
 import me.outspending.protocol.packets.client.play.ClientChunkDataPacket;
 import me.outspending.protocol.packets.client.play.ClientPlayDisconnectPacket;
+import me.outspending.protocol.packets.client.play.ClientPlayerInfoUpdatePacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,13 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -116,16 +113,6 @@ public class ClientConnection {
         sendBundled();
     }
 
-    public void sendChunkData(Chunk chunk) {
-        sendPacket(new ClientChunkDataPacket(
-                chunk.getChunkX(), chunk.getChunkZ(),
-                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                chunk, new BlockEntity[0],
-                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                new Skylight[0], new Blocklight[0]
-        ));
-    }
-
     @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (!isOnline()) return;
@@ -146,4 +133,6 @@ public class ClientConnection {
             }
         });
     }
+
+
 }

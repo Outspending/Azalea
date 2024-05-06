@@ -18,7 +18,8 @@ import java.util.function.Function;
 
 public class PacketListener {
     private static final Logger logger = LoggerFactory.getLogger(PacketListener.class);
-    private static final PacketHandler handler = new PacketHandler();
+
+    private final PacketHandler handler = new PacketHandler();
 
     @SneakyThrows
     public void read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
@@ -38,7 +39,6 @@ public class PacketListener {
         read(connection, readPacket);
 
         if (reader.hasAnotherPacket()) {
-            logger.info("Reading remaining bytes for packet: " + id);
             byte[] remaining = reader.getRemainingBytes();
             ByteBuffer buffer = ByteBuffer.allocate(remaining.length);
             buffer.put(remaining);
