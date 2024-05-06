@@ -1,10 +1,7 @@
 package me.outspending.entity;
 
-import me.outspending.chunk.Chunk;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
-
-import java.util.List;
 
 public interface Entity extends Viewable {
 

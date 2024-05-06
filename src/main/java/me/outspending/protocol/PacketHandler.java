@@ -106,47 +106,7 @@ public class PacketHandler {
 
     @PacketReceiver
     public void onAcknowledgeConfiguration(@NotNull ClientConnection client, @NotNull AcknowledgeFinishConfigurationPacket packet) {
-        logger.info("Configuration has finished!");
-        client.setState(GameState.PLAY);
-
-        EventExecutor.emitEvent(new PlayerJoinEvent(loadedPlayer));
-        if (loadedPlayer.getWorld() == null) {
-            logger.error("Player's world is null, cannot spawn in. Make sure to set the world on PlayerJoinEvent!");
-            loadedPlayer.kick("Failed to join world");
-            return;
-        }
-
-        client.getServer().getServerProcess().getPlayerManager().addPlayer(loadedPlayer);
-
-        final NamespacedID overworld = new NamespacedID("overworld");
-        client.sendPacket(new ClientLoginPlayPacket(
-                273, false, 1,
-                new NamespacedID[]{overworld}, 20,
-                10, 8, false,
-                true, false,
-                overworld, overworld,
-                0L,
-                (byte) 1, (byte) -1,
-                false, false, false,
-                null, null,
-                0
-        ));
-        client.sendPacket(new ClientSynchronizePlayerPosition(new Pos(0, 64, 0, 0f, 0f), (byte) 0, 24));
-
-        loadedPlayer.updateViewers();
-
-
-        loadedPlayer.getViewers().forEach(viewer -> {
-            loadedPlayer.sendAddPlayerPacket(viewer);
-            viewer.sendAddPlayerPacket(loadedPlayer);
-        });
-
-        client.sendPacket(new ClientGameEventPacket((byte) 13, 0f));
-
-        client.sendPacket(new ClientSetTickingStatePacket(20, false));
-        client.sendPacket(new ClientStepTickPacket(0));
-
-        sendChunks();
+        loadedPlayer.handleConfigurationToPlay();
     }
 
     @PacketReceiver
@@ -175,22 +135,5 @@ public class PacketHandler {
         if (!fromChunk.equals(toChunk)) {
             EventExecutor.emitEvent(new ChunkSwitchEvent(loadedPlayer, to, fromChunk, toChunk));
         }
-    }
-
-    private void sendChunks() {
-        loadedPlayer.sendPacket(new ClientCenterChunkPacket(0, 0));
-
-        long start = System.currentTimeMillis();
-        World world = loadedPlayer.getWorld();
-        for (int x = -4; x < 4; x++) {
-            for (int z = -4; z < 4; z++) {
-                Chunk chunk = world.getChunk(x, z);
-                chunk.getSections()[4].fill(1);
-
-                loadedPlayer.sendChunkData(chunk);
-            }
-        }
-
-        logger.info("Finished sending {} chunks in: {}MS", 8*8, System.currentTimeMillis() - start);
     }
 }
