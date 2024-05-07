@@ -1,5 +1,6 @@
 package me.outspending.entity;
 
+import me.outspending.Tickable;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
 
@@ -17,6 +18,10 @@ public interface Entity extends Viewable {
 
     default double distance(Pos position) {
         return getPosition().distance(position);
+    }
+
+    default boolean canTick() {
+        return this instanceof Tickable;
     }
 
 }

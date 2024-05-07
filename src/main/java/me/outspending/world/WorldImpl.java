@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 
 @Getter
 public class WorldImpl implements World {
@@ -55,6 +56,16 @@ public class WorldImpl implements World {
     @Override
     public @NotNull List<Chunk> getLoadedChunks() {
         return chunkMap.getAllChunks();
+    }
+
+    @Override
+    public @NotNull List<Chunk> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance) {
+        return chunkMap.getChunksRange(centerPosition, chunkDistance);
+    }
+
+    @Override
+    public @NotNull List<Chunk> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance, Predicate<Chunk> predicate) {
+        return chunkMap.getChunksRange(centerPosition, chunkDistance, predicate);
     }
 
     @Override

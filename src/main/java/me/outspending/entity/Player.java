@@ -39,7 +39,7 @@ public class Player implements LivingEntity, TickingEntity {
     private final UUID uuid;
 
     private boolean isHardcore = false;
-    private int viewDistance = 10 * 5;
+    private int viewDistance = 12;
     private int simulationDistance = 8 * 5;
     private boolean onGround = false;
 
@@ -144,6 +144,7 @@ public class Player implements LivingEntity, TickingEntity {
 
     @ApiStatus.Internal
     public void sendChunkData(Chunk chunk) {
+        chunk.setIsLoaded(true);
         sendPacket(new ClientChunkDataPacket(
                 chunk.getChunkX(), chunk.getChunkZ(),
                 ClientChunkDataPacket.EMPTY_HEIGHTMAP,

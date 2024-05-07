@@ -8,7 +8,6 @@ import me.outspending.position.Pos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 public interface World extends Tickable {
@@ -33,6 +32,10 @@ public interface World extends Tickable {
     void removeEntity(@NotNull Entity entity);
 
     @NotNull List<Chunk> getLoadedChunks();
+
+    @NotNull List<Chunk> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance);
+
+    @NotNull List<Chunk> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance, Predicate<Chunk> predicate);
 
     @NotNull Chunk getChunk(int x, int z);
 

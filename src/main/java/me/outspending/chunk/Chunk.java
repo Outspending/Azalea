@@ -45,6 +45,12 @@ public interface Chunk extends Writable {
 
     @NotNull List<Entity> getEntities();
 
+    boolean isLoaded();
+
+    void setIsLoaded(boolean isLoaded);
+
+    void load();
+
     void unload();
 
 }

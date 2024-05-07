@@ -1,5 +1,8 @@
 package me.outspending.chunk;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import me.outspending.entity.Entity;
 import me.outspending.position.Pos;
 import me.outspending.protocol.writer.PacketWriter;
@@ -11,7 +14,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public record ChunkImpl(int chunkX, int chunkZ, World world, ChunkSection[] sections) implements Chunk {
+@Getter
+public class ChunkImpl implements Chunk {
+    private boolean isLoaded = false;
+
+    private final int chunkX;
+    private final int chunkZ;
+    private final World world;
+    private final ChunkSection[] sections;
+
+    public ChunkImpl(int chunkX, int chunkZ, World world, ChunkSection[] sections) {
+        this.chunkX = chunkX;
+        this.chunkZ = chunkZ;
+        this.world = world;
+        this.sections = sections;
+    }
 
     public ChunkImpl(int chunkX, int chunkZ, World world) {
         this(chunkX, chunkZ, world, ChunkSection.generateChunkSections());
@@ -103,6 +120,16 @@ public record ChunkImpl(int chunkX, int chunkZ, World world, ChunkSection[] sect
 
             return entityChunkX == chunkX && entityChunkZ == chunkZ;
         });
+    }
+
+    @Override
+    public void setIsLoaded(boolean isLoaded) {
+        this.isLoaded = isLoaded;
+    }
+
+    @Override
+    public void load() {
+
     }
 
     @Override
