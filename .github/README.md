@@ -27,9 +27,9 @@ I'm not planning on finishing it anytime soon as I want to add more features and
 *This list is in order on what is going to be worked on.*
 
 - [x] Working Protocol
-- [ ] Chunk Loading / Unloading *(Delayed)*
+- [x] Chunk Loading / Unloading
 - [x] Ticks
-- [ ] World System
+- [x] World System
 - [ ] Multiplayer Support
 - [ ] Packet Compression
 - [ ] Block / Item Registry
