@@ -4,6 +4,7 @@ import me.outspending.Tickable;
 import me.outspending.chunk.Chunk;
 import me.outspending.entity.Entity;
 import me.outspending.entity.Player;
+import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +27,8 @@ public interface World extends Tickable {
     @NotNull String getName();
 
     @NotNull List<Player> getPlayers();
+
+    @NotNull WorldGenerator getGenerator();
 
     void addEntity(@NotNull Entity entity);
 

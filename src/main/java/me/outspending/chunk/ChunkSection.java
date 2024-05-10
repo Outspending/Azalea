@@ -3,11 +3,13 @@ package me.outspending.chunk;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntListIterator;
+import me.outspending.generation.BlockGetter;
+import me.outspending.generation.BlockSetter;
 import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public class ChunkSection implements Writable {
+public class ChunkSection implements Writable, BlockGetter, BlockSetter {
     private static final int CHUNK_SECTION_SIZE = 24;
     private static final int SECTION_SIZE = 16 * 16 * 16;
     private static final byte GLOBAL_PALETTE_BIT_SIZE = 8;
@@ -64,6 +66,7 @@ public class ChunkSection implements Writable {
         return (y * 16 * 16) + (z * 16) + x;
     }
 
+    @Override
     public void setBlock(int x, int y, int z, int blockID) {
         if (!palette.contains(blockID)) {
             palette.add(blockID);
@@ -82,8 +85,9 @@ public class ChunkSection implements Writable {
         this.data[index / BLOCKS_PER_LONG] = l;
     }
 
-    public long getBlock(int x, int y, int z) {
-        return this.data[getBlockIndex(x, y, z)];
+    @Override
+    public int getBlock(int x, int y, int z) {
+        return (int) this.data[getBlockIndex(x, y, z)];
     }
 
     public long getHighestBlockAt(int x, int z) {
@@ -93,18 +97,8 @@ public class ChunkSection implements Writable {
                 return block;
             }
         }
-        
-        return 16;
-    }
 
-    public void fill(int blockID) {
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
-                for (int z = 0; z < 16; z++) {
-                    setBlock(x, y, z, blockID);
-                }
-            }
-        }
+        return 16;
     }
 
     public boolean isEmpty() {

@@ -1,7 +1,8 @@
 package me.outspending.chunk;
 
 import me.outspending.entity.Entity;
-import me.outspending.position.Pos;
+import me.outspending.generation.BlockGetter;
+import me.outspending.generation.BlockSetter;
 import me.outspending.protocol.Writable;
 import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface Chunk extends Writable {
+public interface Chunk extends Writable, BlockGetter, BlockSetter {
 
     static @NotNull Chunk create(int chunkX, int chunkZ, @NotNull World world, @NotNull ChunkSection[] sections) {
         return new ChunkImpl(chunkX, chunkZ, world, sections);
@@ -22,10 +23,6 @@ public interface Chunk extends Writable {
     default int getChunkIndex(int x, int z) {
         return (x << 4) | z;
     }
-
-    void setBlock(int x, int y, int z, int blockID);
-
-    int getBlock(int x, int y, int z);
 
     @NotNull ChunkSection[] getSections();
 

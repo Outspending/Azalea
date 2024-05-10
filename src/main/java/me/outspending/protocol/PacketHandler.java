@@ -51,7 +51,10 @@ public class PacketHandler {
             if (method.isAnnotationPresent(PacketReceiver.class)) {
                 Class<?>[] params = method.getParameterTypes();
                 if (params.length == 2) {
+
+                    @SuppressWarnings("unchecked")
                     Class<? extends Packet> packetClass = (Class<? extends Packet>) params[1];
+
                     PACKET_HANDLERS.put(packetClass, method);
                 }
             }

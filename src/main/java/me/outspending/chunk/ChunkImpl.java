@@ -1,8 +1,6 @@
 package me.outspending.chunk;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import me.outspending.entity.Entity;
 import me.outspending.position.Pos;
 import me.outspending.protocol.writer.PacketWriter;
@@ -45,7 +43,7 @@ public class ChunkImpl implements Chunk {
     @Override
     public int getBlock(int x, int y, int z) {
         final ChunkSection section = getSectionAt(y);
-        return section != null ? (int) section.getBlock(x, y, z) : 0;
+        return section != null ? section.getBlock(x, y, z) : 0;
     }
 
     @Override
@@ -143,5 +141,4 @@ public class ChunkImpl implements Chunk {
             section.write(writer);
         }
     }
-
 }

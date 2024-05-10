@@ -13,6 +13,7 @@ import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.PlayerJoinEvent;
+import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
@@ -183,10 +184,13 @@ public class Player implements LivingEntity, TickingEntity {
         sendPacket(new ClientCenterChunkPacket(positionChunk.getChunkX(), positionChunk.getChunkZ()));
 
         Set<Chunk> chunks = new HashSet<>();
+        WorldGenerator generator = world.getGenerator();
         for (int x = -14; x < 14; x++) {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
-                chunk.getSections()[6].fill(1);
+                generator.generate(chunk, chunkGenerator -> {
+                    chunkGenerator.fillSection(4, 1);
+                });
 
                 chunks.add(chunk);
             }

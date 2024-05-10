@@ -5,32 +5,33 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
-import me.outspending.chunk.Chunk;
-import me.outspending.chunk.light.Blocklight;
-import me.outspending.chunk.light.Skylight;
-import me.outspending.entity.BlockEntity;
-import me.outspending.protocol.listener.PacketListener;
+import me.outspending.events.EventExecutor;
+import me.outspending.events.event.ClientPacketRecieveEvent;
+import me.outspending.events.event.ServerPacketRecieveEvent;
+import me.outspending.protocol.PacketHandler;
+import me.outspending.protocol.PacketListener;
+import me.outspending.protocol.codec.CodecHandler;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
-import me.outspending.protocol.packets.client.play.ClientChunkDataPacket;
 import me.outspending.protocol.packets.client.play.ClientPlayDisconnectPacket;
-import me.outspending.protocol.packets.client.play.ClientPlayerInfoUpdatePacket;
+import me.outspending.protocol.reader.NormalPacketReader;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.GroupedPacket;
+import me.outspending.protocol.types.ServerPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.BitSet;
+import java.util.function.Function;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -43,13 +44,15 @@ public class ClientConnection {
     public final MinecraftServer server;
     public GameState state = GameState.HANDSHAKE;
 
-    public PacketListener packetListener;
     public boolean isRunning = true;
+
+    private final PacketHandler handler = new PacketHandler();
+    private PacketListener<ClientPacket> clientPacketListener;
+    private PacketListener<ServerPacket> serverPacketListener;
 
     public ClientConnection(Socket socket) {
         this.socket = socket;
         this.server = MinecraftServer.getInstance();
-        this.packetListener = new PacketListener();
 
         run();
     }
@@ -69,9 +72,38 @@ public class ClientConnection {
                 ByteBuffer buffer = ByteBuffer.wrap(responseArray);
 
                 PacketReader reader = PacketReader.createNormalReader(buffer);
-                packetListener.read(ClientConnection.this, reader);
+                handlePacket(reader);
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handlePacket(@NotNull PacketReader reader) {
+        try {
+            int id = reader.getPacketID();
+
+            Function<PacketReader, ServerPacket> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
+            if (packetFunction == null) {
+                logger.info(String.format("Unknown packet ID: %d, in state: %s", id, state.name()));
+                return;
+            }
+            ServerPacket readPacket = packetFunction.apply(reader);
+            handler.handle(this, readPacket);
+
+            EventExecutor.emitEvent(new ServerPacketRecieveEvent(readPacket));
+            if (serverPacketListener != null)
+                serverPacketListener.onPacketReceive(readPacket);
+
+            if (reader.hasAnotherPacket()) {
+                byte[] remaining = reader.getRemainingBytes();
+                ByteBuffer buffer = ByteBuffer.allocate(remaining.length);
+                buffer.put(remaining);
+                buffer.flip();
+
+                handlePacket(new NormalPacketReader(buffer));
+            }
+        } catch (InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -120,6 +152,10 @@ public class ClientConnection {
         synchronized (socket) {
             PacketWriter writer = PacketWriter.createNormalWriter(packet);
             OutputStream stream = socket.getOutputStream();
+
+            EventExecutor.emitEvent(new ClientPacketRecieveEvent(packet, this));
+            if (clientPacketListener != null)
+                clientPacketListener.onPacketReceive(packet);
 
             stream.write(writer.toByteArray());
             writer.flush();
