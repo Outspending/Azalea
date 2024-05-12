@@ -1,6 +1,7 @@
 package me.outspending.chunk;
 
 import lombok.Getter;
+import me.outspending.block.Material;
 import me.outspending.entity.Entity;
 import me.outspending.position.Pos;
 import me.outspending.protocol.writer.PacketWriter;
@@ -33,17 +34,17 @@ public class ChunkImpl implements Chunk {
     }
 
     @Override
-    public void setBlock(int x, int y, int z, int blockID) {
+    public void setBlock(int x, int y, int z, @NotNull Material material) {
         final ChunkSection section = getSectionAt(y);
         if (section != null) {
-            section.setBlock(x, y, z, blockID);
+            section.setBlock(x, y, z, material);
         }
     }
 
     @Override
-    public int getBlock(int x, int y, int z) {
+    public @NotNull Material getBlock(int x, int y, int z) {
         final ChunkSection section = getSectionAt(y);
-        return section != null ? section.getBlock(x, y, z) : 0;
+        return section != null ? section.getBlock(x, y, z) : Material.AIR;
     }
 
     @Override
@@ -64,23 +65,6 @@ public class ChunkImpl implements Chunk {
     @Override
     public int getChunkZ() {
         return chunkZ;
-    }
-
-    @Override
-    public int getHighestBlock(int x, int z) {
-        List<ChunkSection> revSections = Arrays.asList(sections);
-        Collections.reverse(revSections);
-
-        int index = 0;
-        for (ChunkSection section : revSections) {
-            long highestBlock = section.getHighestBlockAt(x, z);
-            index += (int) highestBlock;
-
-            if (highestBlock != 16)
-                return index;
-        }
-
-        return index;
     }
 
     @Override

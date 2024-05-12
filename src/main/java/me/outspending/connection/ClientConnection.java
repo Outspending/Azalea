@@ -47,8 +47,8 @@ public class ClientConnection {
     public boolean isRunning = true;
 
     private final PacketHandler handler = new PacketHandler();
-    private PacketListener<ClientPacket> clientPacketListener = packet -> logger.debug("Client packet received: " + packet);
-    private PacketListener<ServerPacket> serverPacketListener = packet -> logger.debug("Server packet received: " + packet);
+    private PacketListener<ClientPacket> clientPacketListener; // = packet -> logger.debug("Client packet received: " + packet);
+    private PacketListener<ServerPacket> serverPacketListener; // = packet -> logger.debug("Server packet received: " + packet);
 
     public ClientConnection(Socket socket) {
         this.socket = socket;

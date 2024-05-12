@@ -32,8 +32,6 @@ public interface Chunk extends Writable, BlockGetter, BlockSetter {
 
     int getChunkZ();
 
-    int getHighestBlock(int x, int z);
-
     @Nullable ChunkSection getSectionAt(int y);
 
     @NotNull ChunkSection[] getSectionsBelow(int y);

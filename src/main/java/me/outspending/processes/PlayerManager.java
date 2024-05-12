@@ -11,12 +11,12 @@ public final class PlayerManager {
     private final Map<UUID, Player> players = new HashMap<>();
 
     public void addPlayer(Player player) {
-        players.put(player.getUuid(), player);
+        players.put(player.getUUID(), player);
     }
 
     public @Nullable Player getPlayer(String username) {
         return players.values().stream()
-                .filter(player -> player.getUsername().equals(username))
+                .filter(player -> player.getName().equals(username))
                 .findFirst()
                 .orElse(null);
     }

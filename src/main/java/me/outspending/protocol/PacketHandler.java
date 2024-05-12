@@ -7,6 +7,7 @@ import me.outspending.chunk.ChunkSection;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.entity.Entity;
+import me.outspending.entity.GameProfile;
 import me.outspending.entity.Player;
 import me.outspending.entity.Property;
 import me.outspending.events.EventExecutor;
@@ -94,13 +95,14 @@ public class PacketHandler {
         String name = packet.name();
         UUID uuid = packet.uuid();
 
-        loadedPlayer = new Player(client, name, uuid);
+        GameProfile profile = new GameProfile(name, uuid, new Property[0]);
+        loadedPlayer = new Player(client, profile);
 
         logger.info("Player {} ({}) has joined the server", name, uuid);
         client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
         client.setCompressionType(CompressionType.COMPRESSED);
 
-        client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new Property[0]));
+        client.sendPacket(new ClientLoginSuccessPacket(profile));
     }
 
     @PacketReceiver

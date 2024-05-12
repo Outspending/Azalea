@@ -6,6 +6,7 @@ import lombok.Setter;
 import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
+import me.outspending.block.Material;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.light.Blocklight;
 import me.outspending.chunk.light.Skylight;
@@ -36,8 +37,7 @@ public class Player implements LivingEntity, TickingEntity {
     private final GameMode gameMode = GameMode.CREATIVE;
 
     private final int entityID;
-    private final String username;
-    private final UUID uuid;
+    private final GameProfile profile;
 
     private boolean isHardcore = false;
     private int viewDistance = 12;
@@ -47,21 +47,19 @@ public class Player implements LivingEntity, TickingEntity {
     private World world;
     private Pos position;
 
-    public Player(ClientConnection connection, boolean isHardcore, int viewDistance, int simulationDistance, String username, UUID uuid) {
+    public Player(ClientConnection connection, boolean isHardcore, int viewDistance, int simulationDistance, GameProfile profile) {
         this.connection = connection;
         this.entityID = EntityCounter.getNextEntityID();
         this.isHardcore = isHardcore;
         this.viewDistance = viewDistance;
         this.simulationDistance = simulationDistance;
-        this.username = username;
-        this.uuid = uuid;
+        this.profile = profile;
     }
 
-    public Player(ClientConnection connection, String username, UUID uuid) {
+    public Player(ClientConnection connection, GameProfile profile) {
         this.connection = connection;
         this.entityID = EntityCounter.getNextEntityID();
-        this.username = username;
-        this.uuid = uuid;
+        this.profile = profile;
     }
 
     public void setWorld(World world) {
@@ -91,9 +89,13 @@ public class Player implements LivingEntity, TickingEntity {
         world.getPlayers().forEach(player -> {
             if (this.equals(player)) return;
 
-            if (this.distance(player) <= simulationDistance) {
+            boolean isViewer = this.isViewer(player);
+            double distance = this.distance(player);
+            if (distance <= simulationDistance && !isViewer) {
                 this.addViewer(player);
-            } else if (this.isViewer(player)) {
+                logger.info("Adding viewer: {}", player.getName());
+            } else if (distance >= simulationDistance && isViewer) {
+                logger.info("Removing viewer: {}", player.getName());
                 this.removeViewer(player);
                 sendRemoveEntityPacket(player);
             }
@@ -108,6 +110,15 @@ public class Player implements LivingEntity, TickingEntity {
     @Override
     public void removeViewer(@NotNull Player player) {
         viewers.remove(player);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Player) {
+            return ((Player) obj).getEntityID() == this.getEntityID();
+        }
+
+        return false;
     }
 
     @Override
@@ -198,7 +209,7 @@ public class Player implements LivingEntity, TickingEntity {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
                 generator.generate(chunk, chunkGenerator -> {
-                    chunkGenerator.fillSection(4, 1);
+                    chunkGenerator.fillSection(4, Material.STONE);
                 });
 
                 chunks.add(chunk);
@@ -249,14 +260,14 @@ public class Player implements LivingEntity, TickingEntity {
         sendPacket(new ClientPlayerInfoUpdatePacket(
                 (byte) 0x01,
                 new ClientPlayerInfoUpdatePacket.Players(
-                        player.uuid,
+                        player.getUUID(),
                         new ClientPlayerInfoUpdatePacket.Action.AddPlayer(
-                                player.username,
+                                player.getName(),
                                 0, new Property[0])
                 )));
 
         sendPacket(new ClientSpawnEntityPacket(
-                player.getEntityID(), player.getUuid(),
+                player.getEntityID(), player.getUUID(),
                 124, position.x(), position.y(), position.z(),
                 (byte) position.pitch(), (byte) position.yaw(), (byte) 0,
                 0, (short) 0, (short) 0, (short) 0
@@ -282,13 +293,21 @@ public class Player implements LivingEntity, TickingEntity {
 
     @ApiStatus.Internal
     public void sendRemoveEntityPacket(@NotNull Player player) {
-        sendPacket(new ClientPlayerInfoRemovePacket(1, player.getUuid()));
+        sendPacket(new ClientPlayerInfoRemovePacket(1, player.getUUID()));
         sendRemoveEntityPacket(player);
     }
 
     @ApiStatus.Internal
     public void sendRemoveEntityPacket(@NotNull Entity entity) {
         sendPacket(new ClientRemoveEntitiesPacket(1, entity.getEntityID()));
+    }
+
+    public String getName() {
+        return profile.getUsername();
+    }
+
+    public UUID getUUID() {
+        return profile.getUuid();
     }
 
 }

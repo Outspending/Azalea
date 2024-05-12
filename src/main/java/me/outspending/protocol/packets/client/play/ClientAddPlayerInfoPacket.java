@@ -11,9 +11,9 @@ public record ClientAddPlayerInfoPacket(Player player) implements ClientPacket {
     public void write(@NotNull PacketWriter writer) {
         writer.writeByte((byte) 0x17);
         writer.writeVarInt(1);
-        writer.writeUUID(player.getUuid());
+        writer.writeUUID(player.getUUID());
 
-        writer.writeString(player.getUsername());
+        writer.writeString(player.getName());
         writer.writeVarInt(0);
     }
 

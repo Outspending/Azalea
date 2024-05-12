@@ -3,6 +3,7 @@ package me.outspending.chunk;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntListIterator;
+import me.outspending.block.Material;
 import me.outspending.generation.BlockGetter;
 import me.outspending.generation.BlockSetter;
 import me.outspending.protocol.Writable;
@@ -67,7 +68,8 @@ public class ChunkSection implements Writable, BlockGetter, BlockSetter {
     }
 
     @Override
-    public void setBlock(int x, int y, int z, int blockID) {
+    public void setBlock(int x, int y, int z, @NotNull Material material) {
+        int blockID = material.getId();
         if (!palette.contains(blockID)) {
             palette.add(blockID);
         }
@@ -86,19 +88,9 @@ public class ChunkSection implements Writable, BlockGetter, BlockSetter {
     }
 
     @Override
-    public int getBlock(int x, int y, int z) {
-        return (int) this.data[getBlockIndex(x, y, z)];
-    }
-
-    public long getHighestBlockAt(int x, int z) {
-        for (int y = 16; y > 0; y--) {
-            long block = getBlock(x, y, z);
-            if (block != 0) {
-                return block;
-            }
-        }
-
-        return 16;
+    public @NotNull Material getBlock(int x, int y, int z) {
+        Material material = Material.get((int) this.data[getBlockIndex(x, y, z)]);
+        return material != null ? material : Material.AIR;
     }
 
     public boolean isEmpty() {

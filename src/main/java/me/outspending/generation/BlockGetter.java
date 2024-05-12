@@ -1,6 +1,9 @@
 package me.outspending.generation;
 
+import me.outspending.block.Material;
+import org.jetbrains.annotations.NotNull;
+
 @FunctionalInterface
 public interface BlockGetter {
-    int getBlock(int x, int y, int z);
+   @NotNull Material getBlock(int x, int y, int z);
 }
