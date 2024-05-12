@@ -4,7 +4,7 @@ import me.outspending.Tickable;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
 
-public interface Entity extends Viewable {
+public interface Entity extends Viewable, Comparable<Entity> {
 
     Pos getPosition();
 

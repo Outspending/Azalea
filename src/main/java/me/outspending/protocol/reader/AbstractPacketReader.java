@@ -7,6 +7,7 @@ import me.outspending.block.ItemStack;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
+import me.outspending.protocol.exception.InvalidPacketException;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -18,16 +19,9 @@ import java.util.UUID;
 @Getter
 public abstract class AbstractPacketReader implements PacketReader {
     protected final ByteBuffer buffer;
-    private final boolean isCompressed;
-    protected final int packetLength;
-    protected final int packetID;
 
-    public AbstractPacketReader(ByteBuffer buffer, boolean isCompressed) {
+    public AbstractPacketReader(ByteBuffer buffer) {
         this.buffer = buffer;
-        this.isCompressed = isCompressed;
-
-        this.packetLength = readVarInt();
-        this.packetID = readVarInt();
     }
 
     @Override
@@ -126,6 +120,16 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
+    public byte[] readByteArray(int length) {
+        if (buffer.remaining() < length) {
+            throw new InvalidPacketException("Insufficient data in buffer to read byte array of length " + length);
+        }
+
+        byte[] bytes = new byte[length];
+        return buffer.get(bytes).array();
+    }
+
+    @Override
     public @Nullable ItemStack readSlot() {
         return NetworkTypes.SLOT_TYPE.read(buffer);
     }
@@ -152,13 +156,4 @@ public abstract class AbstractPacketReader implements PacketReader {
         return buffer.array();
     }
 
-    @Override
-    public int getPacketID() {
-        return packetID;
-    }
-
-    @Override
-    public boolean isCompressed() {
-        return isCompressed;
-    }
 }

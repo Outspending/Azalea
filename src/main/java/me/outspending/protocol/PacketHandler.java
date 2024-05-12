@@ -18,6 +18,7 @@ import me.outspending.protocol.annotations.PacketReceiver;
 import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
 import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
+import me.outspending.protocol.packets.client.login.ClientSetCompressionPacket;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
@@ -95,7 +96,10 @@ public class PacketHandler {
 
         loadedPlayer = new Player(client, name, uuid);
 
-        // client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
+        logger.info("Player {} ({}) has joined the server", name, uuid);
+        client.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
+        client.setCompressionType(CompressionType.COMPRESSED);
+
         client.sendPacket(new ClientLoginSuccessPacket(uuid, name, new Property[0]));
     }
 

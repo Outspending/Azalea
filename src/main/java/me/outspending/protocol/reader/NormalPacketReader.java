@@ -14,7 +14,7 @@ public class NormalPacketReader extends AbstractPacketReader {
     }
 
     public NormalPacketReader(@NotNull ByteBuffer buffer) {
-        super(buffer, false);
+        super(buffer);
     }
 
     @Override

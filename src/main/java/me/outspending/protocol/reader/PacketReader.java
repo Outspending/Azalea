@@ -1,13 +1,12 @@
 package me.outspending.protocol.reader;
 
 import me.outspending.NamespacedID;
-import me.outspending.Slot;
 import me.outspending.block.ItemStack;
 import me.outspending.position.Location;
-import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.NetworkType;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,32 +21,14 @@ public interface PacketReader {
         return NormalPacketReader.create(buffer);
     }
 
-    static @NotNull PacketReader createCompressedReader(@NotNull ByteBuffer buffer) {
-        return CompressedPacketReader.create(buffer);
+    static @MonotonicNonNull PacketReader createNormalReader(byte @NotNull [] bytes) {
+        return createNormalReader(ByteBuffer.wrap(bytes));
     }
-
-    static @NotNull PacketReader createReader(@NotNull ByteBuffer buffer, int threshold) {
-        if (buffer.remaining() < threshold) {
-            return createNormalReader(buffer);
-        }
-        return createCompressedReader(buffer);
-    }
-
-    static @NotNull PacketReader createReader(@NotNull ByteBuffer buffer, @NotNull CompressionType type) {
-        return switch (type) {
-            case NONE -> createNormalReader(buffer);
-            case ZLIB -> createCompressedReader(buffer);
-        };
-    }
-
-    int getPacketLength();
-    int getPacketID();
 
     ByteBuffer getBuffer();
 
     <T> @Nullable T read(@NotNull NetworkType<T> type);
     boolean hasAnotherPacket();
-    boolean isCompressed();
     byte[] getRemainingBytes();
     byte[] getAllBytes();
 
@@ -78,4 +59,5 @@ public interface PacketReader {
     <T> @Nullable T[] readArray(@NotNull Function<PacketReader, T> elementReader, @NotNull IntFunction<T[]> arrayCreator);
     <T extends Enum<?>> @Nullable T readEnum(@NotNull Class<T> enumClass);
     byte[] readByteArray();
+    byte[] readByteArray(int length);
 }

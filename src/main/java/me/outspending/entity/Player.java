@@ -115,6 +115,11 @@ public class Player implements LivingEntity, TickingEntity {
         return viewers;
     }
 
+    @Override
+    public int compareTo(@NotNull Entity o) {
+        return this.getEntityID() == o.getEntityID() ? 0 : -1;
+    }
+
     @ApiStatus.Internal
     public void sendPacket(@NotNull ClientPacket packet) {
         connection.sendPacket(packet);
@@ -281,4 +286,5 @@ public class Player implements LivingEntity, TickingEntity {
     public void sendRemoveEntityPacket(@NotNull Entity entity) {
         sendPacket(new ClientRemoveEntitiesPacket(1, entity.getEntityID()));
     }
+
 }

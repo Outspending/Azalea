@@ -8,8 +8,7 @@ import me.outspending.MinecraftServer;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.ClientPacketRecieveEvent;
 import me.outspending.events.event.ServerPacketRecieveEvent;
-import me.outspending.protocol.PacketHandler;
-import me.outspending.protocol.PacketListener;
+import me.outspending.protocol.*;
 import me.outspending.protocol.codec.CodecHandler;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
@@ -43,12 +42,13 @@ public class ClientConnection {
 
     public final MinecraftServer server;
     public GameState state = GameState.HANDSHAKE;
+    public CompressionType compressionType = CompressionType.NONE;
 
     public boolean isRunning = true;
 
     private final PacketHandler handler = new PacketHandler();
-    private PacketListener<ClientPacket> clientPacketListener;
-    private PacketListener<ServerPacket> serverPacketListener;
+    private PacketListener<ClientPacket> clientPacketListener = packet -> logger.debug("Client packet received: " + packet);
+    private PacketListener<ServerPacket> serverPacketListener = packet -> logger.debug("Server packet received: " + packet);
 
     public ClientConnection(Socket socket) {
         this.socket = socket;
@@ -81,14 +81,7 @@ public class ClientConnection {
 
     private void handlePacket(@NotNull PacketReader reader) {
         try {
-            int id = reader.getPacketID();
-
-            Function<PacketReader, ServerPacket> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, id);
-            if (packetFunction == null) {
-                logger.info(String.format("Unknown packet ID: %d, in state: %s", id, state.name()));
-                return;
-            }
-            ServerPacket readPacket = packetFunction.apply(reader);
+            ServerPacket readPacket = PacketDecoder.decode(reader, compressionType, state);
             handler.handle(this, readPacket);
 
             EventExecutor.emitEvent(new ServerPacketRecieveEvent(readPacket));
@@ -150,7 +143,7 @@ public class ClientConnection {
         if (!isOnline()) return;
 
         synchronized (socket) {
-            PacketWriter writer = PacketWriter.createNormalWriter(packet);
+            PacketWriter writer = PacketEncoder.encode(PacketWriter.createNormalWriter(), compressionType, packet);
             OutputStream stream = socket.getOutputStream();
 
             EventExecutor.emitEvent(new ClientPacketRecieveEvent(packet, this));

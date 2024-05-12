@@ -5,26 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/events/event/ClientPacketRecieveEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/events/event/ServerPacketRecieveEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/BlockGetter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/BlockSetter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/ChunkGenerator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/Generator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/WorldGenerator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketDecoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketEncoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/exception/InvalidPacketException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Entity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/CompressionDecoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/CompressionEncoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/CompressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/CompressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/world/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/world/World.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/world/WorldImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/world/WorldImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/AbstractPacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/AbstractPacketReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/CompressedPacketReader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/NormalPacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/NormalPacketReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/PacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/PacketReader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +33,7 @@
       <list>
         <option value="Interface" />
         <option value="Record" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -144,6 +142,12 @@
       <workItem from="1715281448374" duration="9000" />
       <workItem from="1715281742780" duration="6000" />
       <workItem from="1715359019166" duration="3321000" />
+      <workItem from="1715365982375" duration="28000" />
+      <workItem from="1715404642390" duration="8862000" />
+      <workItem from="1715446614090" duration="7829000" />
+      <workItem from="1715475205401" duration="1349000" />
+      <workItem from="1715480657244" duration="348000" />
+      <workItem from="1715521268181" duration="2397000" />
     </task>
     <servers />
   </component>
