@@ -9,9 +9,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientPingResponsePacket(long payload) implements ClientPacket {
-    public static ClientPingResponsePacket of(@NotNull PacketReader reader) {
-        return new ClientPingResponsePacket(reader.readLong());
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -22,4 +19,5 @@ public record ClientPingResponsePacket(long payload) implements ClientPacket {
     public int id() {
         return 0x01;
     }
+
 }

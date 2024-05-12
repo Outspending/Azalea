@@ -8,6 +8,7 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientStatusResponsePacket(Players players, Version version, String description) implements ClientPacket {
+
     public String toJson() {
         return new Gson().toJson(this);
     }
@@ -24,4 +25,5 @@ public record ClientStatusResponsePacket(Players players, Version version, Strin
 
     public record Players(int online, int max) {}
     public record Version(int protocol, String name) {}
+
 }

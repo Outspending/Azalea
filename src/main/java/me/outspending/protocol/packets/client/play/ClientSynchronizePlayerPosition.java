@@ -9,19 +9,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientSynchronizePlayerPosition(Pos position, byte flags, int teleportID) implements ClientPacket {
-    public static ClientSynchronizePlayerPosition of(PacketReader reader) {
-        return new ClientSynchronizePlayerPosition(
-                new Pos(
-                        reader.readDouble(),
-                        reader.readDouble(),
-                        reader.readDouble(),
-                        reader.readFloat(),
-                        reader.readFloat()
-                ),
-                reader.readByte(),
-                reader.readVarInt()
-        );
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -38,4 +25,5 @@ public record ClientSynchronizePlayerPosition(Pos position, byte flags, int tele
     public int id() {
         return 0x3E;
     }
+
 }

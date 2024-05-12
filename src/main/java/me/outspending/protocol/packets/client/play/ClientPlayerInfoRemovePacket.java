@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public record ClientPlayerInfoRemovePacket(int numOfPlayers, UUID... uuids) implements ClientPacket {
+
     @Override
     public void write(@NotNull PacketWriter writer) {
         writer.writeVarInt(numOfPlayers);
@@ -17,4 +18,5 @@ public record ClientPlayerInfoRemovePacket(int numOfPlayers, UUID... uuids) impl
     public int id() {
         return 0x3B;
     }
+
 }

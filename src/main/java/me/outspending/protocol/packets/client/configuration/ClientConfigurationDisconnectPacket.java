@@ -7,10 +7,6 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientConfigurationDisconnectPacket(Component component) implements ClientPacket {
-    public static ClientConfigurationDisconnectPacket of(@NotNull PacketReader reader) {
-        return new ClientConfigurationDisconnectPacket(reader.readTextComponent());
-    }
-
     public ClientConfigurationDisconnectPacket(String message) {
         this(Component.text(message));
     }
@@ -24,4 +20,5 @@ public record ClientConfigurationDisconnectPacket(Component component) implement
     public int id() {
         return 0x01;
     }
+
 }

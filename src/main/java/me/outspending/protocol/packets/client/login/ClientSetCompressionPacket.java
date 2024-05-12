@@ -8,9 +8,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientSetCompressionPacket(int threshold) implements ClientPacket {
-    public static @NotNull ClientSetCompressionPacket of(@NotNull PacketReader reader) {
-        return new ClientSetCompressionPacket(reader.readVarInt());
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -21,4 +18,5 @@ public record ClientSetCompressionPacket(int threshold) implements ClientPacket 
     public int id() {
         return 0x03;
     }
+
 }

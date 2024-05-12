@@ -9,9 +9,6 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientDisconnectPlayPacket(CompoundBinaryTag reason) implements ClientPacket {
-    public static @NotNull ClientDisconnectPlayPacket of(@NotNull PacketReader reader) {
-        return new ClientDisconnectPlayPacket(reader.readNBTCompound());
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -22,4 +19,5 @@ public record ClientDisconnectPlayPacket(CompoundBinaryTag reason) implements Cl
     public int id() {
         return 0x1B;
     }
+
 }

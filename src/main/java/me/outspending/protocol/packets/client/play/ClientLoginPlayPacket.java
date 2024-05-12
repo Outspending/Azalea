@@ -36,33 +36,6 @@ public record ClientLoginPlayPacket(
         int portalCooldown
 ) implements ClientPacket {
 
-    public static ClientLoginPlayPacket of(@NotNull PacketReader reader) {
-        return new ClientLoginPlayPacket(
-                reader.readInt(),
-                reader.readBoolean(),
-                reader.readVarInt(),
-                reader.readArray(packetReader -> reader.readNamespacedKey(), NamespacedID[]::new),
-                reader.readVarInt(),
-                reader.readVarInt(),
-                reader.readVarInt(),
-                reader.readBoolean(),
-                reader.readBoolean(),
-                reader.readBoolean(),
-                reader.readNamespacedKey(),
-                reader.readNamespacedKey(),
-                reader.readLong(),
-                reader.readByte(),
-                reader.readByte(),
-                reader.readBoolean(),
-                reader.readBoolean(),
-                reader.readBoolean(),
-                reader.readString(),
-                reader.readLocation(),
-                reader.readVarInt()
-        );
-    }
-
-    @SneakyThrows
     @Override
     public void write(@NotNull PacketWriter writer) {
         writer.writeInt(this.entityID);
@@ -94,4 +67,5 @@ public record ClientLoginPlayPacket(
     public int id() {
         return 0x29;
     }
+
 }

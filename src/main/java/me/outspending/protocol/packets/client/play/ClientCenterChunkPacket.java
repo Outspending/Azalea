@@ -8,12 +8,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientCenterChunkPacket(int chunkX, int chunkZ) implements ClientPacket {
-    public static ClientCenterChunkPacket of(@NotNull PacketReader reader) {
-        return new ClientCenterChunkPacket(
-                reader.readVarInt(),
-                reader.readVarInt()
-        );
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -25,4 +19,5 @@ public record ClientCenterChunkPacket(int chunkX, int chunkZ) implements ClientP
     public int id() {
         return 0x52;
     }
+
 }

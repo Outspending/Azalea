@@ -68,4 +68,5 @@ public record ClientChunkDataPacket(
     public int id() {
         return 0x25;
     }
+
 }

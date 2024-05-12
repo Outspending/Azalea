@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.zip.Deflater;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -29,8 +30,10 @@ public class MinecraftServer {
     private static final Logger logger = LoggerFactory.getLogger(MinecraftServer.class);
 
     public static MinecraftServer instance;
+
     public static final int PROTOCOL = 765;
     public static final int COMPRESSION_THRESHOLD = 256;
+    public static final int COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
     public static final String VERSION = "Testing 1.20.4";
 
     private final String host;

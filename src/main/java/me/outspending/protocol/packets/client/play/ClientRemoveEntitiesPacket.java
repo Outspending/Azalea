@@ -5,6 +5,7 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientRemoveEntitiesPacket(int entityCount, int... entityIds) implements ClientPacket {
+
     @Override
     public void write(@NotNull PacketWriter writer) {
         writer.writeVarInt(entityCount);
@@ -17,4 +18,5 @@ public record ClientRemoveEntitiesPacket(int entityCount, int... entityIds) impl
     public int id() {
         return 0x40;
     }
+
 }

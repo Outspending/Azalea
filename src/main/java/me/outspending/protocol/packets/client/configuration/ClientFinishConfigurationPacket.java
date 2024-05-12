@@ -7,9 +7,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientFinishConfigurationPacket() implements ClientPacket {
-    public static ClientFinishConfigurationPacket of(@NotNull PacketReader reader) {
-        return new ClientFinishConfigurationPacket();
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {}
@@ -18,4 +15,5 @@ public record ClientFinishConfigurationPacket() implements ClientPacket {
     public int id() {
         return 0x02;
     }
+
 }

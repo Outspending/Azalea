@@ -6,6 +6,7 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientAddPlayerInfoPacket(Player player) implements ClientPacket {
+
     @Override
     public void write(@NotNull PacketWriter writer) {
         writer.writeByte((byte) 0x17);
@@ -20,4 +21,5 @@ public record ClientAddPlayerInfoPacket(Player player) implements ClientPacket {
     public int id() {
         return 0x3C;
     }
+
 }

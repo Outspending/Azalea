@@ -12,16 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public record ClientLoginSuccessPacket(UUID uuid, String username, Property[] properties) implements ClientPacket {
-    public static @NotNull ClientLoginSuccessPacket of(@NotNull PacketReader reader) {
-        return new ClientLoginSuccessPacket(
-                reader.readUUID(),
-                reader.readString(),
-                reader.readArray(propertyReader -> new Property(
-                        propertyReader.readString(),
-                        propertyReader.readString(),
-                        propertyReader.readBoolean() ? propertyReader.readString() : null
-                ), Property[]::new));
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -38,4 +28,5 @@ public record ClientLoginSuccessPacket(UUID uuid, String username, Property[] pr
     public int id() {
         return 0x02;
     }
+
 }

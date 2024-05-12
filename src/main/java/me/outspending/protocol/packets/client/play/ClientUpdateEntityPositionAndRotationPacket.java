@@ -6,17 +6,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientUpdateEntityPositionAndRotationPacket(int entityID, short deltaX, short deltaY, short deltaZ, byte yaw, byte pitch, boolean onGround) implements ClientPacket {
-    public static ClientUpdateEntityPositionAndRotationPacket of(@NotNull PacketReader reader) {
-        return new ClientUpdateEntityPositionAndRotationPacket(
-            reader.readVarInt(),
-            reader.readShort(),
-            reader.readShort(),
-            reader.readShort(),
-            reader.readByte(),
-            reader.readByte(),
-            reader.readBoolean()
-        );
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -33,4 +22,5 @@ public record ClientUpdateEntityPositionAndRotationPacket(int entityID, short de
     public int id() {
         return 0x2D;
     }
+
 }

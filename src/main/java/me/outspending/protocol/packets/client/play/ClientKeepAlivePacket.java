@@ -8,9 +8,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientKeepAlivePacket(long keepAliveID) implements ClientPacket {
-    public static ClientKeepAlivePacket of(@NotNull PacketReader reader) {
-        return new ClientKeepAlivePacket(reader.readLong());
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -21,4 +18,5 @@ public record ClientKeepAlivePacket(long keepAliveID) implements ClientPacket {
     public int id() {
         return 0x24;
     }
+
 }

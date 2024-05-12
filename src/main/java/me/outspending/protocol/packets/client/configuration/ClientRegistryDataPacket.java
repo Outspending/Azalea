@@ -9,10 +9,6 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientRegistryDataPacket(CompoundBinaryTag compound) implements ClientPacket {
-    public static ClientRegistryDataPacket of(@NotNull PacketReader reader) {
-        return new ClientRegistryDataPacket(reader.readNBTCompound());
-    }
-
     public ClientRegistryDataPacket(CompoundBinaryTag compound) {
         this.compound = compound;
     }
@@ -26,4 +22,5 @@ public record ClientRegistryDataPacket(CompoundBinaryTag compound) implements Cl
     public int id() {
         return 0x05;
     }
+
 }

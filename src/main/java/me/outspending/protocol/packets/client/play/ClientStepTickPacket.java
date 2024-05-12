@@ -6,9 +6,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientStepTickPacket(int tickSteps) implements ClientPacket {
-    public static ClientStepTickPacket of(@NotNull PacketReader reader) {
-        return new ClientStepTickPacket(reader.readVarInt());
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -19,4 +16,5 @@ public record ClientStepTickPacket(int tickSteps) implements ClientPacket {
     public int id() {
         return 0x6F;
     }
+
 }

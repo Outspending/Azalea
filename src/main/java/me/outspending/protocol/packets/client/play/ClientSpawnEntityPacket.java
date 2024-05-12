@@ -22,6 +22,7 @@ public record ClientSpawnEntityPacket(
         short velocityY,
         short velocityZ
 ) implements ClientPacket {
+
     @Override
     public void write(@NotNull PacketWriter writer) {
         writer.writeVarInt(entityID);
@@ -43,4 +44,5 @@ public record ClientSpawnEntityPacket(
     public int id() {
         return 0x01;
     }
+
 }

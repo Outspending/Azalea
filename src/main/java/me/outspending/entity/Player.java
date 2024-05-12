@@ -129,6 +129,10 @@ public class Player implements LivingEntity, TickingEntity {
         connection.sendBundled(runnable);
     }
 
+    public void sendActionBar(@NotNull Component component) {
+        sendPacket(new ClientActionBarTextPacket(component));
+    }
+
     @ApiStatus.Internal
     public void sendBundledPacket() {
         connection.sendBundled();

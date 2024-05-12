@@ -11,45 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public record ClientPlayerInfoUpdatePacket(byte actions, Players... players) implements ClientPacket {
-    public static ClientPlayerInfoUpdatePacket of(@NotNull PacketReader reader) {
-        return new ClientPlayerInfoUpdatePacket(
-                reader.readByte(),
-                reader.readArray(playersReader -> new Players(
-                        playersReader.readUUID(),
-                        playersReader.readArray(actionReader -> {
-                            byte action = actionReader.readByte();
-                            return switch (action) {
-                                case 0 -> new Action.AddPlayer(
-                                        actionReader.readString(),
-                                        actionReader.readVarInt(),
-                                        actionReader.readArray(propertyReader -> new Property(
-                                                propertyReader.readString(),
-                                                propertyReader.readString(),
-                                                propertyReader.readBoolean() ? propertyReader.readString() : null
-                                        ), Property[]::new)
-                                );
-                                case 1 -> new Action.InitializeChat(
-                                        actionReader.readBoolean(),
-                                        actionReader.readUUID(),
-                                        actionReader.readLong(),
-                                        actionReader.readVarInt(),
-                                        actionReader.readByteArray(),
-                                        actionReader.readVarInt(),
-                                        actionReader.readByteArray()
-                                );
-                                case 2 -> new Action.UpdateGameMode(actionReader.readVarInt());
-                                case 3 -> new Action.UpdateListed(actionReader.readBoolean());
-                                case 4 -> new Action.UpdateLatency(actionReader.readVarInt());
-                                case 5 -> new Action.UpdateDisplayName(
-                                        actionReader.readBoolean(),
-                                        actionReader.readTextComponent()
-                                );
-                                default -> throw new IllegalArgumentException("Unknown action: " + action);
-                            };
-                        }, Action[]::new)
-                ), Players[]::new)
-        );
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {

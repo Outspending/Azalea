@@ -51,7 +51,7 @@ public class PacketEncoder {
 
 
     private static byte[] compress(byte[] data) {
-        Deflater deflater = new Deflater();
+        Deflater deflater = new Deflater(MinecraftServer.COMPRESSION_LEVEL, false);
         deflater.setInput(data);
         deflater.finish();
         byte[] compressedData = new byte[data.length];

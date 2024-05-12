@@ -8,12 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public record ClientInfoRemovePacket(int numOfPlayers, UUID[] uuids) implements ClientPacket {
-    public static ClientInfoRemovePacket of(@NotNull PacketReader reader) {
-        return new ClientInfoRemovePacket(
-                reader.readVarInt(),
-                reader.readArray(PacketReader::readUUID, UUID[]::new)
-        );
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -27,4 +21,5 @@ public record ClientInfoRemovePacket(int numOfPlayers, UUID[] uuids) implements 
     public int id() {
         return 0x3C;
     }
+
 }

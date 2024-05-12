@@ -8,12 +8,6 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientGameEventPacket(byte event, float value) implements ClientPacket {
-    public static ClientGameEventPacket of(@NotNull PacketReader reader) {
-        return new ClientGameEventPacket(
-                reader.readByte(),
-                reader.readFloat()
-        );
-    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -25,4 +19,5 @@ public record ClientGameEventPacket(byte event, float value) implements ClientPa
     public int id() {
         return 0x20;
     }
+
 }

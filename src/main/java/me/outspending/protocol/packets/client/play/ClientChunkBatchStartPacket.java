@@ -5,6 +5,7 @@ import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientChunkBatchStartPacket() implements ClientPacket {
+
     @Override
     public void write(@NotNull PacketWriter writer) {}
 
@@ -12,4 +13,5 @@ public record ClientChunkBatchStartPacket() implements ClientPacket {
     public int id() {
         return 0x0D;
     }
+
 }
