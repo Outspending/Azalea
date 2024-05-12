@@ -30,8 +30,8 @@ I'm not planning on finishing it anytime soon as I want to add more features and
 - [x] Chunk Loading / Unloading
 - [x] Ticks
 - [x] World System
-- [ ] Multiplayer Support
-- [ ] Packet Compression
+- [ ] Multiplayer Support *(Somewhat Working)*
+- [x] Packet Compression
 - [ ] Block / Item Registry
 - [ ] Bossbars / Actionbars / Chat
 - [ ] Particles
