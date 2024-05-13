@@ -1,7 +1,7 @@
 package me.outspending.chunk;
 
 import lombok.Getter;
-import me.outspending.block.Material;
+import me.outspending.block.BlockType;
 import me.outspending.entity.Entity;
 import me.outspending.position.Pos;
 import me.outspending.protocol.writer.PacketWriter;
@@ -9,8 +9,6 @@ import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -34,17 +32,17 @@ public class ChunkImpl implements Chunk {
     }
 
     @Override
-    public void setBlock(int x, int y, int z, @NotNull Material material) {
+    public void setBlock(int x, int y, int z, @NotNull BlockType blockType) {
         final ChunkSection section = getSectionAt(y);
         if (section != null) {
-            section.setBlock(x, y, z, material);
+            section.setBlock(x, y, z, blockType);
         }
     }
 
     @Override
-    public @NotNull Material getBlock(int x, int y, int z) {
+    public @NotNull BlockType getBlock(int x, int y, int z) {
         final ChunkSection section = getSectionAt(y);
-        return section != null ? section.getBlock(x, y, z) : Material.AIR;
+        return section != null ? section.getBlock(x, y, z) : BlockType.AIR;
     }
 
     @Override

@@ -1,12 +1,8 @@
 package me.outspending.protocol;
 
-import com.google.common.graph.Network;
 import me.outspending.NamespacedID;
-import me.outspending.Slot;
-import me.outspending.block.ItemStack;
+import me.outspending.item.ItemStack;
 import me.outspending.position.Location;
-import me.outspending.protocol.reader.PacketReader;
-import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
@@ -18,7 +14,6 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface NetworkTypes {
@@ -309,27 +304,28 @@ public interface NetworkTypes {
         }
     };
 
-    NetworkType<ItemStack> SLOT_TYPE = new NetworkType<>() {
-        @Override
-        public ItemStack read(ByteBuffer buffer) {
-            if (BOOLEAN_TYPE.read(buffer)) {
-                return new ItemStack(
-                        VARINT_TYPE.read(buffer),
-                        BYTE_TYPE.read(buffer),
-                        NBTCOMPOUND_TYPE.read(buffer)
-                );
-            }
-
-            return null;
-        }
-
-        @Override
-        public void write(DataOutputStream stream, ItemStack type) throws IOException {
-            BOOLEAN_TYPE.write(stream, true);
-            VARINT_TYPE.write(stream, type.getCount());
-            NBTCOMPOUND_TYPE.write(stream, type.getItemNBT());
-        }
-    };
+//    NetworkType<ItemStack> SLOT_TYPE = new NetworkType<>() {
+//        @Override
+//        public ItemStack read(ByteBuffer buffer) {
+//            if (BOOLEAN_TYPE.read(buffer)) {
+//                ItemStack item = new ItemStack()
+//                return new ItemStack(
+//                        VARINT_TYPE.read(buffer),
+//                        BYTE_TYPE.read(buffer),
+//                        NBTCOMPOUND_TYPE.read(buffer)
+//                );
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        public void write(DataOutputStream stream, ItemStack type) throws IOException {
+//            BOOLEAN_TYPE.write(stream, true);
+//            VARINT_TYPE.write(stream, type.getCount());
+//            NBTCOMPOUND_TYPE.write(stream, type.getItemNBT());
+//        }
+//    };
 
     NetworkType<byte[]> BYTEARRAY_TYPE = new NetworkType<>() {
         @Override

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 public final class ChunkMap {
@@ -29,29 +30,31 @@ public final class ChunkMap {
         return storedChunks.containsKey(index) ? storedChunks.get(index) : loadChunk(x, z);
     }
 
-    public @NotNull List<Chunk> getChunksRange(@NotNull Pos centerPosition, int distanceChunks) {
-        List<Chunk> chunks = new ArrayList<>();
-        int chunkX = (int) centerPosition.x() >> 4;
-        int chunkZ = (int) centerPosition.z() >> 4;
+    public @NotNull CompletableFuture<List<Chunk>> getChunksRange(@NotNull Pos centerPosition, int distanceChunks) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<Chunk> chunks = new ArrayList<>();
+            int chunkX = (int) centerPosition.x() >> 4;
+            int chunkZ = (int) centerPosition.z() >> 4;
 
-        if (distanceChunks == 0) {
-            chunks.add(getChunk(chunkX, chunkZ));
-        } else {
-            for (int x = chunkX - distanceChunks; x <= chunkX + distanceChunks; x++) {
-                for (int z = chunkZ - distanceChunks; z <= chunkZ + distanceChunks; z++) {
-                    Chunk chunk = getChunk(x, z);
-                    chunks.add(chunk);
+            if (distanceChunks == 0) {
+                chunks.add(getChunk(chunkX, chunkZ));
+            } else {
+                for (int x = chunkX - distanceChunks; x <= chunkX + distanceChunks; x++) {
+                    for (int z = chunkZ - distanceChunks; z <= chunkZ + distanceChunks; z++) {
+                        Chunk chunk = getChunk(x, z);
+                        chunks.add(chunk);
+                    }
                 }
             }
-        }
 
-        return chunks;
+            return chunks;
+        });
     }
 
-    public @NotNull List<Chunk> getChunksRange(@NotNull Pos centerPosition, int distanceChunks, Predicate<Chunk> chunkPredicate) {
-        return getChunksRange(centerPosition, distanceChunks).stream()
+    public @NotNull CompletableFuture<List<Chunk>> getChunksRange(@NotNull Pos centerPosition, int distanceChunks, Predicate<Chunk> chunkPredicate) {
+        return getChunksRange(centerPosition, distanceChunks).thenApply(chunks -> chunks.stream()
                 .filter(chunkPredicate)
-                .toList();
+                .toList());
     }
 
     public @NotNull Chunk loadChunk(int x, int z) {

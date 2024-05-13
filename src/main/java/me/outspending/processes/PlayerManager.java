@@ -5,10 +5,11 @@ import me.outspending.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 public final class PlayerManager {
-    private final Map<UUID, Player> players = new HashMap<>();
+    private final Map<UUID, Player> players = new ConcurrentHashMap<>();
 
     public void addPlayer(Player player) {
         players.put(player.getUUID(), player);

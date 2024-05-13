@@ -1,7 +1,6 @@
 package me.outspending;
 
-import lombok.Getter;
-import me.outspending.block.ItemStack;
+import me.outspending.item.ItemStack;
 
 public record Slot(boolean present, ItemStack item) {
 }

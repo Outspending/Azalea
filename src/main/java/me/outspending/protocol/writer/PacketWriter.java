@@ -1,8 +1,7 @@
 package me.outspending.protocol.writer;
 
 import me.outspending.NamespacedID;
-import me.outspending.Slot;
-import me.outspending.block.ItemStack;
+import me.outspending.item.ItemStack;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.types.ClientPacket;
@@ -11,10 +10,7 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -50,7 +46,7 @@ public interface PacketWriter {
     void writeVarInt(int i);
     void writeVarLong(long l);
     // writeEntityMetaData
-    void writeSlot(@NotNull ItemStack itemStack);
+    // void writeSlot(@NotNull ItemStack itemStack);
     void writeNBTCompound(@NotNull CompoundBinaryTag tag);
     void writeLocation(@NotNull Location location);
     // writeAngle

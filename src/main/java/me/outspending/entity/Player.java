@@ -6,7 +6,7 @@ import lombok.Setter;
 import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
-import me.outspending.block.Material;
+import me.outspending.block.BlockType;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.light.Blocklight;
 import me.outspending.chunk.light.Skylight;
@@ -28,15 +28,12 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 @Getter @Setter
-public class Player implements LivingEntity, TickingEntity {
+public class Player extends LivingEntity implements TickingEntity {
     private static final Logger logger = LoggerFactory.getLogger(Player.class);
 
     private final ClientConnection connection;
 
-    private final List<Player> viewers = new ArrayList<>();
     private final GameMode gameMode = GameMode.CREATIVE;
-
-    private final int entityID;
     private final GameProfile profile;
 
     private boolean isHardcore = false;
@@ -44,12 +41,9 @@ public class Player implements LivingEntity, TickingEntity {
     private int simulationDistance = 8 * 5;
     private boolean onGround = false;
 
-    private World world;
-    private Pos position;
-
     public Player(ClientConnection connection, boolean isHardcore, int viewDistance, int simulationDistance, GameProfile profile) {
+        super();
         this.connection = connection;
-        this.entityID = EntityCounter.getNextEntityID();
         this.isHardcore = isHardcore;
         this.viewDistance = viewDistance;
         this.simulationDistance = simulationDistance;
@@ -57,8 +51,8 @@ public class Player implements LivingEntity, TickingEntity {
     }
 
     public Player(ClientConnection connection, GameProfile profile) {
+        super();
         this.connection = connection;
-        this.entityID = EntityCounter.getNextEntityID();
         this.profile = profile;
     }
 
@@ -82,53 +76,6 @@ public class Player implements LivingEntity, TickingEntity {
     @Override
     public void tick(long time) {
         updateViewers();
-    }
-
-    @Override
-    public void updateViewers() {
-        world.getPlayers().forEach(player -> {
-            if (this.equals(player)) return;
-
-            boolean isViewer = this.isViewer(player);
-            double distance = this.distance(player);
-            if (distance <= simulationDistance && !isViewer) {
-                this.addViewer(player);
-                logger.info("Adding viewer: {}", player.getName());
-            } else if (distance >= simulationDistance && isViewer) {
-                logger.info("Removing viewer: {}", player.getName());
-                this.removeViewer(player);
-                sendRemoveEntityPacket(player);
-            }
-        });
-    }
-
-    @Override
-    public void addViewer(@NotNull Player player) {
-        viewers.add(player);
-    }
-
-    @Override
-    public void removeViewer(@NotNull Player player) {
-        viewers.remove(player);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Player) {
-            return ((Player) obj).getEntityID() == this.getEntityID();
-        }
-
-        return false;
-    }
-
-    @Override
-    public @NotNull List<Player> getViewers() {
-        return viewers;
-    }
-
-    @Override
-    public int compareTo(@NotNull Entity o) {
-        return this.getEntityID() == o.getEntityID() ? 0 : -1;
     }
 
     @ApiStatus.Internal
@@ -209,7 +156,11 @@ public class Player implements LivingEntity, TickingEntity {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
                 generator.generate(chunk, chunkGenerator -> {
-                    chunkGenerator.fillSection(4, Material.STONE);
+                    for (int i = 0; i < 4; i++) {
+                        for (int j = 0; j < 4; j++) {
+                            chunkGenerator.setBlock(i, 0, j, BlockType.STONE);
+                        }
+                    }
                 });
 
                 chunks.add(chunk);

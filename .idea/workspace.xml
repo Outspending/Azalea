@@ -5,23 +5,43 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/block/Block.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/AbstractChunkGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/ConcurrentChunkGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/item/ItemStack.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/item/ItemType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/meta/ItemMeta.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientUpdateSectionBlocks.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/block/Material.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/block/Material.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/Chunk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/Slot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/Slot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/block/BlockData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/item/Item.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/block/BlockState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/block/ItemStack.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/block/Material.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/block/BlockType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chunk/ChunkSection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/LivingEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/LivingEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Player.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/generation/BlockGetter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/BlockGetter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/generation/BlockSetter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/BlockSetter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/generation/ChunkGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/ChunkGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/generation/WorldGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/generation/WorldGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/processes/PlayerManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/processes/PlayerManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/processes/WorldManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/processes/WorldManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/NetworkTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/NetworkTypes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/login/ClientLoginSuccessPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/login/ClientLoginSuccessPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientAddPlayerInfoPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientAddPlayerInfoPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/Registry.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/codec/CodecHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/codec/CodecHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SetCreativeModeSlotPacket.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/AbstractPacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/AbstractPacketReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/PacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/PacketReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/AbstractPacketWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/AbstractPacketWriter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/PacketWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/PacketWriter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/world/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/world/World.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/world/WorldImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/world/WorldImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,10 +51,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Enum" />
-        <option value="Class" />
+        <option value="Interface" />
         <option value="Record" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -150,7 +170,11 @@
       <workItem from="1715521268181" duration="4098000" />
       <workItem from="1715529031656" duration="2922000" />
       <workItem from="1715542914507" duration="1380000" />
-      <workItem from="1715545865309" duration="618000" />
+      <workItem from="1715545865309" duration="1133000" />
+      <workItem from="1715560223257" duration="2000" />
+      <workItem from="1715560795722" duration="106000" />
+      <workItem from="1715561005308" duration="1613000" />
+      <workItem from="1715575861376" duration="3610000" />
     </task>
     <servers />
   </component>

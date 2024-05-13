@@ -1,7 +1,7 @@
 package me.outspending.protocol.reader;
 
 import me.outspending.NamespacedID;
-import me.outspending.block.ItemStack;
+import me.outspending.item.ItemStack;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -48,7 +48,7 @@ public interface PacketReader {
     int readVarInt();
     long readVarLong();
     // readEntityMetaData
-    @Nullable ItemStack readSlot();
+    // @Nullable ItemStack readSlot();
     @Nullable CompoundBinaryTag readNBTCompound();
     @Nullable Location readLocation();
     // readAngle

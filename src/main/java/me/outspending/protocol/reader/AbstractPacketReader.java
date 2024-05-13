@@ -2,8 +2,7 @@ package me.outspending.protocol.reader;
 
 import lombok.Getter;
 import me.outspending.NamespacedID;
-import me.outspending.Slot;
-import me.outspending.block.ItemStack;
+import me.outspending.item.ItemStack;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
@@ -129,10 +128,10 @@ public abstract class AbstractPacketReader implements PacketReader {
         return buffer.get(bytes).array();
     }
 
-    @Override
-    public @Nullable ItemStack readSlot() {
-        return NetworkTypes.SLOT_TYPE.read(buffer);
-    }
+//    @Override
+//    public @Nullable ItemStack readSlot() {
+//        return NetworkTypes.SLOT_TYPE.read(buffer);
+//    }
 
     @Override
     public @Nullable Component readJSONTextComponent() {

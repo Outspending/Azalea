@@ -144,9 +144,10 @@ public class PacketHandler {
         if (!fromChunk.equals(toChunk)) {
             EventExecutor.emitEvent(new ChunkSwitchEvent(loadedPlayer, to, fromChunk, toChunk));
 
-            List<Chunk> allChunks = world.getChunksInRange(to, loadedPlayer.getViewDistance(), chunk -> !chunk.isLoaded());
-            if (!allChunks.isEmpty())
-                loadedPlayer.sendChunkBatch(allChunks);
+            world.getChunksInRange(to, loadedPlayer.getViewDistance(), chunk -> !chunk.isLoaded()).thenAccept(allChunks -> {
+                if (!allChunks.isEmpty())
+                    loadedPlayer.sendChunkBatch(allChunks);
+            });
         }
     }
 }

@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public final class WorldManager {
-    private final Map<String, World> loadedWorlds = new HashMap<>();
+    private final Map<String, World> loadedWorlds = new ConcurrentHashMap<>();
 
     public void addWorld(World world) {
         loadedWorlds.put(world.getName(), world);

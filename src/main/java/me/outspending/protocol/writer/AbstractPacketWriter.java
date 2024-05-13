@@ -1,16 +1,11 @@
 package me.outspending.protocol.writer;
 
-import com.google.common.graph.Network;
-import it.unimi.dsi.fastutil.Pair;
 import lombok.SneakyThrows;
 import me.outspending.NamespacedID;
-import me.outspending.Slot;
-import me.outspending.block.ItemStack;
+import me.outspending.item.ItemStack;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
-import me.outspending.protocol.reader.PacketReader;
-import me.outspending.protocol.types.ClientPacket;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -18,9 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.UUID;
 
@@ -170,11 +162,11 @@ public abstract class AbstractPacketWriter implements PacketWriter {
         NetworkTypes.BITSET_TYPE.write(stream, bitSet);
     }
 
-    @Override
-    @SneakyThrows
-    public void writeSlot(@NotNull ItemStack itemStack) {
-        NetworkTypes.SLOT_TYPE.write(stream, itemStack);
-    }
+//    @Override
+//    @SneakyThrows
+//    public void writeSlot(@NotNull ItemStack itemStack) {
+//        NetworkTypes.SLOT_TYPE.write(stream, itemStack);
+//    }
 
     @Override
     @SneakyThrows

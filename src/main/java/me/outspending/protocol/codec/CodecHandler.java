@@ -40,7 +40,6 @@ public class CodecHandler {
                     Map.entry(0x17, SetPlayerPositionPacket::read),
                     Map.entry(0x18, SetPlayerPositionAndRotationPacket::read),
                     Map.entry(0x2C, SetHeldItemPacket::read),
-                    Map.entry(0x2F, SetCreativeModeSlotPacket::read),
                     Map.entry(0x15, ServerKeepAlivePacket::read),
                     Map.entry(0x19, PlayerRotationPacket::read),
                     Map.entry(0x22, PlayerCommandPacket::read),

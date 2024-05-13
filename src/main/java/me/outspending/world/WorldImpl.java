@@ -12,15 +12,17 @@ import me.outspending.position.Pos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 @Getter
 public class WorldImpl implements World {
 
     private final ChunkMap chunkMap = new ChunkMap(this);
-    private final List<Entity> entities = new ArrayList<>();
-    private final List<Player> players = new ArrayList<>();
+    private final List<Entity> entities = Collections.synchronizedList(new ArrayList<>());
+    private final List<Player> players = Collections.synchronizedList(new ArrayList<>());
 
     private final String name;
     private final WorldGenerator generator;
@@ -70,12 +72,12 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public @NotNull List<Chunk> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance) {
+    public @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance) {
         return chunkMap.getChunksRange(centerPosition, chunkDistance);
     }
 
     @Override
-    public @NotNull List<Chunk> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance, Predicate<Chunk> predicate) {
+    public @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance, Predicate<Chunk> predicate) {
         return chunkMap.getChunksRange(centerPosition, chunkDistance, predicate);
     }
 

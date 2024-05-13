@@ -9,11 +9,12 @@ import java.util.function.Consumer;
 public class WorldGenerator implements Generator {
 
     public void generate(Chunk chunk, Consumer<ChunkGenerator> consumer) {
-        consumer.accept(new ChunkGenerator(chunk));
+        consumer.accept(new ConcurrentChunkGenerator(chunk));
     }
 
     public ChunkGenerator getChunkGenerator(Chunk chunk) {
-        return new ChunkGenerator(chunk);
+        return new ConcurrentChunkGenerator(chunk) {
+        };
     }
 
 }

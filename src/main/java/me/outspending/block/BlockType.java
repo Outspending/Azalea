@@ -1,9 +1,10 @@
 package me.outspending.block;
 
 import lombok.Getter;
+import me.outspending.item.Item;
 
 @Getter
-public enum Material {
+public enum BlockType implements Item {
     ACACIA_BUTTON(389),
     ACACIA_DOOR(586),
     ACACIA_FENCE(578),
@@ -1065,14 +1066,14 @@ public enum Material {
 
     private final int id;
 
-    Material(int id) {
+    BlockType(int id) {
         this.id = id;
     }
 
-    public static Material get(int id) {
-        for (Material material : values()) {
-            if (material.id == id) {
-                return material;
+    public static BlockType get(int id) {
+        for (BlockType blockType : values()) {
+            if (blockType.id == id) {
+                return blockType;
             }
         }
         return null;
