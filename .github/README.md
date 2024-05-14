@@ -48,8 +48,8 @@ I'm not planning on finishing it anytime soon as I want to add more features and
 |--------------------|:--------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Chunks             |    🟡    | `Chunks are a very complex system, which needs to be done right. Currently chunks are using ~200MB of ram which is a no go!`                                             |
 | Worlds             |    🟢    | `Worlds are currently being implemented into the main API, the old API wasn't made for worlds thus there's lots that needs to be chagned.`                               |
-| Ticking System     |    🟡    | `There is a very simple ticking system already implemented into the API, it works for now. This includes Players, Entities, and Packet Syncing for Multiplayer Support.` |
-| Multiplayer System |    🔴    | `There is a multiplayer system that will be added, currently not working on it. We are needing to complete chunks and ticks before beginning work on this system.`       |
+| Ticking System     |    🟢    | `There is a very simple ticking system already implemented into the API, it works for now. This includes Players, Entities, and Packet Syncing for Multiplayer Support.` |
+| Multiplayer System |   🟡   | `There is a multiplayer system that will be added, currently not working on it. We are needing to complete chunks and ticks before beginning work on this system.`       |
 
 ## Contributing
 
