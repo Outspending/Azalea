@@ -32,13 +32,15 @@ I'm not planning on finishing it anytime soon as I want to add more features and
 - [x] World System
 - [ ] Multiplayer Support *(Somewhat Working)*
 - [x] Packet Compression
+- [x] Basic Entity System
 - [ ] Block / Item Registry
 - [ ] Metadata / Data Containers
 - [ ] Bossbars / Actionbars / Chat
 - [ ] Particles
-- [ ] Entities
+- [ ] Full Entity Support
 - [ ] Inventory Support
 - [ ] Lighting???
+- [ ] Vanilla Features (Toggleable)
 - [ ] Chunk Saving
 - [ ] Improve performance / API
 - [ ] Final Touches
