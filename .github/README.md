@@ -33,6 +33,7 @@ I'm not planning on finishing it anytime soon as I want to add more features and
 - [ ] Multiplayer Support *(Somewhat Working)*
 - [x] Packet Compression
 - [ ] Block / Item Registry
+- [ ] Metadata / Data Containers
 - [ ] Bossbars / Actionbars / Chat
 - [ ] Particles
 - [ ] Entities
