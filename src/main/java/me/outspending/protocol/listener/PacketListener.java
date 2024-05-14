@@ -1,0 +1,23 @@
+package me.outspending.protocol.listener;
+
+import me.outspending.protocol.types.Packet;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
+
+public sealed interface PacketListener<T extends Packet> permits PacketListenerImpl {
+
+    static <T extends Packet> @NotNull PacketListener<T> create(Class<T> packetType) {
+        return new PacketListenerImpl<>();
+    }
+
+    <P extends T> void addListener(@NotNull Class<P> clazz, @NotNull Consumer<@NotNull P> listener);
+
+    void addNode(@NotNull PacketNode<T> node);
+
+    void onPacketReceived(@NotNull T packet);
+
+}

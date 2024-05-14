@@ -32,6 +32,7 @@ import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.types.Packet;
+import me.outspending.protocol.types.ServerPacket;
 import me.outspending.utils.PacketUtils;
 import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,7 @@ import java.util.*;
 
 public class PacketHandler {
     private static final Logger logger = LoggerFactory.getLogger(PacketHandler.class);
-    private static final Map<Class<? extends Packet>, Method> PACKET_HANDLERS = new HashMap<>();
+    private static final Map<Class<? extends ServerPacket>, Method> PACKET_HANDLERS = new HashMap<>();
 
     private Player loadedPlayer;
 
@@ -55,7 +56,7 @@ public class PacketHandler {
                 if (params.length == 2) {
 
                     @SuppressWarnings("unchecked")
-                    Class<? extends Packet> packetClass = (Class<? extends Packet>) params[1];
+                    Class<? extends ServerPacket> packetClass = (Class<? extends ServerPacket>) params[1];
 
                     PACKET_HANDLERS.put(packetClass, method);
                 }
@@ -63,7 +64,7 @@ public class PacketHandler {
         }
     }
 
-    public void handle(@NotNull ClientConnection connection, @NotNull Packet packet) throws InvocationTargetException, IllegalAccessException {
+    public void handle(@NotNull ClientConnection connection, @NotNull ServerPacket packet) throws InvocationTargetException, IllegalAccessException {
         Method method = PACKET_HANDLERS.get(packet.getClass());
         if (method != null)
             method.invoke(this, connection, packet);
@@ -120,7 +121,7 @@ public class PacketHandler {
 
     @PacketReceiver
     public void onPlayerMove(@NotNull ClientConnection connection, @NotNull SetPlayerPositionPacket packet) {
-        handleMove(packet.position(), loadedPlayer.getPosition(), packet.isGround());
+        handleMove(packet.position(), loadedPlayer.getPosition(), packet.onGround());
     }
 
     @PacketReceiver

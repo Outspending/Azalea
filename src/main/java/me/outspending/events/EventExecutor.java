@@ -56,14 +56,6 @@ public class EventExecutor {
         });
     }
 
-    private static class Listener {
-        private final Object declaringClass;
-        private final Method listenerMethod;
-
-        public Listener(Object declaringClass, Method listenerMethod) {
-            this.declaringClass = declaringClass;
-            this.listenerMethod = listenerMethod;
-        }
-    }
+    private record Listener(Object declaringClass, Method listenerMethod) {}
 }
 

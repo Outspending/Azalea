@@ -7,7 +7,7 @@ import me.outspending.chunk.ChunkSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
-public interface ChunkGenerator extends Generator, BlockSetter {
+public interface ChunkGenerator extends BlockSetter {
 
     void fill(@NotNull BlockType blockType);
 

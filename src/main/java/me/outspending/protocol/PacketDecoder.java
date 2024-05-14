@@ -2,6 +2,7 @@ package me.outspending.protocol;
 
 import lombok.extern.java.Log;
 import me.outspending.MinecraftServer;
+import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.protocol.codec.CodecHandler;
 import me.outspending.protocol.exception.InvalidPacketException;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -20,7 +22,7 @@ import java.util.zip.Inflater;
 public class PacketDecoder {
     private static final Logger logger = LoggerFactory.getLogger(PacketDecoder.class);
 
-    public static ServerPacket decode(@NotNull PacketReader reader, @NotNull CompressionType type, @NotNull GameState state) {
+    public static ServerPacket decode(@NotNull ClientConnection connection, @NotNull PacketReader reader, @NotNull CompressionType type, @NotNull GameState state) {
         int packetID;
         byte[] packetData;
 
@@ -42,13 +44,13 @@ public class PacketDecoder {
                 packetData = reader.getRemainingBytes();
             }
 
-            Function<PacketReader, ServerPacket> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, packetID);
+            BiFunction<ClientConnection, PacketReader, ServerPacket> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, packetID);
             if (packetFunction == null) {
                 logger.info("Unknown packet ID: {}, in state: {}", packetID, state.name());
                 return null;
             }
 
-            return packetFunction.apply(PacketReader.createNormalReader(packetData));
+            return packetFunction.apply(connection, PacketReader.createNormalReader(packetData));
         } catch (InvalidPacketException e) {
             logger.error("Error decoding packet:", e);
             throw new InvalidPacketException("Failed to decode packet", e);

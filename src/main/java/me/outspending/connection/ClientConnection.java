@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
+import me.outspending.entity.Player;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.ClientPacketRecieveEvent;
 import me.outspending.events.event.ServerPacketRecieveEvent;
 import me.outspending.protocol.*;
-import me.outspending.protocol.codec.CodecHandler;
+import me.outspending.protocol.listener.PacketListener;
+import me.outspending.protocol.listener.PacketNode;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
@@ -30,7 +32,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.function.Function;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -43,12 +44,11 @@ public class ClientConnection {
     public final MinecraftServer server;
     public GameState state = GameState.HANDSHAKE;
     public CompressionType compressionType = CompressionType.NONE;
+    public Player player;
 
     public boolean isRunning = true;
 
-    private final PacketHandler handler = new PacketHandler();
-    private PacketListener<ClientPacket> clientPacketListener = packet -> logger.debug("[C -> S][{}] Client packet received: {}", this.state.name(), packet);
-    private PacketListener<ServerPacket> serverPacketListener = packet -> logger.debug("[S -> C][{}] Server packet received: {}", this.state.name(), packet);
+    private final PacketListener<ClientPacket> packetListener = PacketListener.create(ClientPacket.class);
 
     public ClientConnection(Socket socket) {
         this.socket = socket;
@@ -80,13 +80,10 @@ public class ClientConnection {
     }
 
     private void handlePacket(@NotNull PacketReader reader) {
-        try {
-            ServerPacket readPacket = PacketDecoder.decode(reader, compressionType, state);
-            handler.handle(this, readPacket);
-
+        ServerPacket readPacket = PacketDecoder.decode(this, reader, compressionType, state);
+        if (readPacket != null) {
             EventExecutor.emitEvent(new ServerPacketRecieveEvent(readPacket));
-            if (serverPacketListener != null)
-                serverPacketListener.onPacketReceive(readPacket);
+            server.getPacketListener().onPacketReceived(readPacket);
 
             if (reader.hasAnotherPacket()) {
                 byte[] remaining = reader.getRemainingBytes();
@@ -96,8 +93,6 @@ public class ClientConnection {
 
                 handlePacket(new NormalPacketReader(buffer));
             }
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
         }
     }
 
@@ -147,8 +142,7 @@ public class ClientConnection {
             OutputStream stream = socket.getOutputStream();
 
             EventExecutor.emitEvent(new ClientPacketRecieveEvent(packet, this));
-            if (clientPacketListener != null)
-                clientPacketListener.onPacketReceive(packet);
+            packetListener.onPacketReceived(packet);
 
             stream.write(writer.toByteArray());
             writer.flush();

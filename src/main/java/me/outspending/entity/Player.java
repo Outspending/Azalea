@@ -156,11 +156,7 @@ public class Player extends LivingEntity implements TickingEntity {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
                 generator.generate(chunk, chunkGenerator -> {
-                    for (int i = 0; i < 4; i++) {
-                        for (int j = 0; j < 4; j++) {
-                            chunkGenerator.setBlock(i, 0, j, BlockType.STONE);
-                        }
-                    }
+                    chunkGenerator.fillSection(4, BlockType.STONE);
                 });
 
                 chunks.add(chunk);

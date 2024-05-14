@@ -5,8 +5,36 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.outspending.chunk.Chunk;
+import me.outspending.connection.ClientConnection;
+import me.outspending.connection.GameState;
 import me.outspending.connection.ServerConnection;
+import me.outspending.entity.GameProfile;
 import me.outspending.entity.Player;
+import me.outspending.entity.Property;
+import me.outspending.events.EventExecutor;
+import me.outspending.events.event.ChunkSwitchEvent;
+import me.outspending.events.event.PlayerMoveEvent;
+import me.outspending.position.Pos;
+import me.outspending.protocol.CompressionType;
+import me.outspending.protocol.listener.PacketListener;
+import me.outspending.protocol.listener.PacketNode;
+import me.outspending.protocol.packets.client.configuration.ClientFinishConfigurationPacket;
+import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
+import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
+import me.outspending.protocol.packets.client.login.ClientSetCompressionPacket;
+import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
+import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
+import me.outspending.protocol.packets.server.HandshakePacket;
+import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
+import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
+import me.outspending.protocol.packets.server.login.LoginStartPacket;
+import me.outspending.protocol.packets.server.play.SetPlayerPositionAndRotationPacket;
+import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
+import me.outspending.protocol.packets.server.status.PingRequestPacket;
+import me.outspending.protocol.packets.server.status.StatusRequestPacket;
+import me.outspending.protocol.types.ClientPacket;
+import me.outspending.protocol.types.ServerPacket;
 import me.outspending.utils.ResourceUtils;
 import me.outspending.world.World;
 import net.kyori.adventure.nbt.BinaryTagIO;
@@ -41,6 +69,7 @@ public class MinecraftServer {
     private final ServerConnection serverConnection;
     private final ServerProcess serverProcess;
     private final TickHandler tickHandler = new TickHandler();
+    private final PacketListener<ServerPacket> packetListener = PacketListener.create(ServerPacket.class);
 
     private int maxPlayers = 20;
     private String description = "Woah, an MOTD for my mc protocol!";
@@ -65,6 +94,7 @@ public class MinecraftServer {
 
             MinecraftServer.instance = server;
             server.loadRegistry();
+            server.loadPacketNodes();
 
             return server;
         } catch (IOException e) {
@@ -72,6 +102,90 @@ public class MinecraftServer {
         }
 
         return null;
+    }
+
+    private void loadPacketNodes() {
+        PacketNode<ServerPacket> node = PacketNode.create(ServerPacket.class)
+                .addListener(HandshakePacket.class, packet -> {
+                    final ClientConnection connection = packet.getSendingConnection();
+                    connection.setState(packet.nextState() == 2 ? GameState.LOGIN : GameState.STATUS);
+                })
+                .addListener(StatusRequestPacket.class, packet -> {
+                    final ClientConnection connection = packet.getSendingConnection();
+                    final MinecraftServer server = connection.getServer();
+                    connection.sendPacket(new ClientStatusResponsePacket(
+                            new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
+                            new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
+                            server.getDescription()
+                    ));
+                })
+                .addListener(PingRequestPacket.class, packet -> {
+                    final ClientConnection connection = packet.getSendingConnection();
+                    connection.sendPacket(new ClientPingResponsePacket(packet.payload()));
+                })
+                .addListener(LoginStartPacket.class, packet -> {
+                    final ClientConnection connection = packet.getSendingConnection();
+
+                    String name = packet.name();
+                    UUID uuid = packet.uuid();
+
+                    GameProfile profile = new GameProfile(name, uuid, new Property[0]);
+                    connection.setPlayer(new Player(connection, profile));
+
+                    logger.info("Player {} ({}) has joined the server", name, uuid);
+                    connection.sendPacket(new ClientSetCompressionPacket(MinecraftServer.COMPRESSION_THRESHOLD));
+                    connection.setCompressionType(CompressionType.COMPRESSED);
+
+                    connection.sendPacket(new ClientLoginSuccessPacket(profile));
+                })
+                .addListener(LoginAcknowledgedPacket.class, packet -> {
+                    final ClientConnection connection = packet.getSendingConnection();
+                    connection.setState(GameState.CONFIGURATION);
+
+                    connection.sendPacket(new ClientRegistryDataPacket(connection.getServer().REGISTRY_NBT));
+                    connection.sendPacket(new ClientFinishConfigurationPacket());
+                })
+                .addListener(AcknowledgeFinishConfigurationPacket.class, packet -> {
+                    final ClientConnection connection = packet.getSendingConnection();
+                    connection.getPlayer().handleConfigurationToPlay();
+                })
+                .addListener(SetPlayerPositionPacket.class, packet -> {
+                    final ClientConnection connection = packet.getSendingConnection();
+                    final Player player = connection.getPlayer();
+
+                    handleMove(player, packet.position(), player.getPosition(), packet.onGround());
+                })
+                .addListener(SetPlayerPositionAndRotationPacket.class, packet -> {
+                    final ClientConnection connection = packet.getSendingConnection();
+                    final Player player = connection.getPlayer();
+
+                    handleMove(player, packet.position(), player.getPosition(), packet.onGround());
+                });
+
+        packetListener.addNode(node);
+    }
+
+    private void handleMove(@NotNull Player player, @NotNull Pos to, @NotNull Pos from, boolean onGround) {
+        final World world = player.getWorld();
+
+        EventExecutor.emitEvent(new PlayerMoveEvent(player, to));
+
+        player.setOnGround(onGround);
+        player.setPosition(to);
+
+        player.getViewers().forEach(viewer -> viewer.sendPlayerMovementPacket(player, to, from));
+
+        // Check if the player is moving within chunks
+        Chunk fromChunk = world.getChunk(from);
+        Chunk toChunk = world.getChunk(to);
+        if (!fromChunk.equals(toChunk)) {
+            EventExecutor.emitEvent(new ChunkSwitchEvent(player, to, fromChunk, toChunk));
+
+            world.getChunksInRange(to, player.getViewDistance(), chunk -> !chunk.isLoaded()).thenAccept(allChunks -> {
+                if (!allChunks.isEmpty())
+                    player.sendChunkBatch(allChunks);
+            });
+        }
     }
 
     private void loadRegistry() {
