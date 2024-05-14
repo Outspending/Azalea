@@ -1,4 +1,4 @@
-package me.outspending.meta;
+package me.outspending.entity.metadata;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +8,7 @@ import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-@Getter @Setter
-public class EntityMeta implements Writable {
+public class EntityMeta extends Metadata {
     protected byte isOnFire = 0;
     protected byte isCrouching = 0;
     protected byte isSprinting = 0;
@@ -25,10 +24,4 @@ public class EntityMeta implements Writable {
     protected boolean hasNoGravity = false;
     protected EntityPose pose = EntityPose.STANDING;
     protected int ticksFrozen = 0;
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        // TODO: Write EntityMeta
-    }
-
 }

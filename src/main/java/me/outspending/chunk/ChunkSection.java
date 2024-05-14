@@ -30,32 +30,28 @@ public class ChunkSection implements Writable, BlockGetter, BlockSetter {
     }
 
     private void loadArray(int[] types) {
-        try {
-            this.count = 0;
-            this.palette = new IntArrayList();
-            for (int type : types) {
-                if (type != 0) {
-                    count++;
-                }
-
-                if (!palette.contains(type)) {
-                    palette.add(type);
-                }
+        this.count = 0;
+        this.palette = new IntArrayList();
+        for (int type : types) {
+            if (type != 0) {
+                count++;
             }
 
-            this.data = new long[SECTION_SIZE / BLOCKS_PER_LONG];
-            for (int i = 0; i < SECTION_SIZE; i++) {
-                int index = i / BLOCKS_PER_LONG;
-                int bitOffset = i % BLOCKS_PER_LONG;
-
-                if (palette != null) {
-                    data[index] |= (long) palette.indexOf(types[i]) << bitOffset;
-                } else {
-                    data[index] |= (long) types[i] << bitOffset;
-                }
+            if (!palette.contains(type)) {
+                palette.add(type);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+
+        this.data = new long[SECTION_SIZE / BLOCKS_PER_LONG];
+        for (int i = 0; i < SECTION_SIZE; i++) {
+            int index = i / BLOCKS_PER_LONG;
+            int bitOffset = i % BLOCKS_PER_LONG;
+
+            if (palette != null) {
+                data[index] |= (long) palette.indexOf(types[i]) << bitOffset;
+            } else {
+                data[index] |= (long) types[i] << bitOffset;
+            }
         }
     }
 

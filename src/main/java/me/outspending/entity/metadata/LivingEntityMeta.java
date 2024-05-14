@@ -1,10 +1,8 @@
-package me.outspending.meta;
+package me.outspending.entity.metadata;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.position.Pos;
-import me.outspending.protocol.writer.PacketWriter;
-import org.jetbrains.annotations.NotNull;
 
 @Getter @Setter
 public class LivingEntityMeta extends EntityMeta {

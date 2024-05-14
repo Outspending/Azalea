@@ -1,6 +1,6 @@
 package me.outspending.protocol.packets.client.play;
 
-import me.outspending.meta.EntityMeta;
+import me.outspending.entity.metadata.EntityMeta;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
