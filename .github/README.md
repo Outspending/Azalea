@@ -37,7 +37,9 @@ I'm not planning on finishing it anytime soon as I want to add more features and
 - [ ] Metadata / Data Containers
 - [ ] Bossbars / Actionbars / Chat
 - [ ] Particles
+- [ ] Encryption
 - [ ] Full Entity Support
+- [ ] Commands
 - [ ] Inventory Support
 - [ ] Lighting???
 - [ ] Vanilla Features (Toggleable)
