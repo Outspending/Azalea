@@ -41,7 +41,8 @@ I'm not planning on finishing it anytime soon as I want to add more features and
 - [ ] Inventory Support
 - [ ] Lighting???
 - [ ] Vanilla Features (Toggleable)
-- [ ] Chunk Saving
+- [ ] Saving Format
+- [ ] Chunk / Entity Saving
 - [ ] Improve performance / API
 - [ ] Final Touches
 
