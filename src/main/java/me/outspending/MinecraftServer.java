@@ -61,7 +61,7 @@ public class MinecraftServer {
 
     public static final int PROTOCOL = 765;
     public static final int COMPRESSION_THRESHOLD = 256;
-    public static final int COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
+    public static final int COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
     public static final String VERSION = "Testing 1.20.4";
 
     private final String host;

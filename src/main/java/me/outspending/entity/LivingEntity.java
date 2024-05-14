@@ -2,8 +2,11 @@ package me.outspending.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.outspending.meta.EntityMeta;
+import me.outspending.meta.LivingEntityMeta;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,8 @@ public abstract class LivingEntity implements Entity {
 
     protected final int entityID;
     protected final List<Player> viewers = new ArrayList<>();
+
+    protected LivingEntityMeta meta;
 
     protected volatile World world;
     protected volatile Pos position;

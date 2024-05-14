@@ -2,6 +2,7 @@ package me.outspending.chunk;
 
 import lombok.Getter;
 import me.outspending.block.BlockType;
+import me.outspending.chunk.palette.Palette;
 import me.outspending.entity.Entity;
 import me.outspending.position.Pos;
 import me.outspending.protocol.writer.PacketWriter;
