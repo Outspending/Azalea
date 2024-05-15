@@ -6,7 +6,6 @@ import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkMap;
 import me.outspending.entity.Entity;
 import me.outspending.entity.Player;
-import me.outspending.entity.TickingEntity;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
 import org.jetbrains.annotations.NotNull;
@@ -89,8 +88,8 @@ public class WorldImpl implements World {
     @Override
     public void tick(long time) {
         for (Entity entity : entities) {
-            if (entity instanceof TickingEntity tickingEntity) {
-                tickingEntity.tick(time);
+            if (entity.isCanTick()) {
+                entity.tick(time);
             }
         }
 

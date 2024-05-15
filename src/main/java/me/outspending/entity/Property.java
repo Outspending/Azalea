@@ -19,4 +19,5 @@ public record Property(@NotNull String name, @NotNull String value, @Nullable St
             writer.writeString(this.signature);
         }
     }
+
 }

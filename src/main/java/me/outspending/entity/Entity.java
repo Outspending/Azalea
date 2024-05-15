@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.Tickable;
+import me.outspending.connection.ClientConnection;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter @Setter
-public class Entity implements Viewable, Comparable<Entity> {
+public class Entity implements Viewable, Tickable, Comparable<Entity> {
     private static final Logger logger = LoggerFactory.getLogger(Entity.class);
 
     private final List<Player> viewers = new ArrayList<>();
@@ -47,8 +48,10 @@ public class Entity implements Viewable, Comparable<Entity> {
 
     // EntityMeta - Custom
     protected int viewableDistance = 50;
+    protected boolean canTick = true;
     // EntityMeta - End
 
+    protected boolean onGround = true;
     protected Pos position = Pos.ZERO;
     protected World world;
 
@@ -62,6 +65,15 @@ public class Entity implements Viewable, Comparable<Entity> {
         this.entityUUID = entityUUID;
     }
 
+    public void setRotation(float yaw, float pitch) {
+        setPosition(new Pos(position.x(), position.y(), position.z(), yaw, pitch));
+    }
+
+    public void updateEntity(@NotNull Player player) {
+        final ClientConnection connection = player.getConnection();
+
+    }
+
     @Contract("null -> fail")
     public double distanceFrom(@UnknownNullability Entity entity) {
         return distanceFrom(entity.getPosition());
@@ -70,11 +82,8 @@ public class Entity implements Viewable, Comparable<Entity> {
     @Contract("null -> fail")
     public double distanceFrom(@UnknownNullability Pos position) {
         Preconditions.checkNotNull(position, "Position cannot be null");
-        return getPosition().distance(position);
-    }
 
-    public boolean canTick() {
-        return this instanceof Tickable;
+        return getPosition().distance(position);
     }
 
     @Override
@@ -119,6 +128,9 @@ public class Entity implements Viewable, Comparable<Entity> {
             }
         });
     }
+
+    @Override
+    public void tick(long time) {}
 
     public enum Pose {
         STANDING,

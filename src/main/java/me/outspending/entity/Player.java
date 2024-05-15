@@ -6,6 +6,7 @@ import lombok.Setter;
 import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
+import me.outspending.Tickable;
 import me.outspending.block.BlockType;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.light.Blocklight;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 @Getter @Setter
-public class Player extends LivingEntity implements TickingEntity {
+public class Player extends LivingEntity {
     private static final Logger logger = LoggerFactory.getLogger(Player.class);
 
     private final ClientConnection connection;
@@ -95,7 +96,7 @@ public class Player extends LivingEntity implements TickingEntity {
         if (!to.equals(from)) {
             EventExecutor.emitEvent(new PlayerMoveEvent(this, to));
 
-            getViewers().forEach(viewer -> viewer.sendPlayerMovementPacket(this, to, from));
+            getViewers().forEach(viewer -> viewer.sendEntityMovementPacket(this, to, from));
 
             Chunk fromChunk = world.getChunk(from);
             Chunk toChunk = world.getChunk(to);
@@ -251,13 +252,13 @@ public class Player extends LivingEntity implements TickingEntity {
     }
 
     @ApiStatus.Internal
-    public void sendPlayerMovementPacket(@NotNull Player player, @NotNull Pos to, @NotNull Pos from) {
+    public void sendEntityMovementPacket(@NotNull Entity entity, @NotNull Pos to, @NotNull Pos from) {
         short deltaX = (short) ((to.x() - from.x()) * 32 * 128);
         short deltaY = (short) ((to.y() - from.y()) * 32 * 128);
         short deltaZ = (short) ((to.z() - from.z()) * 32 * 128);
 
         Angle yaw = new Angle(to.yaw());
-        int entityID = player.getEntityID();
+        int entityID = entity.getEntityID();
 
         sendPacket(new ClientUpdateEntityPositionAndRotationPacket(
                 entityID,
@@ -266,7 +267,7 @@ public class Player extends LivingEntity implements TickingEntity {
                 deltaZ,
                 yaw,
                 new Angle(to.pitch()),
-                player.isOnGround()
+                entity.isOnGround()
         ));
         sendPacket(new ClientSetHeadRotationPacket(entityID, yaw));
     }

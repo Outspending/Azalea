@@ -38,8 +38,4 @@ public abstract class LivingEntity extends Entity {
         super(type, entityUUID);
     }
 
-    public void setRotation(float yaw, float pitch) {
-        setPosition(new Pos(position.x(), position.y(), position.z(), yaw, pitch));
-    }
-
 }
