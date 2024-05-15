@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 public class ChunkSection implements Writable, BlockGetter, BlockSetter {
     private static final byte CHUNK_SECTION_SIZE = 24;
     private static final int SECTION_SIZE = 16 * 16 * 16;
-    private static final byte BITS_ENTRY_SIZE = (byte) Math.ceil(Math.log(384 + 1) / Math.log(2));
 
     private final Palette chunkPalette;
 

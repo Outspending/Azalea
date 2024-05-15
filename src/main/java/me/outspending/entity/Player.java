@@ -23,6 +23,7 @@ import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -207,7 +208,7 @@ public class Player extends LivingEntity implements TickingEntity {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
                 generator.generate(chunk, chunkGenerator -> {
-                    chunkGenerator.fillSection(4, BlockType.STONE);
+                    chunkGenerator.fillSection(4, BlockType.MANGROVE_PLANKS);
                 });
 
                 chunks.add(chunk);
@@ -216,7 +217,7 @@ public class Player extends LivingEntity implements TickingEntity {
 
         long start = System.currentTimeMillis();
         sendChunkBatch(chunks);
-        logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
+        logger.info("Finished sending {} chunks in: {}MS", 14*14, System.currentTimeMillis() - start);
     }
 
     @ApiStatus.Internal

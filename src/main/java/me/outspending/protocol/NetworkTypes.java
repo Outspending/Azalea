@@ -1,7 +1,6 @@
 package me.outspending.protocol;
 
 import me.outspending.NamespacedID;
-import me.outspending.item.ItemStack;
 import me.outspending.position.Location;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -349,7 +348,6 @@ public interface NetworkTypes {
 
         @Override
         public void write(DataOutputStream stream, Component type) throws IOException {
-
         }
     };
 
