@@ -10,9 +10,10 @@ import me.outspending.events.EventExecutor;
 import me.outspending.events.event.ClientPacketRecieveEvent;
 import me.outspending.events.event.PlayerDisconnectEvent;
 import me.outspending.events.event.ServerPacketRecieveEvent;
-import me.outspending.protocol.*;
+import me.outspending.protocol.CompressionType;
+import me.outspending.protocol.PacketDecoder;
+import me.outspending.protocol.PacketEncoder;
 import me.outspending.protocol.listener.PacketListener;
-import me.outspending.protocol.listener.PacketNode;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
@@ -28,8 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -76,7 +78,7 @@ public class ClientConnection {
                 handlePacket(reader);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error while reading packet", e);
         }
     }
 
@@ -118,11 +120,11 @@ public class ClientConnection {
             player.getViewers().forEach(viewer -> viewer.sendRemoveEntityPacket(player));
 
         try {
-            logger.info("Client disconnected: " + socket.getInetAddress());
+            logger.info("Client disconnected: {}", socket.getInetAddress());
             socket.close();
             isRunning = false;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error while closing socket", e);
         }
     }
 

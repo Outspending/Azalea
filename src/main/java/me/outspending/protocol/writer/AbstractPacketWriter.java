@@ -2,7 +2,6 @@ package me.outspending.protocol.writer;
 
 import lombok.SneakyThrows;
 import me.outspending.NamespacedID;
-import me.outspending.item.ItemStack;
 import me.outspending.position.Angle;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;

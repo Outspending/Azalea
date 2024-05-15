@@ -1,14 +1,11 @@
 package me.outspending.protocol.packets.client.play;
 
-import lombok.Getter;
-import me.outspending.connection.GameState;
 import me.outspending.position.Pos;
-import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientSynchronizePlayerPosition(Pos position, byte flags, int teleportID) implements ClientPacket {
+public record ClientSynchronizePlayerPosition(@NotNull Pos position, byte flags, int teleportID) implements ClientPacket {
 
     @Override
     public void write(@NotNull PacketWriter writer) {

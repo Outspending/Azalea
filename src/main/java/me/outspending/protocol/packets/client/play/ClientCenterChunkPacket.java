@@ -1,8 +1,5 @@
 package me.outspending.protocol.packets.client.play;
 
-import lombok.Getter;
-import me.outspending.connection.GameState;
-import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,5 @@
 package me.outspending;
 
-import me.outspending.connection.ClientConnection;
 import org.junit.jupiter.api.Test;
 
 public class ServerTest {

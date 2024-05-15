@@ -1,14 +1,12 @@
 package me.outspending.protocol.packets.server.play;
 
-import lombok.Getter;
 import me.outspending.connection.ClientConnection;
-import me.outspending.connection.GameState;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record PlayerAbilitiesPacket(ClientConnection connection, byte flags) implements ServerPacket {
-    public static PlayerAbilitiesPacket read(ClientConnection connection, PacketReader reader) {
+public record PlayerAbilitiesPacket(@NotNull ClientConnection connection, byte flags) implements ServerPacket {
+    public static PlayerAbilitiesPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         return new PlayerAbilitiesPacket(connection, reader.readByte());
     }
 

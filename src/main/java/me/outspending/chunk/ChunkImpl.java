@@ -2,7 +2,6 @@ package me.outspending.chunk;
 
 import lombok.Getter;
 import me.outspending.block.BlockType;
-import me.outspending.chunk.palette.Palette;
 import me.outspending.entity.Entity;
 import me.outspending.position.Pos;
 import me.outspending.protocol.writer.PacketWriter;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @Getter
-public class ChunkImpl implements Chunk {
+public final class ChunkImpl implements Chunk {
     private boolean isLoaded = false;
 
     private final int chunkX;

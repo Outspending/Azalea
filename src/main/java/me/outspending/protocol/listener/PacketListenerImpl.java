@@ -3,7 +3,10 @@ package me.outspending.protocol.listener;
 import me.outspending.protocol.types.Packet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public non-sealed class PacketListenerImpl<T extends Packet> implements PacketListener<T> {

@@ -1,13 +1,11 @@
 package me.outspending.protocol.packets.client.status;
 
 import com.google.gson.Gson;
-import lombok.Getter;
-import me.outspending.connection.GameState;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientStatusResponsePacket(Players players, Version version, String description) implements ClientPacket {
+public record ClientStatusResponsePacket(@NotNull Players players, @NotNull Version version, @NotNull String description) implements ClientPacket {
 
     public String toJson() {
         return new Gson().toJson(this);

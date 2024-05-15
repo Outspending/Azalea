@@ -1,6 +1,5 @@
 package me.outspending.protocol.listener;
 
-import me.outspending.connection.ClientConnection;
 import me.outspending.protocol.types.Packet;
 import org.jetbrains.annotations.NotNull;
 

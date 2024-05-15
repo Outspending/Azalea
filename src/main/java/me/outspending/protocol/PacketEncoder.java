@@ -1,13 +1,10 @@
 package me.outspending.protocol;
 
-import it.unimi.dsi.fastutil.Pair;
 import me.outspending.MinecraftServer;
-import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.zip.Deflater;
 
 public class PacketEncoder {

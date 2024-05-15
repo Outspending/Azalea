@@ -1,18 +1,15 @@
 package me.outspending.protocol.packets.client.play;
 
-import lombok.Getter;
-import me.outspending.connection.GameState;
-import me.outspending.position.Location;
-import me.outspending.protocol.reader.PacketReader;
+import me.outspending.position.Pos;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientBlockUpdatePacket(Location position, int blockID) implements ClientPacket {
+public record ClientBlockUpdatePacket(@NotNull Pos pos, int blockID) implements ClientPacket {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-        writer.writeLocation(this.position);
+        writer.writeLong(this.pos.toNetwork());
         writer.writeVarInt(this.blockID);
     }
 

@@ -4,14 +4,21 @@ import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 
-public record ClientPlayerInfoRemovePacket(int numOfPlayers, UUID... uuids) implements ClientPacket {
+public record ClientPlayerInfoRemovePacket(int numOfPlayers, @NotNull Collection<UUID> uuids) implements ClientPacket {
+    public ClientPlayerInfoRemovePacket(int numOfPlayers, @NotNull UUID... uuids) {
+        this(numOfPlayers, Arrays.asList(uuids));
+    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
         writer.writeVarInt(numOfPlayers);
-        writer.writeArray(uuids, writer::writeUUID);
+        for (UUID uuid : uuids) {
+            writer.writeUUID(uuid);
+        }
     }
 
     @Override

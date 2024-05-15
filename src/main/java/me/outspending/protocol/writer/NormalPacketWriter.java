@@ -3,13 +3,9 @@ package me.outspending.protocol.writer;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.SneakyThrows;
 import me.outspending.protocol.NetworkType;
-import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
-import me.outspending.protocol.types.Packet;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class NormalPacketWriter extends AbstractPacketWriter {

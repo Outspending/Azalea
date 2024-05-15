@@ -5,7 +5,7 @@ import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientSetHeadRotationPacket(int entityID, Angle headRotation) implements ClientPacket {
+public record ClientSetHeadRotationPacket(int entityID, @NotNull Angle headRotation) implements ClientPacket {
 
     @Override
     public void write(@NotNull PacketWriter writer) {

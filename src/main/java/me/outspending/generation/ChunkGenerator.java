@@ -1,8 +1,6 @@
 package me.outspending.generation;
 
-import lombok.Getter;
 import me.outspending.block.BlockType;
-import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;

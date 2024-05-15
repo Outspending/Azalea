@@ -5,8 +5,8 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record ChunkBatchReceivedPacket(ClientConnection connection, float chunksPerTick) implements ServerPacket {
-    public static ChunkBatchReceivedPacket read(ClientConnection connection, @NotNull PacketReader reader) {
+public record ChunkBatchReceivedPacket(@NotNull ClientConnection connection, float chunksPerTick) implements ServerPacket {
+    public static ChunkBatchReceivedPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         return new ChunkBatchReceivedPacket(connection, reader.readFloat());
     }
 

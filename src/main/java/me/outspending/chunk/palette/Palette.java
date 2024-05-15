@@ -1,9 +1,7 @@
 package me.outspending.chunk.palette;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
-import me.outspending.block.BlockType;
 import me.outspending.generation.BlockGetter;
 import me.outspending.generation.BlockSetter;
 import me.outspending.protocol.writer.PacketWriter;

@@ -5,16 +5,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import me.outspending.chunk.Chunk;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.connection.ServerConnection;
 import me.outspending.entity.GameProfile;
 import me.outspending.entity.Player;
 import me.outspending.entity.Property;
-import me.outspending.events.EventExecutor;
-import me.outspending.events.event.ChunkSwitchEvent;
-import me.outspending.events.event.PlayerMoveEvent;
+import me.outspending.listeners.MovementPacketListener;
 import me.outspending.position.Pos;
 import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.listener.PacketListener;
@@ -36,7 +33,6 @@ import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
 import me.outspending.protocol.packets.server.play.SwingArmPacket;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
-import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.ServerPacket;
 import me.outspending.thread.TickThread;
 import me.outspending.utils.ResourceUtils;
@@ -154,19 +150,12 @@ public class MinecraftServer {
                     final ClientConnection connection = packet.getSendingConnection();
                     connection.getPlayer().handleConfigurationToPlay();
                 })
-                .addListener(SetPlayerPositionPacket.class, packet -> {
-                    final Player player = packet.getSendingConnection().getPlayer();
-                    final Pos playerPos = player.getPosition();
-                    final Pos pos = packet.position();
-
-                    player.setPosition(new Pos(pos.x(), pos.y(), pos.z(), playerPos.yaw(), playerPos.pitch()));
-                })
-                .addListener(SetPlayerPositionAndRotationPacket.class, packet -> packet.getSendingConnection().getPlayer().setPosition(packet.position()))
-                .addListener(PlayerRotationPacket.class, packet -> packet.getSendingConnection().getPlayer().setRotation(packet.yaw(), packet.pitch()))
+                .addListener(SetPlayerPositionPacket.class, MovementPacketListener::handlePacket)
+                .addListener(SetPlayerPositionAndRotationPacket.class, MovementPacketListener::handlePacket)
+                .addListener(PlayerRotationPacket.class, MovementPacketListener::handlePacket)
                 .addListener(SwingArmPacket.class, packet -> {
                     final Player player = packet.getSendingConnection().getPlayer();
-
-                    player.getViewers().forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
+                    packet.getSendingConnection().getPlayer().getViewers().forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
                 });
 
         packetListener.addNode(node);

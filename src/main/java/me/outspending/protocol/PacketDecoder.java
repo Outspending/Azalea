@@ -1,6 +1,5 @@
 package me.outspending.protocol;
 
-import lombok.extern.java.Log;
 import me.outspending.MinecraftServer;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
@@ -8,14 +7,11 @@ import me.outspending.protocol.codec.CodecHandler;
 import me.outspending.protocol.exception.InvalidPacketException;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
-import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 

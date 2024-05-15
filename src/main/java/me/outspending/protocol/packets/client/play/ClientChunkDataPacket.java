@@ -14,15 +14,15 @@ import java.util.BitSet;
 public record ClientChunkDataPacket(
         int chunkX,
         int chunkZ,
-        CompoundBinaryTag heightmaps,
-        Chunk chunk,
-        BlockEntity[] blockEntity,
-        BitSet skyLightMask,
-        BitSet blockLightMask,
-        BitSet emptySkyLightMask,
-        BitSet emptyBlockLightMask,
-        Skylight[] skyLight,
-        Blocklight[] blockLight
+        @NotNull CompoundBinaryTag heightmaps,
+        @NotNull Chunk chunk,
+        @NotNull BlockEntity[] blockEntity,
+        @NotNull BitSet skyLightMask,
+        @NotNull BitSet blockLightMask,
+        @NotNull BitSet emptySkyLightMask,
+        @NotNull BitSet emptyBlockLightMask,
+        @NotNull Skylight[] skyLight,
+        @NotNull Blocklight[] blockLight
 ) implements ClientPacket {
     public static final CompoundBinaryTag EMPTY_HEIGHTMAP = CompoundBinaryTag.builder()
             .put("MOTION_BLOCKING", CompoundBinaryTag.builder().putIntArray("MOTION_BLOCKING", new int[256]).build())

@@ -6,8 +6,8 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record SetPlayerPositionPacket(ClientConnection connection, Pos position, boolean onGround) implements ServerPacket {
-    public static SetPlayerPositionPacket read(ClientConnection connection, PacketReader reader) {
+public record SetPlayerPositionPacket(@NotNull ClientConnection connection, @NotNull Pos position, boolean onGround) implements ServerPacket {
+    public static SetPlayerPositionPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         return new SetPlayerPositionPacket(
                 connection,
                 new Pos(

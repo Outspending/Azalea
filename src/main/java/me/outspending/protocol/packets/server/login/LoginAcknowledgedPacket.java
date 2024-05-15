@@ -1,14 +1,12 @@
 package me.outspending.protocol.packets.server.login;
 
 import me.outspending.connection.ClientConnection;
-import me.outspending.connection.GameState;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
-import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record LoginAcknowledgedPacket(ClientConnection connection) implements ServerPacket {
-    public static LoginAcknowledgedPacket read(ClientConnection connection, PacketReader reader) {
+public record LoginAcknowledgedPacket(@NotNull ClientConnection connection) implements ServerPacket {
+    public static LoginAcknowledgedPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         return new LoginAcknowledgedPacket(connection);
     }
 

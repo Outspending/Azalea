@@ -5,8 +5,8 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record PingRequestPlayPacket(ClientConnection connection, long payload) implements ServerPacket {
-    public static PingRequestPlayPacket read(ClientConnection connection, @NotNull PacketReader reader) {
+public record PingRequestPlayPacket(@NotNull ClientConnection connection, long payload) implements ServerPacket {
+    public static PingRequestPlayPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         return new PingRequestPlayPacket(connection, reader.readLong());
     }
 

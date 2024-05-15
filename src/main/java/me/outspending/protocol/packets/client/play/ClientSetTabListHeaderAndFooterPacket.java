@@ -5,7 +5,10 @@ import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientSetTabListHeaderAndFooterPacket(Component header, Component footer) implements ClientPacket {
+public record ClientSetTabListHeaderAndFooterPacket(@NotNull Component header, @NotNull Component footer) implements ClientPacket {
+    public ClientSetTabListHeaderAndFooterPacket(@NotNull String header, @NotNull String footer) {
+        this(Component.text(header), Component.text(footer));
+    }
 
     @Override
     public void write(@NotNull PacketWriter writer) {

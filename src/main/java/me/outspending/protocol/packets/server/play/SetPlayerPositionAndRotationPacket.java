@@ -1,15 +1,13 @@
 package me.outspending.protocol.packets.server.play;
 
-import lombok.Getter;
 import me.outspending.connection.ClientConnection;
-import me.outspending.connection.GameState;
 import me.outspending.position.Pos;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record SetPlayerPositionAndRotationPacket(ClientConnection connection, Pos position, boolean onGround) implements ServerPacket {
-    public static SetPlayerPositionAndRotationPacket read(ClientConnection connection, PacketReader reader) {
+public record SetPlayerPositionAndRotationPacket(@NotNull ClientConnection connection, @NotNull Pos position, boolean onGround) implements ServerPacket {
+    public static SetPlayerPositionAndRotationPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         return new SetPlayerPositionAndRotationPacket(
                 connection,
                 new Pos(

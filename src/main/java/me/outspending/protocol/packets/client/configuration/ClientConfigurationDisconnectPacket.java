@@ -1,13 +1,12 @@
 package me.outspending.protocol.packets.client.configuration;
 
-import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientConfigurationDisconnectPacket(Component component) implements ClientPacket {
-    public ClientConfigurationDisconnectPacket(String message) {
+public record ClientConfigurationDisconnectPacket(@NotNull Component component) implements ClientPacket {
+    public ClientConfigurationDisconnectPacket(@NotNull String message) {
         this(Component.text(message));
     }
 

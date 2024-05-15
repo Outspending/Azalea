@@ -23,9 +23,9 @@ import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +42,14 @@ public class Player extends LivingEntity implements TickingEntity {
 
     private Pos lastPosition = Pos.ZERO;
 
-    private boolean isHardcore = false;
-    private int viewDistance = 12;
-    private int simulationDistance = 8 * 5;
+    private boolean isHardcore;
+    private int viewDistance;
+    private int simulationDistance;
     private boolean onGround = false;
 
     public Player(ClientConnection connection, boolean isHardcore, int viewDistance, int simulationDistance, GameProfile profile) {
-        super();
+        super(EntityType.PLAYER, profile.getUuid());
+
         this.connection = connection;
         this.isHardcore = isHardcore;
         this.viewDistance = viewDistance;
@@ -57,48 +58,26 @@ public class Player extends LivingEntity implements TickingEntity {
     }
 
     public Player(ClientConnection connection, GameProfile profile) {
-        super();
-        this.connection = connection;
-        this.profile = profile;
+        this(connection, false, 12, 10, profile);
     }
 
-    public void setWorld(World world) {
+    public void setWorld(@UnknownNullability World world) {
+        if (world != null) return;
+
         this.world = world;
         world.addEntity(this);
     }
 
-    public void kick(String reason) {
+    public void kick(@NotNull String reason) {
         connection.kick(reason);
     }
 
-    public void kick(Component component) {
+    public void kick(@NotNull Component component) {
         connection.kick(component);
     }
 
     public MinecraftServer getServer() {
         return connection.getServer();
-    }
-
-    @Override
-    public void updateViewers() {
-        world.getPlayers().forEach(player -> {
-            if (this.equals(player)) return;
-
-            boolean isViewer = this.isViewer(player);
-            double distance = this.distance(player);
-
-            if (distance <= this.viewableDistance && !isViewer) {
-                this.addViewer(player);
-                sendAddPlayerPacket(player);
-
-                logger.info("Adding viewer: {}", player.getName());
-            } else if (distance >= this.viewableDistance && isViewer) {
-                this.removeViewer(player);
-                sendRemoveEntityPacket(player);
-
-                logger.info("Removing viewer: {}", player.getName());
-            }
-        });
     }
 
     @Override

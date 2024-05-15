@@ -1,13 +1,12 @@
 package me.outspending.protocol.packets.server.configuration;
 
 import me.outspending.connection.ClientConnection;
-import me.outspending.connection.GameState;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record PluginMessageConfigurationPacket(ClientConnection connection, String channel, byte[] data) implements ServerPacket {
-    public static PluginMessageConfigurationPacket read(ClientConnection connection, PacketReader reader) {
+public record PluginMessageConfigurationPacket(@NotNull ClientConnection connection, @NotNull String channel, byte[] data) implements ServerPacket {
+    public static PluginMessageConfigurationPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         return new PluginMessageConfigurationPacket(
                 connection,
                 reader.readString(),

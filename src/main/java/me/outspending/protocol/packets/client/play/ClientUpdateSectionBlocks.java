@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 
-public record ClientUpdateSectionBlocks(long chunkSectionPosition, Collection<Block> blocks) implements ClientPacket {
-    public ClientUpdateSectionBlocks(long chunkSectionPosition, Block[] blocks) {
+public record ClientUpdateSectionBlocks(long chunkSectionPosition, @NotNull Collection<Block> blocks) implements ClientPacket {
+    public ClientUpdateSectionBlocks(long chunkSectionPosition, @NotNull Block[] blocks) {
         this(chunkSectionPosition, Arrays.asList(blocks));
     }
 
@@ -18,7 +18,7 @@ public record ClientUpdateSectionBlocks(long chunkSectionPosition, Collection<Bl
         writer.writeLong(this.chunkSectionPosition);
         writer.writeVarInt(this.blocks.size());
         for (Block block : blocks) {
-            writer.writeVarLong(block.getType().getId());
+            writer.writeVarLong(block.type().getId());
         }
     }
 

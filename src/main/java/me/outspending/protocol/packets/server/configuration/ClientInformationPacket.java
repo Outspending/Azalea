@@ -1,16 +1,13 @@
 package me.outspending.protocol.packets.server.configuration;
 
-import lombok.Getter;
 import me.outspending.connection.ClientConnection;
-import me.outspending.connection.GameState;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
-import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientInformationPacket(
-        ClientConnection connection,
-        String locale,
+        @NotNull ClientConnection connection,
+        @NotNull String locale,
         byte viewDistance,
         int chatMode,
         boolean chatColors,
@@ -19,7 +16,7 @@ public record ClientInformationPacket(
         boolean textFiltering,
         boolean serverListings
 ) implements ServerPacket {
-    public static ClientInformationPacket read(ClientConnection connection, PacketReader reader) {
+    public static ClientInformationPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
         return new ClientInformationPacket(
                 connection,
                 reader.readString(),

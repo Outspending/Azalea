@@ -1,8 +1,5 @@
 package me.outspending.chunk;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntListIterator;
 import me.outspending.block.BlockType;
 import me.outspending.chunk.palette.DirectPalette;
 import me.outspending.chunk.palette.IndirectPalette;

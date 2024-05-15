@@ -1,23 +1,23 @@
 package me.outspending.protocol.packets.client.play;
 
 import me.outspending.position.Angle;
-import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+// TODO: Replace with Entity instead
 public record ClientSpawnEntityPacket(
         int entityID,
-        UUID entityUUID,
+        @NotNull UUID entityUUID,
         int type,
         double x,
         double y,
         double z,
-        Angle pitch,
-        Angle yaw,
-        Angle headYaw,
+        @NotNull Angle pitch,
+        @NotNull Angle yaw,
+        @NotNull Angle headYaw,
         int data,
         short velocityX,
         short velocityY,

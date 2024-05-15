@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +43,6 @@ public class ServerConnection {
         mainSocket.bind(new InetSocketAddress(IPAddress, port));
     }
 
-    @SneakyThrows
     private void init() {
         PlayerManager manager = MinecraftServer.getInstance().getServerProcess().getPlayerManager();
         keepAliveExecutor.scheduleAtFixedRate(() -> {
@@ -58,7 +57,7 @@ public class ServerConnection {
         try {
             while (isRunning) {
                 Socket clientSocket = mainSocket.accept();
-                logger.info("Client Connected: " + clientSocket);
+                logger.info("Client Connected: {}", clientSocket);
 
                 clientExecutor.submit(() -> {
                     new ClientConnection(clientSocket);
@@ -83,7 +82,7 @@ public class ServerConnection {
         try {
             mainSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to close server socket", e);
         }
     }
 }
