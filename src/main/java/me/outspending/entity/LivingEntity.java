@@ -16,16 +16,22 @@ import java.util.List;
 public abstract class LivingEntity implements Entity {
     private static final Logger logger = LoggerFactory.getLogger(LivingEntity.class);
 
+    protected int viewableDistance = 50;
+
     protected final int entityID;
     protected final List<Player> viewers = new ArrayList<>();
 
-    protected LivingEntityMeta meta;
+    protected LivingEntityMeta metaData;
 
     protected volatile World world;
     protected volatile Pos position;
 
     public LivingEntity() {
         this.entityID = EntityCounter.getNextEntityID();
+    }
+
+    public void setRotation(float yaw, float pitch) {
+        setPosition(new Pos(position.x(), position.y(), position.z(), yaw, pitch));
     }
 
     @Override
@@ -37,25 +43,6 @@ public abstract class LivingEntity implements Entity {
     @Override
     public void removeViewer(@NotNull Player player) {
         viewers.remove(player);
-    }
-
-    @Override
-    public void updateViewers() {
-        world.getPlayers().forEach(player -> {
-            if (this.equals(player)) return;
-
-            double simulationDistance = player.getSimulationDistance();
-            boolean isViewer = this.isViewer(player);
-            double distance = this.distance(player);
-
-            if (distance <= simulationDistance && !isViewer) {
-                this.addViewer(player);
-                logger.info("Adding viewer: {}", player.getName());
-            } else if (distance >= simulationDistance && isViewer) {
-                logger.info("Removing viewer: {}", player.getName());
-                this.removeViewer(player);
-            }
-        });
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.outspending.protocol.writer;
 import lombok.SneakyThrows;
 import me.outspending.NamespacedID;
 import me.outspending.item.ItemStack;
+import me.outspending.position.Angle;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
@@ -124,6 +125,11 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     @SneakyThrows
     public void writeVarLong(long l) {
         NetworkTypes.VARLONG_TYPE.write(stream, l);
+    }
+
+    @Override
+    public void writeAngle(@NotNull Angle angle) {
+        writeByte(angle.toNetwork());
     }
 
     @Override

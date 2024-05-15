@@ -8,6 +8,7 @@ import me.outspending.MinecraftServer;
 import me.outspending.entity.Player;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.ClientPacketRecieveEvent;
+import me.outspending.events.event.PlayerDisconnectEvent;
 import me.outspending.events.event.ServerPacketRecieveEvent;
 import me.outspending.protocol.*;
 import me.outspending.protocol.listener.PacketListener;
@@ -104,11 +105,17 @@ public class ClientConnection {
         switch (state) {
             case LOGIN -> sendPacket(new ClientLoginDisconnectPacket(reason));
             case CONFIGURATION -> sendPacket(new ClientConfigurationDisconnectPacket(reason));
-            case PLAY -> sendPacket(new ClientPlayDisconnectPacket(reason));
+            case PLAY -> {
+                EventExecutor.emitEvent(new PlayerDisconnectEvent(player, reason));
+                sendPacket(new ClientPlayDisconnectPacket(reason));
+            }
             default -> {
                 // Do Nothing
             }
         }
+
+        if (player != null)
+            player.getViewers().forEach(viewer -> viewer.sendRemoveEntityPacket(player));
 
         try {
             logger.info("Client disconnected: " + socket.getInetAddress());

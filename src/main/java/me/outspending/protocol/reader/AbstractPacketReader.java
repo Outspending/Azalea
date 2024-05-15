@@ -3,6 +3,7 @@ package me.outspending.protocol.reader;
 import lombok.Getter;
 import me.outspending.NamespacedID;
 import me.outspending.item.ItemStack;
+import me.outspending.position.Angle;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
@@ -96,6 +97,11 @@ public abstract class AbstractPacketReader implements PacketReader {
     @Override
     public long readVarLong() {
         return NetworkTypes.VARLONG_TYPE.read(buffer);
+    }
+
+    @Override
+    public @Nullable Angle readAngle() {
+        return Angle.fromNetwork(readByte());
     }
 
     @Override

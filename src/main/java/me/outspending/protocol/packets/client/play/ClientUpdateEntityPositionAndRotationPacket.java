@@ -1,11 +1,12 @@
 package me.outspending.protocol.packets.client.play;
 
+import me.outspending.position.Angle;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientUpdateEntityPositionAndRotationPacket(int entityID, short deltaX, short deltaY, short deltaZ, byte yaw, byte pitch, boolean onGround) implements ClientPacket {
+public record ClientUpdateEntityPositionAndRotationPacket(int entityID, short deltaX, short deltaY, short deltaZ, Angle yaw, Angle pitch, boolean onGround) implements ClientPacket {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
@@ -13,8 +14,8 @@ public record ClientUpdateEntityPositionAndRotationPacket(int entityID, short de
         writer.writeShort(deltaX);
         writer.writeShort(deltaY);
         writer.writeShort(deltaZ);
-        writer.writeByte(yaw);
-        writer.writeByte(pitch);
+        writer.writeAngle(yaw);
+        writer.writeAngle(pitch);
         writer.writeBoolean(onGround);
     }
 

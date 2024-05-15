@@ -8,6 +8,7 @@ import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class EntityMeta extends Metadata {
     protected byte isOnFire = 0;
     protected byte isCrouching = 0;

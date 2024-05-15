@@ -23,14 +23,17 @@ import me.outspending.protocol.packets.client.configuration.ClientFinishConfigur
 import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
 import me.outspending.protocol.packets.client.login.ClientSetCompressionPacket;
+import me.outspending.protocol.packets.client.play.ClientEntityAnimationPacket;
 import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
 import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
+import me.outspending.protocol.packets.server.play.PlayerRotationPacket;
 import me.outspending.protocol.packets.server.play.SetPlayerPositionAndRotationPacket;
 import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
+import me.outspending.protocol.packets.server.play.SwingArmPacket;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.types.ClientPacket;
@@ -62,7 +65,7 @@ public class MinecraftServer {
 
     public static final int PROTOCOL = 765;
     public static final int COMPRESSION_THRESHOLD = 256;
-    public static final int COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
+    public static final int COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
     public static final String VERSION = "Testing 1.20.4";
 
     private final String host;
@@ -150,6 +153,20 @@ public class MinecraftServer {
                 .addListener(AcknowledgeFinishConfigurationPacket.class, packet -> {
                     final ClientConnection connection = packet.getSendingConnection();
                     connection.getPlayer().handleConfigurationToPlay();
+                })
+                .addListener(SetPlayerPositionPacket.class, packet -> {
+                    final Player player = packet.getSendingConnection().getPlayer();
+                    final Pos playerPos = player.getPosition();
+                    final Pos pos = packet.position();
+
+                    player.setPosition(new Pos(pos.x(), pos.y(), pos.z(), playerPos.yaw(), playerPos.pitch()));
+                })
+                .addListener(SetPlayerPositionAndRotationPacket.class, packet -> packet.getSendingConnection().getPlayer().setPosition(packet.position()))
+                .addListener(PlayerRotationPacket.class, packet -> packet.getSendingConnection().getPlayer().setRotation(packet.yaw(), packet.pitch()))
+                .addListener(SwingArmPacket.class, packet -> {
+                    final Player player = packet.getSendingConnection().getPlayer();
+
+                    player.getViewers().forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
                 });
 
         packetListener.addNode(node);

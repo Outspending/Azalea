@@ -2,6 +2,7 @@ package me.outspending.protocol.writer;
 
 import me.outspending.NamespacedID;
 import me.outspending.item.ItemStack;
+import me.outspending.position.Angle;
 import me.outspending.position.Location;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.types.ClientPacket;
@@ -49,7 +50,7 @@ public interface PacketWriter {
     // void writeSlot(@NotNull ItemStack itemStack);
     void writeNBTCompound(@NotNull CompoundBinaryTag tag);
     void writeLocation(@NotNull Location location);
-    // writeAngle
+    void writeAngle(@NotNull Angle angle);
     void writeUUID(@NotNull UUID uuid);
     void writeBitSet(@NotNull BitSet bitSet);
     // writeFixedBitSet(@NotNull BitSet bitSet)

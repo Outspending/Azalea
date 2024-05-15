@@ -13,8 +13,11 @@ import me.outspending.chunk.light.Skylight;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.GameState;
 import me.outspending.events.EventExecutor;
+import me.outspending.events.event.ChunkSwitchEvent;
 import me.outspending.events.event.PlayerJoinEvent;
+import me.outspending.events.event.PlayerMoveEvent;
 import me.outspending.generation.WorldGenerator;
+import me.outspending.position.Angle;
 import me.outspending.position.Pos;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
@@ -35,6 +38,8 @@ public class Player extends LivingEntity implements TickingEntity {
 
     private final GameMode gameMode = GameMode.CREATIVE;
     private final GameProfile profile;
+
+    private Pos lastPosition = Pos.ZERO;
 
     private boolean isHardcore = false;
     private int viewDistance = 12;
@@ -74,13 +79,52 @@ public class Player extends LivingEntity implements TickingEntity {
     }
 
     @Override
+    public void updateViewers() {
+        world.getPlayers().forEach(player -> {
+            if (this.equals(player)) return;
+
+            boolean isViewer = this.isViewer(player);
+            double distance = this.distance(player);
+
+            if (distance <= this.viewableDistance && !isViewer) {
+                this.addViewer(player);
+                sendAddPlayerPacket(player);
+
+                logger.info("Adding viewer: {}", player.getName());
+            } else if (distance >= this.viewableDistance && isViewer) {
+                this.removeViewer(player);
+                sendRemoveEntityPacket(player);
+
+                logger.info("Removing viewer: {}", player.getName());
+            }
+        });
+    }
+
+    @Override
     public void tick(long time) {
         updateViewers();
         handleMovement();
+
+        lastPosition = position;
     }
 
     private void handleMovement() {
+        final Pos to = position;
+        final Pos from = lastPosition;
 
+        if (!to.equals(from)) {
+            EventExecutor.emitEvent(new PlayerMoveEvent(this, to));
+
+            getViewers().forEach(viewer -> viewer.sendPlayerMovementPacket(this, to, from));
+
+            Chunk fromChunk = world.getChunk(from);
+            Chunk toChunk = world.getChunk(to);
+            if (!fromChunk.equals(toChunk)) {
+                EventExecutor.emitEvent(new ChunkSwitchEvent(this, to, fromChunk, toChunk));
+
+                // dont send chunks yet
+            }
+        }
     }
 
     @ApiStatus.Internal
@@ -146,7 +190,9 @@ public class Player extends LivingEntity implements TickingEntity {
     @ApiStatus.Internal
     public void sendMainLoginPackets() {
         sendLoginPlayPacket();
+
         sendPacket(new ClientSynchronizePlayerPosition(position, (byte) 0, 24));
+        handleWorldEntityPackets();
         sendPacket(new ClientGameEventPacket((byte) 13, 0f));
 
         sendTickingPackets();
@@ -171,8 +217,6 @@ public class Player extends LivingEntity implements TickingEntity {
         long start = System.currentTimeMillis();
         sendChunkBatch(chunks);
         logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
-
-        handleWorldEntityPackets();
     }
 
     @ApiStatus.Internal
@@ -221,7 +265,7 @@ public class Player extends LivingEntity implements TickingEntity {
         sendPacket(new ClientSpawnEntityPacket(
                 player.getEntityID(), player.getUUID(),
                 124, position.x(), position.y(), position.z(),
-                (byte) position.pitch(), (byte) position.yaw(), (byte) 0,
+                new Angle(position.yaw()), new Angle(position.pitch()), Angle.ZERO,
                 0, (short) 0, (short) 0, (short) 0
         ));
     }
@@ -232,21 +276,24 @@ public class Player extends LivingEntity implements TickingEntity {
         short deltaY = (short) ((to.y() - from.y()) * 32 * 128);
         short deltaZ = (short) ((to.z() - from.z()) * 32 * 128);
 
+        Angle yaw = new Angle(to.yaw());
+        int entityID = player.getEntityID();
+
         sendPacket(new ClientUpdateEntityPositionAndRotationPacket(
-                player.getEntityID(),
+                entityID,
                 deltaX,
                 deltaY,
                 deltaZ,
-                (byte) to.yaw(),
-                (byte) to.pitch(),
+                yaw,
+                new Angle(to.pitch()),
                 player.isOnGround()
         ));
+        sendPacket(new ClientSetHeadRotationPacket(entityID, yaw));
     }
 
     @ApiStatus.Internal
     public void sendRemoveEntityPacket(@NotNull Player player) {
         sendPacket(new ClientPlayerInfoRemovePacket(1, player.getUUID()));
-        sendRemoveEntityPacket(player);
     }
 
     @ApiStatus.Internal

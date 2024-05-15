@@ -30,7 +30,7 @@ I'm not planning on finishing it anytime soon as I want to add more features and
 - [x] Chunk Loading / Unloading
 - [x] Ticks
 - [x] World System
-- [ ] Multiplayer Support *(Somewhat Working)*
+- [x] Multiplayer Support
 - [x] Packet Compression
 - [x] Basic Entity System
 - [ ] Block / Item Registry

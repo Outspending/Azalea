@@ -1,5 +1,6 @@
 package me.outspending.protocol.packets.client.play;
 
+import me.outspending.position.Angle;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
@@ -14,9 +15,9 @@ public record ClientSpawnEntityPacket(
         double x,
         double y,
         double z,
-        byte pitch,
-        byte yaw,
-        byte headYaw,
+        Angle pitch,
+        Angle yaw,
+        Angle headYaw,
         int data,
         short velocityX,
         short velocityY,
@@ -31,9 +32,9 @@ public record ClientSpawnEntityPacket(
         writer.writeDouble(x);
         writer.writeDouble(y);
         writer.writeDouble(z);
-        writer.writeByte(pitch);
-        writer.writeByte(yaw);
-        writer.writeByte(headYaw);
+        writer.writeAngle(pitch);
+        writer.writeAngle(yaw);
+        writer.writeAngle(headYaw);
         writer.writeVarInt(data);
         writer.writeShort(velocityX);
         writer.writeShort(velocityY);
