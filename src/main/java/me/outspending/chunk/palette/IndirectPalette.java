@@ -1,5 +1,6 @@
 package me.outspending.chunk.palette;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntListIterator;
 import me.outspending.block.BlockType;
@@ -11,8 +12,26 @@ public non-sealed class IndirectPalette extends Palette {
     private short count;
     private IntList palette;
 
-    public IndirectPalette(@Range(from = 4, to = 8) byte bitsPerEntry) {
+    private void handleList(int[] types) {
+        this.count = 0;
+        this.palette = new IntArrayList();
+
+        for (int type : types) {
+            if (type != 0) {
+                count++;
+            }
+
+            if (!palette.contains(type)) {
+                palette.add(type);
+            }
+        }
+
+        compressDataArray(types, palette);
+    }
+
+    public IndirectPalette(@Range(from = 4, to = 8) byte bitsPerEntry, int[] types) {
         super(bitsPerEntry);
+        handleList(types);
     }
 
     @Override
@@ -45,8 +64,16 @@ public non-sealed class IndirectPalette extends Palette {
 
     @Override
     public @NotNull BlockType getBlock(int x, int y, int z) {
-        BlockType blockType = BlockType.get((int) this.data[getBlockIndex(x, y, z)]);
-        return blockType != null ? blockType : BlockType.AIR;
+        int index = getBlockIndex(x, y, z);
+        int bitOffset = index % blocksPerLong;
+        int compressedDataIndex = index / blocksPerLong;
+        long blockData = this.data[compressedDataIndex];
+
+        int paletteIndex = (int) ((blockData >> bitOffset) & ((1 << bitsPerEntry) - 1));
+        int blockType = palette.getInt(paletteIndex);
+
+        BlockType type = BlockType.get(blockType);
+        return type != null ? type : BlockType.AIR;
     }
 
     @Override
@@ -57,16 +84,16 @@ public non-sealed class IndirectPalette extends Palette {
         }
 
         int index = getBlockIndex(x, y, z);
-        long l = this.data[index / BLOCKS_PER_LONG];
-        long mask = (1 << GLOBAL_PALETTE_BIT_SIZE) - 1;
-        int offset = GLOBAL_PALETTE_BIT_SIZE * (index % BLOCKS_PER_LONG);
+        long l = this.data[index / blocksPerLong];
+        long mask = (1 << bitsPerEntry) - 1;
+        int offset = bitsPerEntry * (index % blocksPerLong);
         l &= ~(mask << offset);
         l |= ((long) blockID << offset);
 
         if (blockID == 0) this.count--;
         else this.count++;
 
-        this.data[index / BLOCKS_PER_LONG] = l;
+        this.data[index / blocksPerLong] = l;
     }
 
 }

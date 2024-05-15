@@ -76,6 +76,11 @@ public class Player extends LivingEntity implements TickingEntity {
     @Override
     public void tick(long time) {
         updateViewers();
+        handleMovement();
+    }
+
+    private void handleMovement() {
+
     }
 
     @ApiStatus.Internal

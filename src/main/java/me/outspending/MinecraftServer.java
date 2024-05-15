@@ -35,6 +35,7 @@ import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.ServerPacket;
+import me.outspending.thread.TickThread;
 import me.outspending.utils.ResourceUtils;
 import me.outspending.world.World;
 import net.kyori.adventure.nbt.BinaryTagIO;
@@ -68,7 +69,6 @@ public class MinecraftServer {
     private final int port;
     private final ServerConnection serverConnection;
     private final ServerProcess serverProcess;
-    private final TickHandler tickHandler = new TickHandler();
     private final PacketListener<ServerPacket> packetListener = PacketListener.create(ServerPacket.class);
 
     private int maxPlayers = 20;
@@ -95,6 +95,8 @@ public class MinecraftServer {
             MinecraftServer.instance = server;
             server.loadRegistry();
             server.loadPacketNodes();
+
+            new TickThread().start();
 
             return server;
         } catch (IOException e) {
@@ -148,44 +150,9 @@ public class MinecraftServer {
                 .addListener(AcknowledgeFinishConfigurationPacket.class, packet -> {
                     final ClientConnection connection = packet.getSendingConnection();
                     connection.getPlayer().handleConfigurationToPlay();
-                })
-                .addListener(SetPlayerPositionPacket.class, packet -> {
-                    final ClientConnection connection = packet.getSendingConnection();
-                    final Player player = connection.getPlayer();
-
-                    handleMove(player, packet.position(), player.getPosition(), packet.onGround());
-                })
-                .addListener(SetPlayerPositionAndRotationPacket.class, packet -> {
-                    final ClientConnection connection = packet.getSendingConnection();
-                    final Player player = connection.getPlayer();
-
-                    handleMove(player, packet.position(), player.getPosition(), packet.onGround());
                 });
 
         packetListener.addNode(node);
-    }
-
-    private void handleMove(@NotNull Player player, @NotNull Pos to, @NotNull Pos from, boolean onGround) {
-        final World world = player.getWorld();
-
-        EventExecutor.emitEvent(new PlayerMoveEvent(player, to));
-
-        player.setOnGround(onGround);
-        player.setPosition(to);
-
-        player.getViewers().forEach(viewer -> viewer.sendPlayerMovementPacket(player, to, from));
-
-        // Check if the player is moving within chunks
-        Chunk fromChunk = world.getChunk(from);
-        Chunk toChunk = world.getChunk(to);
-        if (!fromChunk.equals(toChunk)) {
-            EventExecutor.emitEvent(new ChunkSwitchEvent(player, to, fromChunk, toChunk));
-
-            world.getChunksInRange(to, player.getViewDistance(), chunk -> !chunk.isLoaded()).thenAccept(allChunks -> {
-                if (!allChunks.isEmpty())
-                    player.sendChunkBatch(allChunks);
-            });
-        }
     }
 
     private void loadRegistry() {

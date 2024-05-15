@@ -88,11 +88,15 @@ public class WorldImpl implements World {
 
     @Override
     public void tick(long time) {
-        entities.stream()
-                .filter(entity -> entity instanceof TickingEntity)
-                .forEach(entity -> ((TickingEntity) entity).tick(time));
+        for (Entity entity : entities) {
+            if (entity instanceof TickingEntity tickingEntity) {
+                tickingEntity.tick(time);
+            }
+        }
 
-        players.forEach(player -> player.tick(time));
+        for (Player player : players) {
+            player.tick(time);
+        }
     }
 
 }

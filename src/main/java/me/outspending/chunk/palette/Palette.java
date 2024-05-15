@@ -13,21 +13,22 @@ import org.jetbrains.annotations.NotNull;
 public sealed abstract class Palette implements BlockGetter, BlockSetter permits DirectPalette, IndirectPalette, SingleValuePalette {
     protected static final int CHUNK_SECTION_SIZE = 24;
     protected static final int SECTION_SIZE = 16 * 16 * 16;
-    protected static final byte GLOBAL_PALETTE_BIT_SIZE = 8;
-    protected static final int BLOCKS_PER_LONG = 64 / GLOBAL_PALETTE_BIT_SIZE;
 
     protected final byte bitsPerEntry;
+    protected final int blocksPerLong;
     protected long[] data;
 
     protected void compressDataArray(int[] types, IntList palette) {
-        this.data = new long[SECTION_SIZE / BLOCKS_PER_LONG];
+        this.data = new long[SECTION_SIZE / blocksPerLong];
         for (int i = 0; i < SECTION_SIZE; i++) {
-            int index = i / BLOCKS_PER_LONG;
-            int bitOffset = i % BLOCKS_PER_LONG;
+            int index = i / blocksPerLong;
+            int bitOffset = i % blocksPerLong;
 
             if (palette != null) {
+                // Indirect Palette
                 data[index] |= (long) palette.indexOf(types[i]) << bitOffset;
             } else {
+                // Direct Palette
                 data[index] |= (long) types[i] << bitOffset;
             }
         }
@@ -35,6 +36,7 @@ public sealed abstract class Palette implements BlockGetter, BlockSetter permits
 
     public Palette(byte bitsPerEntry) {
         this.bitsPerEntry = bitsPerEntry;
+        this.blocksPerLong = 64 / bitsPerEntry;
     }
 
     public int getBlockIndex(int x, int y, int z) {
