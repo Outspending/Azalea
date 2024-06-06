@@ -1,7 +1,7 @@
 package me.outspending.events.event;
 
 import lombok.Getter;
-import me.outspending.entity.Player;
+import me.outspending.player.Player;
 import me.outspending.events.types.PlayerEvent;
 import net.kyori.adventure.text.Component;
 

@@ -1,6 +1,6 @@
 package me.outspending;
 
-import me.outspending.entity.Player;
+import me.outspending.player.Player;
 import me.outspending.events.EventHandler;
 import me.outspending.events.EventListener;
 import me.outspending.events.event.PlayerJoinEvent;

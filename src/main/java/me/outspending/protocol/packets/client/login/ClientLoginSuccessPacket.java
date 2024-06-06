@@ -1,7 +1,7 @@
 package me.outspending.protocol.packets.client.login;
 
-import me.outspending.entity.GameProfile;
-import me.outspending.entity.Property;
+import me.outspending.player.GameProfile;
+import me.outspending.player.Property;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;

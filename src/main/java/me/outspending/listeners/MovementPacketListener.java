@@ -1,8 +1,7 @@
 package me.outspending.listeners;
 
 import com.google.common.base.Preconditions;
-import me.outspending.connection.ClientConnection;
-import me.outspending.entity.Player;
+import me.outspending.player.Player;
 import me.outspending.position.Pos;
 import me.outspending.protocol.packets.server.play.PlayerRotationPacket;
 import me.outspending.protocol.packets.server.play.SetPlayerPositionAndRotationPacket;

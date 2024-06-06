@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public sealed interface PacketListener<T extends Packet> permits PacketListenerImpl {
+public interface PacketListener<T extends Packet> {
 
     static <T extends Packet> @NotNull PacketListener<T> create(Class<T> packetType) {
         return new PacketListenerImpl<>();

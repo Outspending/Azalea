@@ -1,6 +1,5 @@
-package me.outspending.entity;
+package me.outspending.player;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

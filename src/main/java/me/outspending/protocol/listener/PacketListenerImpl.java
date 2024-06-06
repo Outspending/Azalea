@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public non-sealed class PacketListenerImpl<T extends Packet> implements PacketListener<T> {
+public class PacketListenerImpl<T extends Packet> implements PacketListener<T> {
     private final Map<Class<T>, List<Consumer<T>>> listeners = new HashMap<>();
-
-    PacketListenerImpl() {}
 
     @Override
     @SuppressWarnings("unchecked")

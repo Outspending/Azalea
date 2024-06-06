@@ -1,4 +1,4 @@
-package me.outspending.entity;
+package me.outspending.player;
 
 import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;

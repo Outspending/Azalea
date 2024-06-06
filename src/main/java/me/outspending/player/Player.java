@@ -1,4 +1,4 @@
-package me.outspending.entity;
+package me.outspending.player;
 
 import com.google.common.base.Preconditions;
 import lombok.Getter;
@@ -6,20 +6,26 @@ import lombok.Setter;
 import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
-import me.outspending.Tickable;
 import me.outspending.block.BlockType;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.light.Blocklight;
 import me.outspending.chunk.light.Skylight;
 import me.outspending.connection.ClientConnection;
-import me.outspending.connection.GameState;
+import me.outspending.connection.ConnectionState;
+import me.outspending.entity.BlockEntity;
+import me.outspending.entity.Entity;
+import me.outspending.entity.EntityType;
+import me.outspending.entity.LivingEntity;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.ChunkSwitchEvent;
+import me.outspending.events.event.PlayerDisconnectEvent;
 import me.outspending.events.event.PlayerJoinEvent;
 import me.outspending.events.event.PlayerMoveEvent;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Angle;
 import me.outspending.position.Pos;
+import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
+import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.world.World;
@@ -30,6 +36,8 @@ import org.jetbrains.annotations.UnknownNullability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.*;
 
 @Getter @Setter
@@ -63,18 +71,37 @@ public class Player extends LivingEntity {
     }
 
     public void setWorld(@UnknownNullability World world) {
-        if (world != null) return;
+        if (world == null) return;
 
         this.world = world;
         world.addEntity(this);
     }
 
     public void kick(@NotNull String reason) {
-        connection.kick(reason);
+        this.kick(Component.text(reason));
     }
 
-    public void kick(@NotNull Component component) {
-        connection.kick(component);
+    public void kick(@NotNull Component reason) {
+        final ClientConnection clientConnection = this.getConnection();
+        final Socket clientSocket = clientConnection.getSocket();
+        switch (clientConnection.getState()) {
+            case LOGIN -> sendPacket(new ClientLoginDisconnectPacket(reason));
+            case CONFIGURATION -> sendPacket(new ClientConfigurationDisconnectPacket(reason));
+            case PLAY -> sendPacket(new ClientPlayDisconnectPacket(reason));
+            default -> {
+                // Do Nothing
+            }
+        }
+
+        EventExecutor.emitEvent(new PlayerDisconnectEvent(this, reason));
+        this.getViewers().forEach(viewer -> viewer.sendRemoveEntityPacket(this));
+
+        try {
+            logger.info("Client disconnected: {}", clientSocket.getInetAddress());
+            clientSocket.close();
+        } catch (IOException e) {
+            logger.error("Error while closing socket", e);
+        }
     }
 
     public MinecraftServer getServer() {
@@ -154,9 +181,9 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     public void handleConfigurationToPlay() {
-        Preconditions.checkArgument(connection.getState() == GameState.CONFIGURATION, "Player is not in configuration state");
+        Preconditions.checkArgument(connection.getState() == ConnectionState.CONFIGURATION, "Player is not in configuration state");
 
-        connection.setState(GameState.PLAY);
+        connection.setState(ConnectionState.PLAY);
         EventExecutor.emitEvent(new PlayerJoinEvent(this));
         if (this.getWorld() == null) {
             logger.error("Player's world is null, cannot spawn in. Make sure to set the world on PlayerJoinEvent!");
@@ -164,7 +191,7 @@ public class Player extends LivingEntity {
             return;
         }
 
-        this.getServer().getServerProcess().getPlayerManager().addPlayer(this);
+        this.getServer().getServerProcess().getPlayerCache().add(this);
         sendMainLoginPackets();
     }
 
@@ -197,7 +224,7 @@ public class Player extends LivingEntity {
 
         long start = System.currentTimeMillis();
         sendChunkBatch(chunks);
-        logger.info("Finished sending {} chunks in: {}MS", 14*14, System.currentTimeMillis() - start);
+        logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
     }
 
     @ApiStatus.Internal
@@ -280,6 +307,13 @@ public class Player extends LivingEntity {
     @ApiStatus.Internal
     public void sendRemoveEntityPacket(@NotNull Entity entity) {
         sendPacket(new ClientRemoveEntitiesPacket(1, entity.getEntityID()));
+    }
+
+    @ApiStatus.Internal
+    public void keepAliveConnection(long time) {
+        if (getConnection().getState() == ConnectionState.PLAY) {
+            sendPacket(new ClientKeepAlivePacket(time));
+        }
     }
 
     public String getName() {

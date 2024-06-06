@@ -5,7 +5,7 @@ import me.outspending.MinecraftServer;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkMap;
 import me.outspending.entity.Entity;
-import me.outspending.entity.Player;
+import me.outspending.player.Player;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class WorldImpl implements World {
         this.name = name;
         this.generator = generator;
 
-        MinecraftServer.getInstance().getServerProcess().getWorldManager().addWorld(this);
+        MinecraftServer.getInstance().getServerProcess().getWorldCache().add(this);
     }
 
     public WorldImpl(String name) {

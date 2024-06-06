@@ -2,7 +2,7 @@ package me.outspending.events.event;
 
 import lombok.Getter;
 import me.outspending.chunk.Chunk;
-import me.outspending.entity.Player;
+import me.outspending.player.Player;
 import me.outspending.events.types.PlayerEvent;
 import me.outspending.position.Pos;
 

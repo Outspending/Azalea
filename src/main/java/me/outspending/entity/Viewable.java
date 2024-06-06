@@ -1,5 +1,6 @@
 package me.outspending.entity;
 
+import me.outspending.player.Player;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.GroupedPacket;
 import org.jetbrains.annotations.NotNull;

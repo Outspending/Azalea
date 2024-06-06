@@ -1,6 +1,6 @@
 package me.outspending.protocol.packets.client.play;
 
-import me.outspending.entity.Property;
+import me.outspending.player.Property;
 import me.outspending.protocol.Writable;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;

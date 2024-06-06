@@ -26,7 +26,7 @@ public class TickThread extends Thread {
 
             EventExecutor.emitEvent(new ServerTickEvent(tickStart));
 
-            Collection<World> loadedWorlds = MinecraftServer.getInstance().getServerProcess().getWorldManager().getLoadedWorlds().values();
+            Collection<World> loadedWorlds = MinecraftServer.getInstance().getServerProcess().getWorldCache().getAll();
             for (World world : loadedWorlds) {
                 world.tick(tickStart);
             }

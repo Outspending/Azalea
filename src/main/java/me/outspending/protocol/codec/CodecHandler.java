@@ -1,7 +1,7 @@
 package me.outspending.protocol.codec;
 
 import me.outspending.MinecraftServer;
-import me.outspending.connection.GameState;
+import me.outspending.connection.ConnectionState;
 import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.configuration.ClientInformationPacket;
@@ -15,26 +15,26 @@ import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import java.util.Map;
 
 public class CodecHandler {
-    public static final PacketCodec<GameState> CLIENT_CODEC = PacketCodec.builder(GameState.class)
+    public static final PacketCodec<ConnectionState> CLIENT_CODEC = PacketCodec.builder(ConnectionState.class)
             .protocolVersion(MinecraftServer.PROTOCOL)
             .minecraftVersion("1.20.4")
-            .packetType(GameState.HANDSHAKE, Map.ofEntries(
+            .packetType(ConnectionState.HANDSHAKE, Map.ofEntries(
                     Map.entry(0x00, HandshakePacket::read)
             ))
-            .packetType(GameState.STATUS, Map.ofEntries(
+            .packetType(ConnectionState.STATUS, Map.ofEntries(
                     Map.entry(0x00, StatusRequestPacket::read),
                     Map.entry(0x01, PingRequestPacket::read)
             ))
-            .packetType(GameState.LOGIN, Map.ofEntries(
+            .packetType(ConnectionState.LOGIN, Map.ofEntries(
                     Map.entry(0x00, LoginStartPacket::read),
                     Map.entry(0x03, LoginAcknowledgedPacket::read)
             ))
-            .packetType(GameState.CONFIGURATION, Map.ofEntries(
+            .packetType(ConnectionState.CONFIGURATION, Map.ofEntries(
                     Map.entry(0x00, ClientInformationPacket::read),
                     Map.entry(0x01, PluginMessageConfigurationPacket::read),
                     Map.entry(0x02, AcknowledgeFinishConfigurationPacket::read)
             ))
-            .packetType(GameState.PLAY, Map.ofEntries(
+            .packetType(ConnectionState.PLAY, Map.ofEntries(
                     Map.entry(0x35, UseItemOnPacket::read),
                     Map.entry(0x33, SwingArmPacket::read),
                     Map.entry(0x17, SetPlayerPositionPacket::read),

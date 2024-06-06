@@ -1,16 +1,14 @@
 package me.outspending;
 
 import lombok.Getter;
-import me.outspending.processes.PlayerManager;
-import me.outspending.processes.WorldManager;
+import me.outspending.cache.PlayerCache;
+import me.outspending.cache.WorldCache;
 
 @Getter
 public class ServerProcess {
-    private final PlayerManager playerManager;
-    private final WorldManager worldManager;
+    private final PlayerCache playerCache = new PlayerCache();
+    private final WorldCache worldCache = new WorldCache();
 
-    public ServerProcess() {
-        this.playerManager = new PlayerManager();
-        this.worldManager = new WorldManager();
-    }
+    ServerProcess() {}
+
 }

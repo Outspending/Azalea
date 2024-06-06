@@ -3,7 +3,7 @@ package me.outspending.world;
 import me.outspending.Tickable;
 import me.outspending.chunk.Chunk;
 import me.outspending.entity.Entity;
-import me.outspending.entity.Player;
+import me.outspending.player.Player;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
 import org.jetbrains.annotations.NotNull;

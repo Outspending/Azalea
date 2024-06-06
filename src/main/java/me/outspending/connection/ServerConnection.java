@@ -3,11 +3,7 @@ package me.outspending.connection;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
-import me.outspending.entity.Player;
-import me.outspending.processes.PlayerManager;
-import me.outspending.protocol.packets.client.play.ClientKeepAlivePacket;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,54 +24,49 @@ public class ServerConnection {
     private static final ScheduledExecutorService keepAliveExecutor = Executors.newSingleThreadScheduledExecutor();
     private static final ExecutorService clientExecutor = Executors.newCachedThreadPool();
 
-    private boolean isRunning = true;
-
-    private final String IPAddress;
-    private final int port;
+    private boolean running = false;
+    private String IPAddress;
+    private int port;
 
     private final ServerSocket mainSocket;
+    private final MinecraftServer server;
 
-    public ServerConnection(@NotNull String IPAddress, int port) throws IOException {
+    public ServerConnection(@NotNull MinecraftServer server) throws IOException {
         this.mainSocket = new ServerSocket();
-        this.IPAddress = IPAddress;
-        this.port = port;
-
-        mainSocket.bind(new InetSocketAddress(IPAddress, port));
+        this.server = server;
     }
 
-    private void init() {
-        PlayerManager manager = MinecraftServer.getInstance().getServerProcess().getPlayerManager();
-        keepAliveExecutor.scheduleAtFixedRate(() -> {
-            for (Player player : manager.getAllPlayers()) {
-                ClientConnection connection = player.getConnection();
-                if (connection.state == GameState.PLAY) {
-                    connection.sendPacket(new ClientKeepAlivePacket(System.currentTimeMillis()));
-                }
-            }
-        }, 10, 10, TimeUnit.SECONDS);
-
+    public void startTcpListener(@NotNull String IPAddress, int port) {
         try {
-            while (isRunning) {
-                Socket clientSocket = mainSocket.accept();
-                logger.info("Client Connected: {}", clientSocket);
+            this.IPAddress = IPAddress;
+            this.port = port;
+            this.running = true;
+            mainSocket.bind(new InetSocketAddress(IPAddress, port));
 
-                clientExecutor.submit(() -> {
-                    new ClientConnection(clientSocket);
-                });
-            }
+            keepConnectionsAlive();
+            UNSAFE_startTcpListener();
         } catch (IOException e) {
-            logger.error("Failed to accept connection", e);
-        } finally {
-            clientExecutor.shutdown();
+            logger.error("Failed to accept minecraft connection", e);
         }
     }
 
-    public void start() {
-        init();
+    private void UNSAFE_startTcpListener() throws IOException {
+        while (running) {
+            Socket clientSocket = mainSocket.accept();
+            logger.info("Client Connected: {}", clientSocket);
+
+            clientExecutor.submit(() -> {
+                final ClientConnection connection = new ClientConnection(clientSocket);
+                connection.startTcpListener();
+            });
+        }
     }
 
-    public boolean isRunning() {
-        return isRunning;
+    private void keepConnectionsAlive() {
+        keepAliveExecutor.scheduleAtFixedRate(() -> {
+            final long time = System.currentTimeMillis();
+            server.getAllPlayers().forEach(player -> player.keepAliveConnection(time));
+        }, 10, 10, TimeUnit.SECONDS);
     }
 
     public void stop() {

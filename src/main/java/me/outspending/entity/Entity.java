@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.outspending.Tickable;
 import me.outspending.connection.ClientConnection;
+import me.outspending.player.Player;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;

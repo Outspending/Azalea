@@ -1,7 +1,7 @@
 package me.outspending.utils;
 
 import me.outspending.MinecraftServer;
-import me.outspending.entity.Player;
+import me.outspending.player.Player;
 import me.outspending.position.Pos;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.world.World;
@@ -30,15 +30,15 @@ public class PacketUtils {
     }
 
     public static void sendGroupedPacket(ClientPacket packet, Predicate<Player> predicate) {
-        Collection<Player> allPlayers = MinecraftServer.getInstance().getServerProcess().getPlayerManager().getAllPlayers();
+        Collection<Player> allPlayers = MinecraftServer.getInstance().getServerProcess().getPlayerCache().getAll();
         sendGroupedPacket(allPlayers, packet, predicate);
     }
 
     public static void sendPacketWithinDistance(ClientPacket packet, Pos position, long distance) {
-        sendGroupedPacket(packet, player -> player.distance(position) <= distance);
+        sendGroupedPacket(packet, player -> player.distanceFrom(position) <= distance);
     }
 
 public static void sendPacketWithinDistance(ClientPacket packet, Pos position, long distance, Predicate<Player> predicate) {
-        sendGroupedPacket(MinecraftServer.getInstance().getAllPlayers(), packet, player -> player.distance(position) <= distance && predicate.test(player));
+        sendGroupedPacket(MinecraftServer.getInstance().getAllPlayers(), packet, player -> player.distanceFrom(position) <= distance && predicate.test(player));
     }
 }

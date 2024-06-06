@@ -2,7 +2,7 @@ package me.outspending.protocol;
 
 import me.outspending.MinecraftServer;
 import me.outspending.connection.ClientConnection;
-import me.outspending.connection.GameState;
+import me.outspending.connection.ConnectionState;
 import me.outspending.protocol.codec.CodecHandler;
 import me.outspending.protocol.exception.InvalidPacketException;
 import me.outspending.protocol.reader.PacketReader;
@@ -18,7 +18,7 @@ import java.util.zip.Inflater;
 public class PacketDecoder {
     private static final Logger logger = LoggerFactory.getLogger(PacketDecoder.class);
 
-    public static ServerPacket decode(@NotNull ClientConnection connection, @NotNull PacketReader reader, @NotNull CompressionType type, @NotNull GameState state) {
+    public static ServerPacket decode(@NotNull ClientConnection connection, @NotNull PacketReader reader, @NotNull CompressionType type, @NotNull ConnectionState state) {
         int packetID;
         byte[] packetData;
 
