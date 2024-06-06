@@ -10,6 +10,10 @@
     </div>
 </div>
 
+> [!WARNING]  
+> This is the **1.20.6** branch of Azalea. 1.20.6 support is very unstable, use at own risk
+> This will include all the packets / features that need to be changed from main. For further development we will be moving strictly to 1.20.6
+
 ## About
 
 Azalea was created just for fun and to learn more about how Minecraft works.
