@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatTypeDecoration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatTypes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/NamespacedID.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/NamespacedID.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/cache/DimensionCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/cache/DimensionCache.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/dimension/Dimension.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/dimension/Dimension.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/dimension/DimensionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/dimension/DimensionType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/dimension/InfiniburnType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/dimension/InfiniburnType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatTypeDecoration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatTypeDecoration.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +205,7 @@
       <workItem from="1717646540733" duration="2283000" />
       <workItem from="1717720883550" duration="57000" />
       <workItem from="1717720993539" duration="42000" />
-      <workItem from="1717817726304" duration="2418000" />
+      <workItem from="1717817726304" duration="2677000" />
     </task>
     <servers />
   </component>
