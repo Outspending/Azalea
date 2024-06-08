@@ -40,4 +40,8 @@ public interface DimensionType {
             .height(256)
             .build();
 
+    static Dimension[] values() {
+        return new Dimension[]{OVERWORLD, OVERWORLD_CAVES, THE_END, NETHER};
+    }
+
 }

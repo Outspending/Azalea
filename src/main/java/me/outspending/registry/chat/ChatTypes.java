@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static me.outspending.registry.chat.ChatTypeDecoration.Parameter;
@@ -125,6 +126,12 @@ public enum ChatTypes {
 
     public static ChatTypes[] all() {
         return ChatTypes.values();
+    }
+
+    public static ChatType[] allDefault() {
+        return Arrays.stream(all())
+                .map(ChatTypes::getType)
+                .toArray(ChatType[]::new);
     }
 
 }

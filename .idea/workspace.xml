@@ -5,9 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/DefaultRegistries.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/DefaultedRegistry.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/Registry.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatTypeDecoration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatTypeDecoration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/chat/ChatTypes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/dimension/DimensionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/dimension/DimensionType.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,9 +45,9 @@
       <list>
         <option value="AnnotationType" />
         <option value="Record" />
+        <option value="Enum" />
         <option value="Interface" />
         <option value="Class" />
-        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -80,34 +84,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Profiler#1",
-    "Gradle.Azalea [:Main.main()].executor": "Run",
-    "Gradle.Build ServerImpl.executor": "Run",
-    "Gradle.ServerImpl [:Main.main()].executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "1__20__6",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/media/outspending/Coding/java/Azalea",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "discord-application",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Profiler#1&quot;,
+    &quot;Gradle.Azalea [:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build ServerImpl.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ServerImpl [:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;1__20__6&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/media/outspending/Coding/java/Azalea&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;discord-application&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "Excalidraw"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Excalidraw&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="me.outspending.Main" />
@@ -205,7 +209,8 @@
       <workItem from="1717646540733" duration="2283000" />
       <workItem from="1717720883550" duration="57000" />
       <workItem from="1717720993539" duration="42000" />
-      <workItem from="1717817726304" duration="2677000" />
+      <workItem from="1717817726304" duration="2701000" />
+      <workItem from="1717865659822" duration="1038000" />
     </task>
     <servers />
   </component>
