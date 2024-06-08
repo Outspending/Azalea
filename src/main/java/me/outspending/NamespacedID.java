@@ -49,4 +49,5 @@ public class NamespacedID implements Writable {
     public void write(@NotNull PacketWriter writer) {
         writer.writeString(this.toString());
     }
+
 }

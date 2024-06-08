@@ -1,4 +1,4 @@
-package me.outspending.dimension;
+package me.outspending.registry.dimension;
 
 import lombok.Getter;
 import me.outspending.NamespacedID;
@@ -10,15 +10,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 @Getter
 public class Dimension implements Writable, RegistryType {
     private static final NamespacedID registerID = NamespacedID.of("dimension_type");
-    private static final AtomicInteger idCounter = new AtomicInteger(0);
 
     private final NamespacedID biomeKey;
-    private final int id = idCounter.incrementAndGet();
 
     private final boolean piglinSafe;
     private final boolean natural;
@@ -33,13 +29,12 @@ public class Dimension implements Writable, RegistryType {
     private final boolean hasRaids;
     private final int logicalHeight;
     private final double coordinateScale;
-    private final MonsterSpawnRules monsterSpawnLightLevel;
     private final int minY;
     private final boolean ultrawarm;
     private final boolean hasCeiling;
     private final int height;
 
-    public Dimension(NamespacedID biomeKey, boolean piglinSafe, boolean natural, float ambientLight, int monsterSpawnBlockLightLimit, InfiniburnType infiniburn, boolean respawnAnchorWorks, boolean hasSkyLight, boolean bedWorks, NamespacedID effects, long fixedTime, boolean hasRaids, int logicalHeight, double coordinateScale, MonsterSpawnRules monsterSpawnLightLevel, int minY, boolean ultrawarm, boolean hasCeiling, int height) {
+    public Dimension(NamespacedID biomeKey, boolean piglinSafe, boolean natural, float ambientLight, int monsterSpawnBlockLightLimit, InfiniburnType infiniburn, boolean respawnAnchorWorks, boolean hasSkyLight, boolean bedWorks, NamespacedID effects, long fixedTime, boolean hasRaids, int logicalHeight, double coordinateScale, int minY, boolean ultrawarm, boolean hasCeiling, int height) {
         this.biomeKey = biomeKey;
         this.piglinSafe = piglinSafe;
         this.natural = natural;
@@ -54,7 +49,6 @@ public class Dimension implements Writable, RegistryType {
         this.hasRaids = hasRaids;
         this.logicalHeight = logicalHeight;
         this.coordinateScale = coordinateScale;
-        this.monsterSpawnLightLevel = monsterSpawnLightLevel;
         this.minY = minY;
         this.ultrawarm = ultrawarm;
         this.hasCeiling = hasCeiling;
@@ -64,30 +58,24 @@ public class Dimension implements Writable, RegistryType {
     @ApiStatus.Internal
     public final CompoundBinaryTag getNBT() {
         return CompoundBinaryTag.builder()
-                .putBoolean("piglin_safe", this.piglinSafe)
+                .putBoolean("ultrawarm", this.ultrawarm)
                 .putBoolean("natural", this.natural)
-                .putFloat("ambient_light", this.ambientLight)
-                .putInt("monster_spawn_block_light_limit", this.monsterSpawnBlockLightLimit)
-                .putString("infiniburn", this.infiniburn.toString())
-                .putBoolean("respawn_anchor_works", this.respawnAnchorWorks)
+                .putDouble("coordinate_scale", this.coordinateScale)
                 .putBoolean("has_skylight", this.hasSkyLight)
+                .putBoolean("has_ceiling", this.hasCeiling)
+                .putFloat("ambient_light", this.ambientLight)
+                .putBoolean("piglin_safe", this.piglinSafe)
                 .putBoolean("bed_works", this.bedWorks)
-                .putString("effects", this.effects.toString())
-                .putLong("fixed_time", this.fixedTime)
+                .putBoolean("respawn_anchor_works", this.respawnAnchorWorks)
                 .putBoolean("has_raids", this.hasRaids)
                 .putInt("logical_height", this.logicalHeight)
-                .putDouble("coordinate_scale", this.coordinateScale)
-                .put(
-                        CompoundBinaryTag.builder()
-                                .putString("type", this.monsterSpawnLightLevel.type.toString())
-                                .putInt("min_inclusive", this.monsterSpawnLightLevel.minInclusive)
-                                .putInt("max_inclusive", this.monsterSpawnLightLevel.maxInclusive)
-                                .build()
-                )
                 .putInt("min_y", this.minY)
-                .putBoolean("ultrawarm", this.ultrawarm)
-                .putBoolean("has_ceiling", this.hasCeiling)
                 .putInt("height", this.height)
+                .putString("infiniburn", this.infiniburn.toString())
+                .putString("effects", this.effects.toString())
+                .putLong("fixed_time", this.fixedTime)
+                .putInt("monster_spawn_block_light_limit", 0)
+                .putInt("monster_spawn_light_level", 0)
                 .build();
     }
 
@@ -108,8 +96,6 @@ public class Dimension implements Writable, RegistryType {
         return registerID;
     }
 
-    public record MonsterSpawnRules(NamespacedID type, int minInclusive, int maxInclusive) {}
-
     public static class Builder {
         private final NamespacedID biomeKey;
 
@@ -126,10 +112,6 @@ public class Dimension implements Writable, RegistryType {
         private boolean hasRaids = true;
         private int logicalHeight = 384;
         private double coordinateScale = 1.0;
-        private MonsterSpawnRules monsterSpawnLightLevel = new MonsterSpawnRules(
-                NamespacedID.of("uniform"),
-                0, 7
-        );
         private int minY = -64;
         private boolean ultrawarm = false;
         private boolean hasCeiling = false;
@@ -218,12 +200,6 @@ public class Dimension implements Writable, RegistryType {
         }
 
         @Contract("_ -> this")
-        public Builder monsterSpawnLightLevel(@NotNull MonsterSpawnRules monsterSpawnLightLevel) {
-            this.monsterSpawnLightLevel = monsterSpawnLightLevel;
-            return this;
-        }
-
-        @Contract("_ -> this")
         public Builder minY(int minY) {
             this.minY = minY;
             return this;
@@ -264,7 +240,6 @@ public class Dimension implements Writable, RegistryType {
                     this.hasRaids,
                     this.logicalHeight,
                     this.coordinateScale,
-                    this.monsterSpawnLightLevel,
                     this.minY,
                     this.ultrawarm,
                     this.hasCeiling,

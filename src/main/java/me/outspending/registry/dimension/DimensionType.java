@@ -1,4 +1,4 @@
-package me.outspending.dimension;
+package me.outspending.registry.dimension;
 
 import me.outspending.NamespacedID;
 
@@ -34,7 +34,6 @@ public interface DimensionType {
             .hasRaids(false)
             .logicalHeight(128)
             .coordinateScale(8.0)
-            .monsterSpawnLightLevel(new Dimension.MonsterSpawnRules(NamespacedID.of("darkness"), 0, 7))
             .minY(0)
             .ultrawarm(true)
             .hasCeiling(true)

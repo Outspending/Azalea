@@ -1,10 +1,7 @@
-package me.outspending.dimension;
+package me.outspending.registry.dimension;
 
 import lombok.Getter;
 import me.outspending.NamespacedID;
-import me.outspending.protocol.Writable;
-import me.outspending.protocol.writer.PacketWriter;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 public enum InfiniburnType {

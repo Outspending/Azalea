@@ -3,7 +3,7 @@ package me.outspending.cache;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import me.outspending.NamespacedID;
-import me.outspending.dimension.Dimension;
+import me.outspending.registry.dimension.Dimension;
 import me.outspending.protocol.Writable;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
@@ -11,9 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class DimensionCache implements Cache<Dimension>, Writable {
     private final Map<NamespacedID, Dimension> dimensions = Maps.newHashMap();
@@ -43,6 +41,11 @@ public final class DimensionCache implements Cache<Dimension>, Writable {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-
+        writer.writeNamespacedKey(NamespacedID.of("dimension_type"));
+        writer.writeVarInt(dimensions.size());
+        for (Dimension dimension : dimensions.values()) {
+            dimension.write(writer);
+        }
     }
+
 }
