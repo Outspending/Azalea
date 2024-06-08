@@ -85,7 +85,7 @@ public non-sealed class IndirectPalette extends Palette {
 
         int index = getBlockIndex(x, y, z);
         long l = this.data[index / blocksPerLong];
-        long mask = (1 << bitsPerEntry) - 1;
+        long mask = (1L << bitsPerEntry) - 1;
         int offset = bitsPerEntry * (index % blocksPerLong);
         l &= ~(mask << offset);
         l |= ((long) blockID << offset);

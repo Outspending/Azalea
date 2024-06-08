@@ -1,9 +1,12 @@
 package me.outspending;
 
 import lombok.Getter;
+import me.outspending.protocol.Writable;
+import me.outspending.protocol.writer.PacketWriter;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class NamespacedID {
+public class NamespacedID implements Writable {
     private static final String VALID_NAMESPACE = "[a-z0-9.-_]*";
     private static final String VALID_PATH = "[a-z0-9.-_/]*";
 
@@ -40,5 +43,10 @@ public class NamespacedID {
     @Override
     public String toString() {
         return this.namespace + ":" + this.path;
+    }
+
+    @Override
+    public void write(@NotNull PacketWriter writer) {
+        writer.writeString(this.toString());
     }
 }

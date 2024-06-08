@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 
 @ApiStatus.NonExtendable
-public sealed interface Cache<K> permits PlayerCache, WorldCache {
+public sealed interface Cache<K> permits DimensionCache, PlayerCache, WorldCache {
 
     @Contract("null -> fail")
     void add(@UnknownNullability K key);
