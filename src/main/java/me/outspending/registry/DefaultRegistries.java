@@ -5,8 +5,6 @@ import me.outspending.registry.chat.ChatTypes;
 import me.outspending.registry.dimension.Dimension;
 import me.outspending.registry.dimension.DimensionType;
 
-import java.util.Arrays;
-
 public class DefaultRegistries {
     public static final Registry<Dimension> DIMENSION;
     public static final Registry<ChatType> CHATTYPES;

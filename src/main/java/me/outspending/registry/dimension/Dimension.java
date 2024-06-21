@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class Dimension implements Writable, RegistryType {
+public class Dimension implements RegistryType {
     private static final NamespacedID registerID = NamespacedID.of("dimension_type");
 
     private final NamespacedID biomeKey;
@@ -55,8 +55,18 @@ public class Dimension implements Writable, RegistryType {
         this.height = height;
     }
 
-    @ApiStatus.Internal
-    public final CompoundBinaryTag getNBT() {
+    @Contract("_ -> new")
+    public static @NotNull Builder builder(@NotNull NamespacedID key) {
+        return new Dimension.Builder(key);
+    }
+
+    @Override
+    public @NotNull NamespacedID getRegistryID() {
+        return registerID;
+    }
+
+    @Override
+    public @NotNull CompoundBinaryTag toNBT() {
         return CompoundBinaryTag.builder()
                 .putBoolean("ultrawarm", this.ultrawarm)
                 .putBoolean("natural", this.natural)
@@ -74,26 +84,10 @@ public class Dimension implements Writable, RegistryType {
                 .putString("infiniburn", this.infiniburn.toString())
                 .putString("effects", this.effects.toString())
                 .putLong("fixed_time", this.fixedTime)
+
                 .putInt("monster_spawn_block_light_limit", 0)
                 .putInt("monster_spawn_light_level", 0)
                 .build();
-    }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        this.biomeKey.write(writer);
-        writer.writeBoolean(true);
-        writer.writeNBTCompound(this.getNBT());
-    }
-
-    @Contract("_ -> new")
-    public static @NotNull Builder builder(@NotNull NamespacedID key) {
-        return new Dimension.Builder(key);
-    }
-
-    @Override
-    public @NotNull NamespacedID getRegistryID() {
-        return registerID;
     }
 
     public static class Builder {

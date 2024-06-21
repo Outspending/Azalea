@@ -16,12 +16,12 @@ public enum ChatTypes {
 
     CHAT_TYPE(ChatType.builder("chat")
             .chat(new ChatTypeDecoration(
-                    "chat.type.text",
+                    NamespacedID.of("chat.type.text"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
             .narration(new ChatTypeDecoration(
-                    "chat.type.text.narrate",
+                    NamespacedID.of("chat.type.text.narrate"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
@@ -30,12 +30,12 @@ public enum ChatTypes {
 
     EMOTE_COMMAND(ChatType.builder("emote_command")
             .chat(new ChatTypeDecoration(
-                    "chat.type.emote",
+                    NamespacedID.of("chat.type.emote"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
             .narration(new ChatTypeDecoration(
-                    "chat.type.emote",
+                    NamespacedID.of("chat.type.emote"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
@@ -44,7 +44,7 @@ public enum ChatTypes {
 
     MSG_COMMAND_INCOMING(ChatType.builder("msg_command_incoming")
             .chat(new ChatTypeDecoration(
-                    "commands.message.display.incoming",
+                    NamespacedID.of("commands.message.display.incoming"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.style(
                             TextColor.color(170, 170, 170),
@@ -52,7 +52,7 @@ public enum ChatTypes {
                     )
             ))
             .narration(new ChatTypeDecoration(
-                    "chat.type.text.narrate",
+                    NamespacedID.of("chat.type.text.narrate"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
@@ -61,7 +61,7 @@ public enum ChatTypes {
 
     MSG_COMMAND_OUTGOING(ChatType.builder("msg_command_outgoing")
             .chat(new ChatTypeDecoration(
-                    "commands.message.display.outgoing",
+                    NamespacedID.of("commands.message.display.outgoing"),
                     List.of(Parameter.TARGET, Parameter.CONTENT),
                     Style.style(
                             TextColor.color(170, 170, 170),
@@ -69,7 +69,7 @@ public enum ChatTypes {
                     )
             ))
             .narration(new ChatTypeDecoration(
-                    "chat.type.text.narrate",
+                    NamespacedID.of("chat.type.text.narrate"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
@@ -78,12 +78,12 @@ public enum ChatTypes {
 
     SAY_COMMAND(ChatType.builder("say_command")
             .chat(new ChatTypeDecoration(
-                    "chat.type.announcement",
+                    NamespacedID.of("chat.type.announcement"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
             .narration(new ChatTypeDecoration(
-                    "chat.type.text.narrate",
+                    NamespacedID.of("chat.type.text.narrate"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
@@ -92,12 +92,12 @@ public enum ChatTypes {
 
     TEAM_MSG_COMMAND_INCOMING(ChatType.builder("team_msg_command_incoming")
             .chat(new ChatTypeDecoration(
-                    "chat.type.text",
+                    NamespacedID.of("chat.type.text"),
                     List.of(Parameter.TARGET, Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
             .narration(new ChatTypeDecoration(
-                    "chat.type.text.narrate",
+                    NamespacedID.of("chat.type.text.narrate"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
@@ -106,12 +106,12 @@ public enum ChatTypes {
 
     TEAM_MSG_COMMAND_OUTGOING(ChatType.builder("team_msg_command_outgoing")
             .chat(new ChatTypeDecoration(
-                    "chat.type.text",
+                    NamespacedID.of("chat.type.text"),
                     List.of(Parameter.TARGET, Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))
             .narration(new ChatTypeDecoration(
-                    "chat.type.text.narrate",
+                    NamespacedID.of("chat.type.text.narrate"),
                     List.of(Parameter.SENDER, Parameter.CONTENT),
                     Style.empty()
             ))

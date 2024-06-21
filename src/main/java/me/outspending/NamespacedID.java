@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class NamespacedID implements Writable {
+    public static final NamespacedID EMPTY = new NamespacedID("minecraft", "empty");
+
     private static final String VALID_NAMESPACE = "[a-z0-9.-_]*";
     private static final String VALID_PATH = "[a-z0-9.-_/]*";
 
