@@ -5,16 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/trim/ArmorTrimMaterials.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/trim/ArmorTrimPatterns.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/configuration/ClientRegistryDataPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/configuration/ClientRegistryDataPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/DefaultRegistries.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/DefaultRegistries.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/DefaultedRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/DefaultedRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/Registry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/Registry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/RegistryType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/RegistryType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/trim/ArmorTrimPattern.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/trim/ArmorTrimPattern.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -223,7 +214,7 @@
       <workItem from="1718305099254" duration="116000" />
       <workItem from="1719002833234" duration="9059000" />
       <workItem from="1719029272744" duration="356000" />
-      <workItem from="1719029643597" duration="2054000" />
+      <workItem from="1719029643597" duration="2563000" />
     </task>
     <servers />
   </component>

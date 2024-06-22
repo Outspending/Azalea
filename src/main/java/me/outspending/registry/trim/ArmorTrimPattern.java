@@ -20,7 +20,7 @@ public record ArmorTrimPattern(
     @Override
     public @NotNull CompoundBinaryTag toNBT() {
         return CompoundBinaryTag.builder()
-                .putString("asset_name", this.assetName)
+                .putString("asset_id", this.assetName)
                 .putString("template_item", this.templateItem)
                 .putString("description", this.description)
                 .putByte("decal", this.decal)
