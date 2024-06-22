@@ -70,7 +70,6 @@ public class ClientConnection {
                 }
 
                 byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, result);
-                logger.info("Received packet: {}", Arrays.toString(responseArray));
                 handlePacket(responseArray);
             }
         } catch (IOException e) {
@@ -83,8 +82,9 @@ public class ClientConnection {
         final PacketReader reader = PacketReader.createNormalReader(buffer);
 
         ServerPacket readPacket = PacketDecoder.decode(this, reader, compressionType, state);
-        logger.info("Received packet: {}", readPacket.toString());
         if (readPacket != null) {
+            logger.info("Received packet: {}", readPacket);
+
             EventExecutor.emitEvent(new ServerPacketRecieveEvent(readPacket));
             server.getPacketListener().onPacketReceived(readPacket);
             packetsReceived++;

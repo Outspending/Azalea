@@ -32,25 +32,25 @@ public class CodecHandler {
             ))
             .packetType(ConnectionState.CONFIGURATION, Map.ofEntries(
                     Map.entry(0x00, ClientInformationPacket::read),
-                    Map.entry(0x01, PluginMessageConfigurationPacket::read),
-                    Map.entry(0x02, AcknowledgeFinishConfigurationPacket::read),
+                    Map.entry(0x02, PluginMessageConfigurationPacket::read),
+                    Map.entry(0x03, AcknowledgeFinishConfigurationPacket::read),
                     Map.entry(0x05, ConfigurationPongPacket::read)
             ))
             .packetType(ConnectionState.PLAY, Map.ofEntries(
-                    Map.entry(0x35, UseItemOnPacket::read),
-                    Map.entry(0x33, SwingArmPacket::read),
-                    Map.entry(0x17, SetPlayerPositionPacket::read),
-                    Map.entry(0x18, SetPlayerPositionAndRotationPacket::read),
-                    Map.entry(0x2C, SetHeldItemPacket::read),
-                    Map.entry(0x15, ServerKeepAlivePacket::read),
-                    Map.entry(0x19, PlayerRotationPacket::read),
-                    Map.entry(0x22, PlayerCommandPacket::read),
-                    Map.entry(0x21, PlayerActionPacket::read),
-                    Map.entry(0x20, PlayerAbilitiesPacket::read),
+                    Map.entry(0x38, UseItemOnPacket::read),
+                    Map.entry(0x36, SwingArmPacket::read),
+                    Map.entry(0x1A, SetPlayerPositionPacket::read),
+                    Map.entry(0x1B, SetPlayerPositionAndRotationPacket::read),
+                    Map.entry(0x2F, SetHeldItemPacket::read),
+                    Map.entry(0x26, ServerKeepAlivePacket::read),
+                    Map.entry(0x1C, PlayerRotationPacket::read),
+                    Map.entry(0x25, PlayerCommandPacket::read),
+                    Map.entry(0x24, PlayerActionPacket::read),
+                    Map.entry(0x23, PlayerAbilitiesPacket::read),
                     Map.entry(0x00, ConfirmTeleportPacket::read),
-                    Map.entry(0x1E, PingRequestPlayPacket::read),
-                    Map.entry(0x07, ChunkBatchReceivedPacket::read),
-                    Map.entry(0x13, EntityInteractPacket::read)
+                    Map.entry(0x21, PingRequestPlayPacket::read),
+                    Map.entry(0x08, ChunkBatchReceivedPacket::read),
+                    Map.entry(0x16, EntityInteractPacket::read)
             ))
             .build();
 }

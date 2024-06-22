@@ -13,6 +13,8 @@ import me.outspending.registry.damage.DamageType;
 import me.outspending.registry.damage.DamageTypes;
 import me.outspending.registry.dimension.Dimension;
 import me.outspending.registry.dimension.DimensionType;
+import me.outspending.registry.painting.PaintingVariant;
+import me.outspending.registry.painting.PaintingVariants;
 import me.outspending.registry.trim.ArmorTrimMaterial;
 import me.outspending.registry.trim.ArmorTrimMaterials;
 import me.outspending.registry.trim.ArmorTrimPattern;
@@ -33,6 +35,7 @@ public class DefaultRegistries {
     public static final Registry<ArmorTrimMaterial> TRIM_MATERIAL;
     public static final Registry<ArmorTrimPattern> TRIM_PATTERN;
     public static final Registry<WolfVariant> WOLF_VARIANT;
+    public static final Registry<PaintingVariant> PAINTING_VARIANT;
 
     public static final List<Registry<? extends RegistryType>> ALL_REGISTRIES;
 
@@ -71,6 +74,7 @@ public class DefaultRegistries {
         TRIM_MATERIAL = registerNew("trim_material", ArmorTrimMaterials.allDefault());
         TRIM_PATTERN = registerNew("trim_pattern", ArmorTrimPatterns.allDefault());
         WOLF_VARIANT = registerNew("wolf_variant", WolfVariants.allDefault());
+        PAINTING_VARIANT = registerNew("painting_variant", PaintingVariants.allDefault());
 
         ALL_REGISTRIES = List.of(
                 BANNER_PATTERN,
@@ -80,7 +84,8 @@ public class DefaultRegistries {
                 DIMENSION,
                 TRIM_MATERIAL,
                 TRIM_PATTERN,
-                WOLF_VARIANT
+                WOLF_VARIANT,
+                PAINTING_VARIANT
         );
     }
 

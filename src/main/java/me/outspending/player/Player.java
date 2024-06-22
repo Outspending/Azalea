@@ -36,6 +36,7 @@ import me.outspending.registry.banner.BannerPatterns;
 import me.outspending.registry.biome.Biomes;
 import me.outspending.registry.chat.ChatTypes;
 import me.outspending.registry.damage.DamageTypes;
+import me.outspending.registry.dimension.Dimension;
 import me.outspending.registry.dimension.DimensionType;
 import me.outspending.registry.wolf.WolfVariants;
 import me.outspending.world.World;
@@ -258,13 +259,16 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     public void sendLoginPlayPacket() {
-        final NamespacedID overworld = new NamespacedID("overworld");
+        final NamespacedID[] dimensionNames = Arrays.stream(DimensionType.values())
+                .map(Dimension::getBiomeKey)
+                .toArray(NamespacedID[]::new);
+
         sendPacket(new ClientLoginPlayPacket(
-                273, false, 1,
-                new NamespacedID[]{overworld}, 20,
+                273, false,
+                dimensionNames, 20,
                 10, 8, false,
                 true, false,
-                overworld, overworld,
+                0, dimensionNames[0],
                 0L,
                 gameMode.getId(), (byte) -1,
                 false, false, false,
