@@ -14,7 +14,7 @@ public record ClientSetTickingStatePacket(float tickRate, boolean frozen) implem
 
     @Override
     public int id() {
-        return 0x6E;
+        return 0x71;
     }
 
 }

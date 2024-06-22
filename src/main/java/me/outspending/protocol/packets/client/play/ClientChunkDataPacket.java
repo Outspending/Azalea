@@ -66,7 +66,7 @@ public record ClientChunkDataPacket(
 
     @Override
     public int id() {
-        return 0x25;
+        return 0x27;
     }
 
 }

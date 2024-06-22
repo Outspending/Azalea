@@ -13,7 +13,7 @@ import org.jetbrains.annotations.UnknownNullability;
 import java.util.Collection;
 import java.util.Map;
 
-public final class DimensionCache implements Cache<Dimension>, Writable {
+public final class DimensionCache implements Cache<Dimension> {
     private final Map<NamespacedID, Dimension> dimensions = Maps.newHashMap();
 
     @Override
@@ -37,15 +37,6 @@ public final class DimensionCache implements Cache<Dimension>, Writable {
     @Override
     public @NotNull Collection<Dimension> getAll() {
         return dimensions.values();
-    }
-
-    @Override
-    public void write(@NotNull PacketWriter writer) {
-        writer.writeNamespacedKey(NamespacedID.of("dimension_type"));
-        writer.writeVarInt(dimensions.size());
-        for (Dimension dimension : dimensions.values()) {
-            dimension.write(writer);
-        }
     }
 
 }

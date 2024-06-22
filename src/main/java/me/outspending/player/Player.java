@@ -25,9 +25,17 @@ import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Angle;
 import me.outspending.position.Pos;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
+import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
+import me.outspending.registry.banner.BannerPattern;
+import me.outspending.registry.banner.BannerPatterns;
+import me.outspending.registry.biome.Biomes;
+import me.outspending.registry.chat.ChatTypes;
+import me.outspending.registry.damage.DamageTypes;
+import me.outspending.registry.dimension.DimensionType;
+import me.outspending.registry.wolf.WolfVariants;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.ApiStatus;
@@ -236,6 +244,16 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
+    public void sendRegistryPacket() {
+        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("banner_pattern"), BannerPatterns.allDefault()));
+        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("worldgen/biome"), Biomes.allDefault()));
+        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("chat_type"), ChatTypes.allDefault()));
+        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("damage_type"), DamageTypes.allDefault()));
+        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("dimension_type"), DimensionType.values()));
+        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("wolf_variant"), WolfVariants.allDefault()));
+    }
+
+    @ApiStatus.Internal
     public void sendTickingPackets() {
         sendPacket(new ClientSetTickingStatePacket(20, false));
         sendPacket(new ClientStepTickPacket(0));
@@ -254,7 +272,7 @@ public class Player extends LivingEntity {
                 gameMode.getId(), (byte) -1,
                 false, false, false,
                 null, null,
-                0
+                0, false
         ));
     }
 

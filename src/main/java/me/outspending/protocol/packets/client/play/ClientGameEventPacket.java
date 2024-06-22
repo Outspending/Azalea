@@ -14,7 +14,7 @@ public record ClientGameEventPacket(byte event, float value) implements ClientPa
 
     @Override
     public int id() {
-        return 0x20;
+        return 0x22;
     }
 
 }

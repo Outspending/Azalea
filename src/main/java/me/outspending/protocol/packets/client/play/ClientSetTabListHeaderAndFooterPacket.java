@@ -18,7 +18,7 @@ public record ClientSetTabListHeaderAndFooterPacket(@NotNull Component header, @
 
     @Override
     public int id() {
-        return 0x6A;
+        return 0x6D;
     }
 
 }

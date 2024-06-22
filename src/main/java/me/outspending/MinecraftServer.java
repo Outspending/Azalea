@@ -31,10 +31,10 @@ public class MinecraftServer {
 
     public static MinecraftServer instance;
 
-    public static final int PROTOCOL = 766;
+    public static final int PROTOCOL = 767;
     public static final int COMPRESSION_THRESHOLD = 256;
     public static final int COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
-    public static final String VERSION = "Testing 1.20.6";
+    public static final String VERSION = "Testing 1.21";
 
     private ServerConnection serverConnection;
     private final ServerProcess serverProcess;

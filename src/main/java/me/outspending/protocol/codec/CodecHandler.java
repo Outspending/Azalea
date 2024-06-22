@@ -5,6 +5,7 @@ import me.outspending.connection.ConnectionState;
 import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.configuration.ClientInformationPacket;
+import me.outspending.protocol.packets.server.configuration.ConfigurationPongPacket;
 import me.outspending.protocol.packets.server.configuration.PluginMessageConfigurationPacket;
 import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
@@ -32,7 +33,8 @@ public class CodecHandler {
             .packetType(ConnectionState.CONFIGURATION, Map.ofEntries(
                     Map.entry(0x00, ClientInformationPacket::read),
                     Map.entry(0x01, PluginMessageConfigurationPacket::read),
-                    Map.entry(0x02, AcknowledgeFinishConfigurationPacket::read)
+                    Map.entry(0x02, AcknowledgeFinishConfigurationPacket::read),
+                    Map.entry(0x05, ConfigurationPongPacket::read)
             ))
             .packetType(ConnectionState.PLAY, Map.ofEntries(
                     Map.entry(0x35, UseItemOnPacket::read),

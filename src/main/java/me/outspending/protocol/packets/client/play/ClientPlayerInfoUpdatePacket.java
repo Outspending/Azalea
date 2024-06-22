@@ -25,7 +25,7 @@ public record ClientPlayerInfoUpdatePacket(byte actions, Players... players) imp
 
     @Override
     public int id() {
-        return 0x3C;
+        return 0x3E;
     }
 
     public record Players(UUID uuid, Action... actions) {}

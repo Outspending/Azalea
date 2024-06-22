@@ -15,7 +15,7 @@ public record ClientSetHeadRotationPacket(int entityID, @NotNull Angle headRotat
 
     @Override
     public int id() {
-        return 0x46;
+        return 0x48;
     }
 
 }

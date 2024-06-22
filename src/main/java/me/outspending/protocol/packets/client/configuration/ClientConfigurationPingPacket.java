@@ -4,14 +4,11 @@ import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientFinishConfigurationPacket() implements ClientPacket {
+public record ClientConfigurationPingPacket(int id) implements ClientPacket {
 
     @Override
-    public void write(@NotNull PacketWriter writer) {}
-
-    @Override
-    public int id() {
-        return 0x03;
+    public void write(@NotNull PacketWriter writer) {
+        writer.writeInt(id);
     }
 
 }

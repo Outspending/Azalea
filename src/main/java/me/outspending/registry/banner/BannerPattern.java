@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record BannerPattern(
         @NotNull NamespacedID registryID,
-        @NotNull String assetID,
         @NotNull String translationKey
 ) implements RegistryType {
     @Override
@@ -18,7 +17,7 @@ public record BannerPattern(
     @Override
     public @NotNull CompoundBinaryTag toNBT() {
         return CompoundBinaryTag.builder()
-                .putString("asset_id", this.assetID)
+                .putString("asset_id", this.registryID.toString())
                 .putString("translation_key", this.translationKey)
                 .build();
     }

@@ -95,7 +95,7 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
             final ClientConnection connection = packet.getSendingConnection();
             connection.setState(ConnectionState.CONFIGURATION);
 
-            connection.sendPacket(new ClientRegistryDataPacket(connection.getServer().REGISTRY_NBT));
+            connection.getPlayer().sendRegistryPacket();
             connection.sendPacket(new ClientFinishConfigurationPacket());
         });
     }

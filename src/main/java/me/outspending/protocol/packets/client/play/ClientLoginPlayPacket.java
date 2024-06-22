@@ -27,7 +27,8 @@ public record ClientLoginPlayPacket(
         boolean hasDeathLocation,
         String deathDimensionName,
         Location deathLocation,
-        int portalCooldown
+        int portalCooldown,
+        boolean enforceSecureChat
 ) implements ClientPacket {
 
     @Override
@@ -55,11 +56,12 @@ public record ClientLoginPlayPacket(
             writer.writeLocation(this.deathLocation);
         }
         writer.writeVarInt(this.portalCooldown);
+        writer.writeBoolean(this.enforceSecureChat);
     }
 
     @Override
     public int id() {
-        return 0x29;
+        return 0x2B;
     }
 
 }
