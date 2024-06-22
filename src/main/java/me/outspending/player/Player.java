@@ -29,6 +29,8 @@ import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPa
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
+import me.outspending.registry.DefaultRegistries;
+import me.outspending.registry.DefaultedRegistry;
 import me.outspending.registry.banner.BannerPattern;
 import me.outspending.registry.banner.BannerPatterns;
 import me.outspending.registry.biome.Biomes;
@@ -245,12 +247,7 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     public void sendRegistryPacket() {
-        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("banner_pattern"), BannerPatterns.allDefault()));
-        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("worldgen/biome"), Biomes.allDefault()));
-        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("chat_type"), ChatTypes.allDefault()));
-        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("damage_type"), DamageTypes.allDefault()));
-        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("dimension_type"), DimensionType.values()));
-        sendPacket(new ClientRegistryDataPacket(NamespacedID.of("wolf_variant"), WolfVariants.allDefault()));
+        DefaultRegistries.sendRegistries(this.connection);
     }
 
     @ApiStatus.Internal

@@ -1,9 +1,14 @@
 package me.outspending.registry;
 
+import me.outspending.NamespacedID;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.Predicate;
 
-public interface Registry<T> {
+public interface Registry<T extends RegistryType> {
+
+    @NotNull NamespacedID registryID();
 
     void add(T value);
 
@@ -13,6 +18,12 @@ public interface Registry<T> {
 
     boolean contains(T value);
 
-    List<T> lookup(Predicate<T> predicate);
+    default List<T> lookup(Predicate<T> predicate) {
+        return all().stream()
+                .filter(predicate)
+                .toList();
+    }
+
+    List<T> all();
 
 }

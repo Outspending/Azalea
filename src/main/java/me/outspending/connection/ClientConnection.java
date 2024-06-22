@@ -110,6 +110,13 @@ public class ClientConnection {
     }
 
     @SneakyThrows
+    public void sendPackets(@NotNull ClientPacket... packets) {
+        for (ClientPacket packet : packets) {
+            sendPacket(packet);
+        }
+    }
+
+    @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (isOnline()) {
             PacketWriter writer = PacketEncoder.encode(PacketWriter.createNormalWriter(), compressionType, packet);
