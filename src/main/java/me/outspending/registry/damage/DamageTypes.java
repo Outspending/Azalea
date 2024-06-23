@@ -168,6 +168,14 @@ public enum DamageTypes {
             Optional.of("burning"),
             Optional.empty()
     )),
+    CAMPFIRE(new DamageType(
+            NamespacedID.of("campfire"),
+            "inFire",
+            "when_caused_by_living_non_player",
+            0.1F,
+            Optional.of("burning"),
+            Optional.empty()
+    )),
     IN_WALL(new DamageType(
             NamespacedID.of("in_wall"),
             "inWall",
