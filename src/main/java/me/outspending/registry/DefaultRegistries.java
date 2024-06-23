@@ -23,6 +23,7 @@ import me.outspending.registry.wolf.WolfVariant;
 import me.outspending.registry.wolf.WolfVariants;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -63,6 +64,15 @@ public class DefaultRegistries {
         for (Registry<? extends RegistryType> registry : ALL_REGISTRIES) {
             sendRegistry(connection, registry);
         }
+    }
+
+    @ApiStatus.Internal
+    @SuppressWarnings("unchecked")
+    public static <T extends RegistryType> @Nullable Registry<T> getRegistry(@NotNull NamespacedID registryID) {
+        return (Registry<T>) ALL_REGISTRIES.stream()
+                .filter(registry -> registry.registryID().equals(registryID))
+                .findFirst()
+                .orElse(null);
     }
 
     static {

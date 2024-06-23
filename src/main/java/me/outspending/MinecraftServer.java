@@ -8,6 +8,9 @@ import me.outspending.connection.ServerConnection;
 import me.outspending.player.Player;
 import me.outspending.protocol.listener.PacketListener;
 import me.outspending.protocol.types.ServerPacket;
+import me.outspending.registry.DefaultRegistries;
+import me.outspending.registry.Registry;
+import me.outspending.registry.RegistryType;
 import me.outspending.thread.TickThread;
 import me.outspending.utils.ResourceUtils;
 import me.outspending.world.World;
@@ -43,8 +46,6 @@ public class MinecraftServer {
     private int maxPlayers = 100;
     private String description = "Woah, an MOTD for my mc protocol!";
 
-    public CompoundBinaryTag REGISTRY_NBT;
-
     public static @NotNull MinecraftServer getInstance() {
         if (instance == null) {
             throw new IllegalStateException("Server not initialized");
@@ -57,8 +58,6 @@ public class MinecraftServer {
         final MinecraftServer server = new MinecraftServer(new ServerProcess());
 
         MinecraftServer.instance = server;
-        server.loadRegistry();
-
         new TickThread().start();
 
         return server;
@@ -68,14 +67,12 @@ public class MinecraftServer {
         this.serverProcess = process;
     }
 
-    private void loadRegistry() {
-        try (InputStream inputStream = ResourceUtils.getResourceAsStream("/networkCodec.nbt")) {
-            Preconditions.checkNotNull(inputStream, "Couldn't find networkCodec.nbt");
+    public <T extends RegistryType> Registry<T> getRegistry(@NotNull NamespacedID registryID) {
+        return DefaultRegistries.getRegistry(registryID);
+    }
 
-            REGISTRY_NBT = BinaryTagIO.reader().read(inputStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Collection<Registry<? extends RegistryType>> getAllRegistries() {
+        return DefaultRegistries.ALL_REGISTRIES;
     }
 
     public Player getPlayer(@NotNull String username) {

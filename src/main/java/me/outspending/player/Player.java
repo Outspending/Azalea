@@ -160,11 +160,6 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    public void sendBundledPacket() {
-        connection.sendBundled();
-    }
-
-    @ApiStatus.Internal
     public void sendChunkBatch(Chunk... chunks) {
         sendChunkBatch(Arrays.asList(chunks));
     }
@@ -319,13 +314,12 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    public void sendRemoveEntityPacket(@NotNull Player player) {
-        sendPacket(new ClientPlayerInfoRemovePacket(1, player.getUUID()));
-    }
-
-    @ApiStatus.Internal
     public void sendRemoveEntityPacket(@NotNull Entity entity) {
-        sendPacket(new ClientRemoveEntitiesPacket(1, entity.getEntityID()));
+        if (entity instanceof Player player) {
+            sendPacket(new ClientPlayerInfoRemovePacket(1, player.getUUID()));
+        } else {
+            sendPacket(new ClientRemoveEntitiesPacket(1, entity.getEntityID()));
+        }
     }
 
     @ApiStatus.Internal

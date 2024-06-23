@@ -83,7 +83,7 @@ public class ClientConnection {
 
         ServerPacket readPacket = PacketDecoder.decode(this, reader, compressionType, state);
         if (readPacket != null) {
-            logger.info("Received packet: {}", readPacket);
+            logger.info("[{}] Received packet: {}", readPacket.id(), readPacket);
 
             EventExecutor.emitEvent(new ServerPacketRecieveEvent(readPacket));
             server.getPacketListener().onPacketReceived(readPacket);
@@ -99,7 +99,7 @@ public class ClientConnection {
         return socket.isConnected();
     }
 
-    public void sendBundled() {
+    private void sendBundled() {
         sendPacket(new ClientBundleDelimiterPacket());
     }
 
@@ -119,6 +119,7 @@ public class ClientConnection {
     @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (isOnline()) {
+            logger.info("[{}] Sending packet: {}", packet.id(), packet);
             PacketWriter writer = PacketEncoder.encode(PacketWriter.createNormalWriter(), compressionType, packet);
 
             EventExecutor.emitEvent(new ClientPacketRecieveEvent(packet, this));
