@@ -2,13 +2,9 @@ package me.outspending;
 
 import com.google.common.base.Preconditions;
 import me.outspending.events.EventExecutor;
-import me.outspending.registry.DefaultRegistries;
-import me.outspending.registry.DefaultedRegistry;
-
-import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         MinecraftServer server = MinecraftServer.init();
         Preconditions.checkNotNull(server, "Server failed to initialize");
 

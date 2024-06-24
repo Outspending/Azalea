@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/attribute/AttributeType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientUpdateAttributesPacket.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/biome/Biomes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/biome/Biomes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/damage/DamageTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/damage/DamageTypes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,9 +44,9 @@
       <list>
         <option value="AnnotationType" />
         <option value="Interface" />
-        <option value="Record" />
         <option value="Class" />
         <option value="Enum" />
+        <option value="Record" />
       </list>
     </option>
   </component>
@@ -223,6 +225,8 @@
       <workItem from="1719115676852" duration="1145000" />
       <workItem from="1719165927359" duration="342000" />
       <workItem from="1719182073173" duration="1316000" />
+      <workItem from="1719194359593" duration="110000" />
+      <workItem from="1719196275083" duration="972000" />
     </task>
     <servers />
   </component>
