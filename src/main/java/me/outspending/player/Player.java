@@ -138,17 +138,18 @@ public class Player extends LivingEntity {
         }
     }
 
+    public void sendActionBar(@NotNull Component component) {
+        sendPacket(new ClientActionBarTextPacket(component));
+    }
+
     @ApiStatus.Internal
     public void sendPacket(@NotNull ClientPacket packet) {
         connection.sendPacket(packet);
     }
 
-    public void sendBundled(Runnable runnable) {
+    @ApiStatus.Internal
+    public void sendBundledPacket(Runnable runnable) {
         connection.sendBundled(runnable);
-    }
-
-    public void sendActionBar(@NotNull Component component) {
-        sendPacket(new ClientActionBarTextPacket(component));
     }
 
     @ApiStatus.Internal
@@ -194,7 +195,7 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    public void sendMainLoginPackets() {
+    private void sendMainLoginPackets() {
         sendLoginPlayPacket();
 
         sendPacket(new ClientSynchronizePlayerPosition(position, (byte) 0, 24));
@@ -226,7 +227,7 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    public void handleWorldEntityPackets() {
+    private void handleWorldEntityPackets() {
         getViewers().forEach(viewer -> {
             sendAddPlayerPacket(viewer);
             viewer.sendAddPlayerPacket(this);
@@ -239,13 +240,13 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    public void sendTickingPackets() {
+    private void sendTickingPackets() {
         sendPacket(new ClientSetTickingStatePacket(20, false));
         sendPacket(new ClientStepTickPacket(0));
     }
 
     @ApiStatus.Internal
-    public void sendLoginPlayPacket() {
+    private void sendLoginPlayPacket() {
         final NamespacedID[] dimensionNames = Arrays.stream(DimensionType.values())
                 .map(Dimension::getBiomeKey)
                 .toArray(NamespacedID[]::new);
@@ -266,19 +267,23 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     public void sendAddPlayerPacket(@NotNull Player player) {
-        final Pos position = player.getPosition();
         sendPacket(new ClientPlayerInfoUpdatePacket(
-                (byte) 0x01,
                 new ClientPlayerInfoUpdatePacket.Players(
                         player.getUUID(),
                         new ClientPlayerInfoUpdatePacket.Action.AddPlayer(
                                 player.getName(),
-                                0, new Property[0])
+                                0, new Property[0]),
+                        new ClientPlayerInfoUpdatePacket.Action.UpdateListed(true)
                 )));
+        sendAddEntityPacket(player);
+    }
 
+    @ApiStatus.Internal
+    public void sendAddEntityPacket(@NotNull Entity entity) {
+        final Pos position = entity.getPosition();
         sendPacket(new ClientSpawnEntityPacket(
-                player.getEntityID(), player.getUUID(),
-                124, position.x(), position.y(), position.z(),
+                entity.getEntityID(), entity.getEntityUUID(),
+                entity.getType().getId(), position.x(), position.y(), position.z(),
                 new Angle(position.yaw()), new Angle(position.pitch()), Angle.ZERO,
                 0, (short) 0, (short) 0, (short) 0
         ));

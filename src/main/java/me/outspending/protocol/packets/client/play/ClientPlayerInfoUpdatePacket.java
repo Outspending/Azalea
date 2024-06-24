@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public record ClientPlayerInfoUpdatePacket(byte actions, Players... players) implements ClientPacket {
+public record ClientPlayerInfoUpdatePacket(Players... players) implements ClientPacket {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-        writer.writeByte(actions);
+        writer.writeByte(this.getActions());
         writer.writeVarInt(players.length);
         for (Players players1 : players) {
             writer.writeUUID(players1.uuid());
@@ -21,6 +21,17 @@ public record ClientPlayerInfoUpdatePacket(byte actions, Players... players) imp
                 action.write(writer);
             }
         }
+    }
+
+    private byte getActions() {
+        byte actions = 0;
+        for (Players players : players) {
+            for (Action action : players.actions) {
+                actions |= action.getActionID();
+            }
+        }
+
+        return actions;
     }
 
     @Override
@@ -39,6 +50,11 @@ public record ClientPlayerInfoUpdatePacket(byte actions, Players... players) imp
                     property.write(writer);
                 }
             }
+
+            @Override
+            public byte getActionID() {
+                return 0x00;
+            }
         }
 
         record InitializeChat(boolean hasSignatureData, UUID chatSessionID, long publicKeyExpiration, int encodedPublicKeySize, byte[] encodedPublicKey, int encodedNonceSize, byte[] encodedNonce) implements Action {
@@ -52,12 +68,22 @@ public record ClientPlayerInfoUpdatePacket(byte actions, Players... players) imp
                 writer.writeVarInt(encodedNonceSize);
                 writer.writeByteArray(encodedNonce);
             }
+
+            @Override
+            public byte getActionID() {
+                return 0x01;
+            }
         }
 
         record UpdateGameMode(int gameMode) implements Action {
             @Override
             public void write(@NotNull PacketWriter writer) {
                 writer.writeVarInt(gameMode);
+            }
+
+            @Override
+            public byte getActionID() {
+                return 0x02;
             }
         }
 
@@ -66,12 +92,22 @@ public record ClientPlayerInfoUpdatePacket(byte actions, Players... players) imp
             public void write(@NotNull PacketWriter writer) {
                 writer.writeBoolean(listed);
             }
+
+            @Override
+            public byte getActionID() {
+                return 0x03;
+            }
         }
 
         record UpdateLatency(int ping) implements Action {
             @Override
             public void write(@NotNull PacketWriter writer) {
                 writer.writeVarInt(ping);
+            }
+
+            @Override
+            public byte getActionID() {
+                return 0x04;
             }
         }
 
@@ -81,8 +117,14 @@ public record ClientPlayerInfoUpdatePacket(byte actions, Players... players) imp
                 writer.writeBoolean(hasDisplayName);
                 writer.writeTextComponent(displayName);
             }
+
+            @Override
+            public byte getActionID() {
+                return 0x05;
+            }
         }
 
+        byte getActionID();
     }
 
 }

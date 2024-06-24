@@ -70,11 +70,6 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
         setPosition(new Pos(position.x(), position.y(), position.z(), yaw, pitch));
     }
 
-    public void updateEntity(@NotNull Player player) {
-        final ClientConnection connection = player.getConnection();
-
-    }
-
     @Contract("null -> fail")
     public double distanceFrom(@UnknownNullability Entity entity) {
         return distanceFrom(entity.getPosition());
