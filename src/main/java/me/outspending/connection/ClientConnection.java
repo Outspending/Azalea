@@ -7,8 +7,8 @@ import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
 import me.outspending.player.Player;
 import me.outspending.events.EventExecutor;
-import me.outspending.events.event.ClientPacketRecieveEvent;
-import me.outspending.events.event.ServerPacketRecieveEvent;
+import me.outspending.events.event.ClientPacketReceivedEvent;
+import me.outspending.events.event.ServerPacketReceivedEvent;
 import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.PacketDecoder;
 import me.outspending.protocol.PacketEncoder;
@@ -66,6 +66,8 @@ public class ClientConnection {
             while (server.isRunning()) {
                 int result = inputStream.read(BYTE_ARRAY);
                 if (result == -1) {
+                    MinecraftServer.getInstance().getServerProcess().getPlayerCache().remove(this.player);
+                    logger.info("Client disconnected");
                     return;
                 }
 
@@ -85,7 +87,12 @@ public class ClientConnection {
         if (readPacket != null) {
             logger.info("[{}] Received packet: {}", readPacket.id(), readPacket);
 
-            EventExecutor.emitEvent(new ServerPacketRecieveEvent(readPacket));
+            final ServerPacketReceivedEvent event = new ServerPacketReceivedEvent(readPacket);
+            EventExecutor.emitEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+
             server.getPacketListener().onPacketReceived(readPacket);
             packetsReceived++;
 
@@ -122,7 +129,12 @@ public class ClientConnection {
             logger.info("[{}] Sending packet: {}", packet.id(), packet);
             PacketWriter writer = PacketEncoder.encode(PacketWriter.createNormalWriter(), compressionType, packet);
 
-            EventExecutor.emitEvent(new ClientPacketRecieveEvent(packet, this));
+            final ClientPacketReceivedEvent event = new ClientPacketReceivedEvent(packet, this);
+            EventExecutor.emitEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+
             packetListener.onPacketReceived(packet);
             packetsSent++;
 

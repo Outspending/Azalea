@@ -23,5 +23,4 @@ public non-sealed class PacketNodeImpl<T extends Packet> implements PacketNode<T
         return Collections.unmodifiableMap(listeners);
     }
 
-    private record Handle() {}
 }

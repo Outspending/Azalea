@@ -88,9 +88,7 @@ public class Player extends LivingEntity {
             case LOGIN -> sendPacket(new ClientLoginDisconnectPacket(reason));
             case CONFIGURATION -> sendPacket(new ClientConfigurationDisconnectPacket(reason));
             case PLAY -> sendPacket(new ClientPlayDisconnectPacket(reason));
-            default -> {
-                // Do Nothing
-            }
+            default -> {}
         }
 
         EventExecutor.emitEvent(new PlayerDisconnectEvent(this, reason));
@@ -130,7 +128,7 @@ public class Player extends LivingEntity {
             if (!fromChunk.equals(toChunk)) {
                 EventExecutor.emitEvent(new ChunkSwitchEvent(this, to, fromChunk, toChunk));
 
-                // dont send chunks yet
+                // TODO: Send chunks when player moves to a new chunk
             }
         }
     }
@@ -142,6 +140,26 @@ public class Player extends LivingEntity {
     public void setGameMode(@NotNull GameMode gameMode) {
         this.gameMode = gameMode;
         sendPacket(new ClientGameEventPacket((byte) 3, gameMode.getId()));
+    }
+
+    public void showDemoScreen() {
+        sendPacket(new ClientGameEventPacket((byte) 5, 0));
+    }
+
+    public void showCredits() {
+        sendPacket(new ClientGameEventPacket((byte) 4, 1));
+    }
+
+    public void showHurtAnimation(@NotNull Pos pos) {
+        showHurtAnimation(pos.yaw());
+    }
+
+    public void showHurtAnimation(float yaw) {
+        sendPacket(new ClientHurtAnimationPacket(this, yaw));
+    }
+
+    public boolean canSee(@NotNull Player player) {
+        return getViewers().contains(player);
     }
 
     @ApiStatus.Internal
@@ -225,7 +243,7 @@ public class Player extends LivingEntity {
         sendChunkBatch(chunks);
         logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
 
-        EventExecutor.emitEvent(new EntitySpawnEvent(this));
+        EventExecutor.emitEvent(new EntitySpawnEvent(this, this.world));
     }
 
     @ApiStatus.Internal
