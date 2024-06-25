@@ -3,7 +3,7 @@ package me.outspending.protocol.reader;
 import lombok.Getter;
 import me.outspending.NamespacedID;
 import me.outspending.position.Angle;
-import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
 import me.outspending.protocol.exception.InvalidPacketException;
@@ -109,7 +109,7 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
-    public @Nullable Location readLocation() {
+    public @Nullable Pos readPosition() {
         return NetworkTypes.LOCATION_TYPE.read(buffer);
     }
 

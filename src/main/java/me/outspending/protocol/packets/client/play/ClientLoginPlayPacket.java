@@ -1,7 +1,7 @@
 package me.outspending.protocol.packets.client.play;
 
 import me.outspending.NamespacedID;
-import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public record ClientLoginPlayPacket(
         boolean isFlatWorld,
         boolean hasDeathLocation,
         String deathDimensionName,
-        Location deathLocation,
+        Pos deathPosition,
         int portalCooldown,
         boolean enforceSecureChat
 ) implements ClientPacket {
@@ -56,7 +56,7 @@ public record ClientLoginPlayPacket(
         writer.writeBoolean(this.hasDeathLocation);
         if (hasDeathLocation) {
             writer.writeString(this.deathDimensionName);
-            writer.writeLocation(this.deathLocation);
+            writer.writePosition(this.deathPosition);
         }
         writer.writeVarInt(this.portalCooldown);
         writer.writeBoolean(this.enforceSecureChat);

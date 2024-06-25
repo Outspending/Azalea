@@ -1,6 +1,5 @@
 package me.outspending.block;
 
-import lombok.Getter;
-import me.outspending.position.Location;
+import me.outspending.position.Pos;
 
-public record Block(Location location, BlockType type) {}
+public record Block(Pos pos, BlockType type) {}

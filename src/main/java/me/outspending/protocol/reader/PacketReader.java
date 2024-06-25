@@ -2,7 +2,7 @@ package me.outspending.protocol.reader;
 
 import me.outspending.NamespacedID;
 import me.outspending.position.Angle;
-import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import me.outspending.protocol.NetworkType;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
@@ -50,7 +50,7 @@ public interface PacketReader {
     // readEntityMetaData
     // @Nullable ItemStack readSlot();
     @Nullable CompoundBinaryTag readNBTCompound();
-    @Nullable Location readLocation();
+    @Nullable Pos readPosition();
     @Nullable Angle readAngle();
     @Nullable UUID readUUID();
     // readBitSet

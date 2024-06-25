@@ -6,6 +6,10 @@ public record Pos(double x, double y, double z, float yaw, float pitch) {
     public static final Pos ZERO = new Pos(0, 0, 0, 0f, 0f);
     public static final Pos ONE = new Pos(1, 1, 1, 0f, 0f);
 
+    public Pos(double x, double y, double z) {
+        this(x, y, z, 0, 0);
+    }
+
     public static @UnknownNullability Pos fromNetwork(long l) {
         int x = (int) (l >> 38);
         int y = (int) (l << 52 >> 52);

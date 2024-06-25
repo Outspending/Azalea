@@ -1,7 +1,7 @@
 package me.outspending.protocol;
 
 import me.outspending.NamespacedID;
-import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
@@ -255,20 +255,15 @@ public interface NetworkTypes {
         }
     };
 
-    NetworkType<Location> LOCATION_TYPE = new NetworkType<>() {
+    NetworkType<Pos> LOCATION_TYPE = new NetworkType<>() {
         @Override
-        public @NotNull Location read(ByteBuffer buffer) {
-            long value = buffer.getLong();
-            int x = (int) (value >> 38);
-            int y = (int) (value << 52 >> 52);
-            int z = (int) (value << 26 >> 38);
-
-            return new Location(x, y, z);
+        public @NotNull Pos read(ByteBuffer buffer) {
+            return Pos.fromNetwork(buffer.getLong());
         }
 
         @Override
-        public void write(DataOutputStream stream, Location type) throws IOException {
-            stream.writeLong((((long) (type.x() & 0x3FFFFFF) << 38) | ((long) (type.z() & 0x3FFFFFF) << 12) | (type.y() & 0xFFF)));
+        public void write(DataOutputStream stream, Pos type) throws IOException {
+            stream.writeLong(type.toNetwork());
         }
     };
 
@@ -287,7 +282,7 @@ public interface NetworkTypes {
 
     NetworkType<BitSet> BITSET_TYPE = new NetworkType<>() {
         @Override
-        public @Nullable BitSet read(ByteBuffer buffer) {
+        public @NotNull BitSet read(ByteBuffer buffer) {
             int length = VARINT_TYPE.read(buffer);
             BitSet bitSet = new BitSet(length);
             for (int i = 0; i < length; i++) {

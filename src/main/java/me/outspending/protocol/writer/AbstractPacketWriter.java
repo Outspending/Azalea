@@ -3,7 +3,7 @@ package me.outspending.protocol.writer;
 import lombok.SneakyThrows;
 import me.outspending.NamespacedID;
 import me.outspending.position.Angle;
-import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -139,8 +139,8 @@ public abstract class AbstractPacketWriter implements PacketWriter {
 
     @Override
     @SneakyThrows
-    public void writeLocation(@NotNull Location location) {
-        NetworkTypes.LOCATION_TYPE.write(stream, location);
+    public void writePosition(@NotNull Pos pos) {
+        NetworkTypes.LOCATION_TYPE.write(stream, pos);
     }
 
     @Override
