@@ -21,6 +21,7 @@ import me.outspending.events.event.*;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Angle;
 import me.outspending.position.Pos;
+import me.outspending.protocol.GameEvent;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.*;
@@ -139,15 +140,15 @@ public class Player extends LivingEntity {
 
     public void setGameMode(@NotNull GameMode gameMode) {
         this.gameMode = gameMode;
-        sendPacket(new ClientGameEventPacket((byte) 3, gameMode.getId()));
+        sendPacket(new ClientGameEventPacket(GameEvent.CHANGE_GAME_MODE, gameMode.getId()));
     }
 
     public void showDemoScreen() {
-        sendPacket(new ClientGameEventPacket((byte) 5, 0));
+        sendPacket(new ClientGameEventPacket(GameEvent.DEMO_EVENT, 0));
     }
 
     public void showCredits() {
-        sendPacket(new ClientGameEventPacket((byte) 4, 1));
+        sendPacket(new ClientGameEventPacket(GameEvent.WIN_GAME, 1));
     }
 
     public void showHurtAnimation(@NotNull Pos pos) {
@@ -220,7 +221,7 @@ public class Player extends LivingEntity {
 
         sendPacket(new ClientSynchronizePlayerPosition(position, (byte) 0, 24));
         handleWorldEntityPackets();
-        sendPacket(new ClientGameEventPacket((byte) 13, 0f));
+        sendPacket(new ClientGameEventPacket(GameEvent.START_WAITING_FOR_CHUNKS, 0f));
 
         sendTickingPackets();
 

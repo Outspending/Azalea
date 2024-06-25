@@ -35,9 +35,4 @@ public class Testing implements EventListener {
         }
     }
 
-    @EventHandler
-    public void onServerPacketReceived(ServerPacketReceivedEvent e) {
-        e.setCancelled(true);
-    }
-
 }

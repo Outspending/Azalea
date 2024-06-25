@@ -29,6 +29,7 @@ import me.outspending.protocol.types.ServerPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.UUID;
 
 final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
@@ -49,7 +50,12 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     private void handleHandshakePacket() {
         super.addListener(HandshakePacket.class, packet -> {
             final ClientConnection connection = packet.getSendingConnection();
-            connection.setState(packet.nextState() == 2 ? ConnectionState.LOGIN : ConnectionState.STATUS);
+            switch (packet.nextState()) {
+                case 1 -> connection.setState(ConnectionState.STATUS);
+                case 2 -> connection.setState(ConnectionState.LOGIN);
+                case 3 -> connection.setState(ConnectionState.TRANSFER);
+                default -> {}
+            }
         });
     }
 
@@ -57,8 +63,9 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
         super.addListener(StatusRequestPacket.class, packet -> {
             final ClientConnection connection = packet.getSendingConnection();
             final MinecraftServer server = connection.getServer();
+            final Collection<Player> players = server.getAllPlayers();
             connection.sendPacket(new ClientStatusResponsePacket(
-                    new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
+                    new ClientStatusResponsePacket.Players(players.size(), server.getMaxPlayers()),
                     new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
                     server.getDescription()
             ));
