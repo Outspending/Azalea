@@ -17,10 +17,7 @@ import me.outspending.entity.Entity;
 import me.outspending.entity.EntityType;
 import me.outspending.entity.LivingEntity;
 import me.outspending.events.EventExecutor;
-import me.outspending.events.event.ChunkSwitchEvent;
-import me.outspending.events.event.PlayerDisconnectEvent;
-import me.outspending.events.event.PlayerJoinEvent;
-import me.outspending.events.event.PlayerMoveEvent;
+import me.outspending.events.event.*;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Angle;
 import me.outspending.position.Pos;
@@ -49,9 +46,9 @@ public class Player extends LivingEntity {
 
     private final ClientConnection connection;
 
-    private final GameMode gameMode = GameMode.CREATIVE;
     private final GameProfile profile;
 
+    private GameMode gameMode = GameMode.CREATIVE;
     private Pos lastPosition = Pos.ZERO;
 
     private boolean isHardcore;
@@ -142,6 +139,11 @@ public class Player extends LivingEntity {
         sendPacket(new ClientActionBarTextPacket(component));
     }
 
+    public void setGameMode(@NotNull GameMode gameMode) {
+        this.gameMode = gameMode;
+        sendPacket(new ClientGameEventPacket((byte) 3, gameMode.getId()));
+    }
+
     @ApiStatus.Internal
     public void sendPacket(@NotNull ClientPacket packet) {
         connection.sendPacket(packet);
@@ -213,9 +215,7 @@ public class Player extends LivingEntity {
         for (int x = -14; x < 14; x++) {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
-                generator.generate(chunk, chunkGenerator -> {
-                    chunkGenerator.fillSection(4, BlockType.MANGROVE_PLANKS);
-                });
+                generator.generate(chunk);
 
                 chunks.add(chunk);
             }
@@ -224,6 +224,8 @@ public class Player extends LivingEntity {
         long start = System.currentTimeMillis();
         sendChunkBatch(chunks);
         logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
+
+        EventExecutor.emitEvent(new EntitySpawnEvent(this));
     }
 
     @ApiStatus.Internal
@@ -252,13 +254,13 @@ public class Player extends LivingEntity {
                 .toArray(NamespacedID[]::new);
 
         sendPacket(new ClientLoginPlayPacket(
-                273, false,
+                this.entityID, false,
                 dimensionNames, 20,
                 10, 8, false,
                 true, false,
                 0, dimensionNames[0],
                 0L,
-                gameMode.getId(), (byte) -1,
+                this.gameMode.getId(), (byte) -1,
                 false, false, false,
                 null, null,
                 0, false

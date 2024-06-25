@@ -34,7 +34,7 @@ public class WorldImpl implements World {
     }
 
     public WorldImpl(String name) {
-        this(name, new WorldGenerator());
+        this(name, WorldGenerator.EMPTY);
     }
 
     @Override

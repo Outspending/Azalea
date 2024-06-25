@@ -6,6 +6,9 @@ import me.outspending.entity.Entity;
 import me.outspending.player.Player;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
+import me.outspending.registry.dimension.Dimension;
+import me.outspending.registry.dimension.DimensionType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -13,8 +16,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 public interface World extends Tickable {
+
     static @NotNull World create(@NotNull String name) {
         return new WorldImpl(name);
+    }
+
+    static @NotNull Builder builder(@NotNull String name) {
+        return new Builder(name);
     }
 
     @NotNull List<Entity> getAllEntities();
@@ -46,4 +54,26 @@ public interface World extends Tickable {
     default @NotNull Chunk getChunk(@NotNull Pos position) {
         return getChunk((int) position.x() >> 4, (int) position.z() >> 4);
     }
+
+    class Builder {
+        private final String name;
+
+        private WorldGenerator generator = WorldGenerator.EMPTY;
+
+        public Builder(String name) {
+            this.name = name;
+        }
+
+        @Contract("_ -> new")
+        public @NotNull Builder generator(@NotNull WorldGenerator generator) {
+            this.generator = generator;
+            return this;
+        }
+
+        public @NotNull World build() {
+            return new WorldImpl(this.name, this.generator);
+        }
+
+    }
+
 }
