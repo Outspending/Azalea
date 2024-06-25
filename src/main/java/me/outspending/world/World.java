@@ -6,8 +6,6 @@ import me.outspending.entity.Entity;
 import me.outspending.player.Player;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
-import me.outspending.registry.dimension.Dimension;
-import me.outspending.registry.dimension.DimensionType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
