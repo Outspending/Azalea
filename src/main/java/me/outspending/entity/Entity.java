@@ -5,13 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import me.outspending.Tickable;
 import me.outspending.connection.ClientConnection;
+import me.outspending.entity.meta.EntityMeta;
 import me.outspending.player.Player;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnknownNullability;
+import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,28 +28,7 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     protected final UUID entityUUID;
     // private final EntityMeta entityMeta;
 
-    // EntityMeta - Start
-    protected byte isOnFire = 0;
-    protected byte isCrouching = 0;
-    protected byte isSprinting = 0;
-    protected byte isSwimming = 0;
-    protected byte isInvisible = 0;
-    protected byte hasGlowEffect = 0;
-    protected byte isFlyingWithElytra = 0;
-
-    protected int airTicks = 300;
-    protected Component customName = Component.empty();
-    protected boolean isCustomNameVisible = false;
-    protected boolean isSilent = false;
-    protected boolean isNoGravity = false;
-    protected boolean isInvulnerable = false;
-    protected Pose pose = Pose.STANDING;
-    protected int frozenTicks = 0;
-
-    // EntityMeta - Custom
-    protected int viewableDistance = 50;
-    protected boolean canTick = true;
-    // EntityMeta - End
+    protected EntityMeta entityMeta = new EntityMeta();
 
     protected boolean onGround = true;
     protected Pos position = Pos.ZERO;
@@ -117,9 +95,10 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
             boolean isViewer = this.isViewer(entity);
             double distance = this.distanceFrom(entity);
 
-            if (distance <= this.viewableDistance && !isViewer) {
+            int viewableDistance = this.entityMeta.getViewableDistance();
+            if (distance <= viewableDistance && !isViewer) {
                 this.addViewer(entity);
-            } else if (distance >= this.viewableDistance && isViewer) {
+            } else if (distance >= viewableDistance && isViewer) {
                 this.removeViewer(entity);
             }
         });
@@ -128,6 +107,15 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     @Override
     public void tick(long time) {
         updateViewers();
+    }
+
+    public enum Hand {
+        MAIN_HAND,
+        OFF_HAND;
+
+        public static @Nullable Hand getById(@Range(from = 0, to = 1) int id) {
+            return values()[id];
+        }
     }
 
     public enum Pose {
@@ -147,7 +135,7 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
         EMERGING,
         DIGGING;
 
-        public static Pose getById(int id) {
+        public static @Nullable Pose getById(@Range(from = 0, to = 14) int id) {
             return values()[id];
         }
 
