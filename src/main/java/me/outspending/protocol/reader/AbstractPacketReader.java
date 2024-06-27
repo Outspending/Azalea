@@ -44,18 +44,8 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
-    public int readUnsignedByte() {
-        return NetworkTypes.UNSIGNED_BYTE_TYPE.read(buffer);
-    }
-
-    @Override
     public short readShort() {
         return NetworkTypes.SHORT_TYPE.read(buffer);
-    }
-
-    @Override
-    public int readUnsignedShort() {
-        return NetworkTypes.UNSIGNED_SHORT_TYPE.read(buffer);
     }
 
     @Override
@@ -84,18 +74,8 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
-    public @Nullable NamespacedID readNamespacedKey() {
-        return NetworkTypes.NAMESPACEDID_TYPE.read(buffer);
-    }
-
-    @Override
     public int readVarInt() {
         return NetworkTypes.VARINT_TYPE.read(buffer);
-    }
-
-    @Override
-    public long readVarLong() {
-        return NetworkTypes.VARLONG_TYPE.read(buffer);
     }
 
     @Override
@@ -124,40 +104,10 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
-    public byte[] readByteArray(int length) {
-        if (buffer.remaining() < length) {
-            throw new InvalidPacketException("Insufficient data in buffer to read byte array of length " + length);
-        }
-
-        byte[] bytes = new byte[length];
-        return buffer.get(bytes).array();
-    }
-
-//    @Override
-//    public @Nullable ItemStack readSlot() {
-//        return NetworkTypes.SLOT_TYPE.read(buffer);
-//    }
-
-    @Override
-    public @Nullable Component readJSONTextComponent() {
-        return NetworkTypes.JSON_TEXT_COMPONENT_TYPE.read(buffer);
-    }
-
-    @Override
-    public @NotNull Component readTextComponent() {
-        return NetworkTypes.TEXT_COMPONENT_TYPE.read(buffer);
-    }
-
-    @Override
     public byte[] getRemainingBytes() {
         byte[] remaining = new byte[buffer.remaining()];
         buffer.get(remaining);
         return remaining;
-    }
-
-    @Override
-    public byte[] getAllBytes() {
-        return buffer.array();
     }
 
 }

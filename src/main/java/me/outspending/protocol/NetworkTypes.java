@@ -70,18 +70,6 @@ public interface NetworkTypes {
         }
     };
 
-    NetworkType<Integer> UNSIGNED_SHORT_TYPE = new NetworkType<>() {
-        @Override
-        public Integer read(ByteBuffer buffer) {
-            return buffer.getShort() & 0xFFFF;
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Integer type) throws IOException {
-            stream.writeShort(type & 0xFFFF);
-        }
-    };
-
     NetworkType<Integer> INT_TYPE = new NetworkType<>() {
         @Override
         public Integer read(ByteBuffer buffer) {
@@ -300,29 +288,6 @@ public interface NetworkTypes {
             }
         }
     };
-
-//    NetworkType<ItemStack> SLOT_TYPE = new NetworkType<>() {
-//        @Override
-//        public ItemStack read(ByteBuffer buffer) {
-//            if (BOOLEAN_TYPE.read(buffer)) {
-//                ItemStack item = new ItemStack()
-//                return new ItemStack(
-//                        VARINT_TYPE.read(buffer),
-//                        BYTE_TYPE.read(buffer),
-//                        NBTCOMPOUND_TYPE.read(buffer)
-//                );
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        public void write(DataOutputStream stream, ItemStack type) throws IOException {
-//            BOOLEAN_TYPE.write(stream, true);
-//            VARINT_TYPE.write(stream, type.getCount());
-//            NBTCOMPOUND_TYPE.write(stream, type.getItemNBT());
-//        }
-//    };
 
     NetworkType<byte[]> BYTEARRAY_TYPE = new NetworkType<>() {
         @Override

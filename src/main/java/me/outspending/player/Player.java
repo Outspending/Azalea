@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Getter @Setter
 public class Player extends LivingEntity {
@@ -93,7 +94,7 @@ public class Player extends LivingEntity {
             default -> {}
         }
 
-        EventExecutor.emitEvent(new PlayerDisconnectEvent(this, reason));
+        EventExecutor.emitEvent(new PlayerDisconnectEvent(this));
         this.getPlayerViewers().forEach(viewer -> viewer.sendRemoveEntityPacket(this));
 
         try {
@@ -226,7 +227,14 @@ public class Player extends LivingEntity {
         sendLoginPlayPacket();
 
         sendPacket(new ClientSynchronizePlayerPosition(position, (byte) 0, 24));
-        handleWorldEntityPackets();
+        for (Player player : MinecraftServer.getInstance().getAllPlayers()) {
+            if (this.equals(player)) {
+                break;
+            }
+
+            this.sendAddPlayerPacket(player, true);
+        }
+        this.sendAddPlayerPacket(this, false);
         sendPacket(new ClientGameEventPacket(GameEvent.START_WAITING_FOR_CHUNKS, 0f));
 
         sendTickingPackets();
@@ -251,14 +259,14 @@ public class Player extends LivingEntity {
         sendChunkBatch(chunks);
         logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
 
+        handleWorldEntityPackets();
         this.world.addEntity(this);
     }
 
     @ApiStatus.Internal
     private void handleWorldEntityPackets() {
-        this.getPlayerViewers().forEach(viewer -> {
-            sendAddPlayerPacket(viewer);
-            viewer.sendAddPlayerPacket(this);
+        this.getViewers().forEach(viewer -> {
+            viewer.spawn(this);
         });
     }
 
@@ -275,7 +283,7 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     private void sendLoginPlayPacket() {
-        final NamespacedID[] dimensionNames = Arrays.stream(DimensionType.values())
+        final NamespacedID[] dimensionNames = Arrays.stream(DimensionType.getDimensions())
                 .map(Dimension::getBiomeKey)
                 .toArray(NamespacedID[]::new);
 
@@ -294,7 +302,7 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    public void sendAddPlayerPacket(@NotNull Player player) {
+    public void sendAddPlayerPacket(@NotNull Player player, boolean spawn) {
         sendPacket(new ClientPlayerInfoUpdatePacket(
                 new ClientPlayerInfoUpdatePacket.Players(
                         player.getUUID(),
@@ -302,9 +310,10 @@ public class Player extends LivingEntity {
                                 player.getName(),
                                 0, new Property[0]),
                         new ClientPlayerInfoUpdatePacket.Action.UpdateListed(true)
-                )));
+                )
+        ));
 
-        this.spawn(player);
+        if (spawn) this.spawn(player);
     }
 
     @ApiStatus.Internal

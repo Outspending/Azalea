@@ -7,6 +7,7 @@ import me.outspending.position.Pos;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.StringBinaryTag;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,22 +21,14 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     protected final ByteArrayOutputStream byteStream;
     protected final DataOutputStream stream;
 
-    private final boolean isCompressed;
-
-    public AbstractPacketWriter(boolean isCompressed) {
+    public AbstractPacketWriter() {
         this.byteStream = new ByteArrayOutputStream();
         this.stream = new DataOutputStream(byteStream);
-        this.isCompressed = isCompressed;
     }
 
     @Override
     public <T> void write(@NotNull NetworkType<T> type, T value) throws IOException {
         type.write(stream, value);
-    }
-
-    @Override
-    public boolean isCompressed() {
-        return isCompressed;
     }
 
     @Override
@@ -70,12 +63,6 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     @SneakyThrows
     public void writeShort(short s) {
         NetworkTypes.SHORT_TYPE.write(stream, s);
-    }
-
-    @Override
-    @SneakyThrows
-    public void writeUnsignedShort(int s) {
-        NetworkTypes.UNSIGNED_SHORT_TYPE.write(stream, s);
     }
 
     @Override
@@ -157,12 +144,6 @@ public abstract class AbstractPacketWriter implements PacketWriter {
 
     @Override
     @SneakyThrows
-    public void writeByteArray(byte[] array, int offset, int length) {
-        stream.write(array, offset, length);
-    }
-
-    @Override
-    @SneakyThrows
     public void writeBitSet(@NotNull BitSet bitSet) {
         NetworkTypes.BITSET_TYPE.write(stream, bitSet);
     }
@@ -189,14 +170,6 @@ public abstract class AbstractPacketWriter implements PacketWriter {
     @SneakyThrows
     public void write(int b) throws IOException {
         stream.writeByte((byte) b);
-    }
-
-    @Override
-    @SneakyThrows
-    public void writeLongArray(long[] array) {
-        for (long value : array) {
-            writeLong(value);
-        }
     }
 
     @Override

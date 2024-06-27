@@ -6,6 +6,8 @@ import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
@@ -23,16 +25,16 @@ public record ClientPlayerInfoUpdatePacket(Players... players) implements Client
         }
     }
 
-    private byte getActions() {
+    public byte getActions() {
         byte actions = 0;
         for (Players players : players) {
-            for (Action action : players.actions) {
+            for (Action action : players.actions()) {
                 actions |= action.getActionID();
             }
         }
-
         return actions;
     }
+
 
     @Override
     public int id() {
@@ -40,20 +42,22 @@ public record ClientPlayerInfoUpdatePacket(Players... players) implements Client
     }
 
     public record Players(UUID uuid, Action... actions) {}
+
     public interface Action extends Writable {
+
         record AddPlayer(String name, int numOfProperties, Property[] properties) implements Action {
             @Override
             public void write(@NotNull PacketWriter writer) {
                 writer.writeString(name);
                 writer.writeVarInt(numOfProperties);
                 for (Property property : properties) {
-                    property.write(writer);
+                    writer.write(property);
                 }
             }
 
             @Override
             public byte getActionID() {
-                return 0x00;
+                return 0x01;
             }
         }
 
@@ -71,7 +75,7 @@ public record ClientPlayerInfoUpdatePacket(Players... players) implements Client
 
             @Override
             public byte getActionID() {
-                return 0x01;
+                return 0x02;
             }
         }
 
@@ -83,7 +87,7 @@ public record ClientPlayerInfoUpdatePacket(Players... players) implements Client
 
             @Override
             public byte getActionID() {
-                return 0x02;
+                return 0x04;
             }
         }
 
@@ -95,7 +99,7 @@ public record ClientPlayerInfoUpdatePacket(Players... players) implements Client
 
             @Override
             public byte getActionID() {
-                return 0x03;
+                return 0x08;
             }
         }
 
@@ -107,7 +111,7 @@ public record ClientPlayerInfoUpdatePacket(Players... players) implements Client
 
             @Override
             public byte getActionID() {
-                return 0x04;
+                return 0x10;
             }
         }
 
@@ -120,11 +124,12 @@ public record ClientPlayerInfoUpdatePacket(Players... players) implements Client
 
             @Override
             public byte getActionID() {
-                return 0x05;
+                return 0x20;
             }
         }
 
         byte getActionID();
+
     }
 
 }

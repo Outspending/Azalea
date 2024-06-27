@@ -83,7 +83,7 @@ public class DefaultRegistries {
         BIOME = registerNew("worldgen/biome", Biomes.allDefault());
         CHAT_TYPES = registerNew("chat_type", ChatTypes.allDefault());
         DAMAGE = registerNew("damage_type", DamageTypes.allDefault());
-        DIMENSION = registerNew("dimension_type", DimensionType.values());
+        DIMENSION = registerNew("dimension_type", DimensionType.getDimensions());
         TRIM_MATERIAL = registerNew("trim_material", ArmorTrimMaterials.allDefault());
         TRIM_PATTERN = registerNew("trim_pattern", ArmorTrimPatterns.allDefault());
         WOLF_VARIANT = registerNew("wolf_variant", WolfVariants.allDefault());

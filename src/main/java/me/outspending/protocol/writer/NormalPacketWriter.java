@@ -21,21 +21,12 @@ public class NormalPacketWriter extends AbstractPacketWriter {
 
     @SneakyThrows
     public NormalPacketWriter(ClientPacket packet) {
-        super(false);
-
         Pair<Integer, PacketWriter> pair = getPacketLength(packet);
         writeVarInt(pair.left());
         writeByteArray(pair.right().toByteArray());
     }
 
-    public NormalPacketWriter() {
-        super(false);
-    }
-
-    @Override
-    public <T> void writeOptional(@NotNull T element, @NotNull NetworkType<T> type) {
-
-    }
+    public NormalPacketWriter() {}
 
     @Override
     public <T> void writeArray(@NotNull T[] array, Consumer<T> consumer) {

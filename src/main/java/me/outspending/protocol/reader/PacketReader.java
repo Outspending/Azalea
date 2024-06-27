@@ -25,30 +25,19 @@ public interface PacketReader {
         return createNormalReader(ByteBuffer.wrap(bytes));
     }
 
-    ByteBuffer getBuffer();
-
     <T> @Nullable T read(@NotNull NetworkType<T> type);
     boolean hasAnotherPacket();
     byte[] getRemainingBytes();
-    byte[] getAllBytes();
 
     boolean readBoolean();
     byte readByte();
-    int readUnsignedByte();
     short readShort();
-    int readUnsignedShort();
     int readInt();
     long readLong();
     float readFloat();
     double readDouble();
     @Nullable String readString();
-    @NotNull Component readTextComponent();
-    @Nullable Component readJSONTextComponent();
-    @Nullable NamespacedID readNamespacedKey();
     int readVarInt();
-    long readVarLong();
-    // readEntityMetaData
-    // @Nullable ItemStack readSlot();
     @Nullable CompoundBinaryTag readNBTCompound();
     @Nullable Pos readPosition();
     @Nullable Angle readAngle();
@@ -59,5 +48,4 @@ public interface PacketReader {
     <T> @Nullable T[] readArray(@NotNull Function<PacketReader, T> elementReader, @NotNull IntFunction<T[]> arrayCreator);
     <T extends Enum<?>> @Nullable T readEnum(@NotNull Class<T> enumClass);
     byte[] readByteArray();
-    byte[] readByteArray(int length);
 }

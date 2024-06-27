@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
+import me.outspending.events.event.PlayerDisconnectEvent;
 import me.outspending.player.Player;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.ClientPacketReceivedEvent;
@@ -66,7 +67,11 @@ public class ClientConnection {
             while (server.isRunning()) {
                 int result = inputStream.read(BYTE_ARRAY);
                 if (result == -1) {
-                    MinecraftServer.getInstance().getServerProcess().getPlayerCache().remove(this.player);
+                    final Player t = this.player;
+                    MinecraftServer.getInstance().getServerProcess().getPlayerCache().remove(t);
+                    t.getWorld().removeEntity(t);
+
+                    EventExecutor.emitEvent(new PlayerDisconnectEvent(t));
                     logger.info("Client disconnected");
                     return;
                 }
