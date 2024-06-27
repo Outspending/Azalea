@@ -29,7 +29,7 @@ public interface Viewable {
     }
 
     default void sendPacketsToViewers(@NotNull ClientPacket... packets) {
-        getPlayerViewers().forEach(player -> player.getConnection().sendGroupedPacket(new GroupedPacket(packets)));
+        getPlayerViewers().forEach(player -> player.sendBundledPackets(packets));
     }
 
 }

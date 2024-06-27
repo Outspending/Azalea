@@ -1,6 +1,7 @@
 package me.outspending.player;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.GameMode;
@@ -26,6 +27,7 @@ import me.outspending.protocol.packets.client.configuration.ClientConfigurationD
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
+import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.registry.DefaultRegistries;
 import me.outspending.registry.dimension.Dimension;
 import me.outspending.registry.dimension.DimensionType;
@@ -164,12 +166,17 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     public void sendPacket(@NotNull ClientPacket packet) {
-        connection.sendPacket(packet);
+        this.connection.sendPacket(packet);
     }
 
     @ApiStatus.Internal
-    public void sendBundledPacket(Runnable runnable) {
-        connection.sendBundled(runnable);
+    public void sendBundledPackets(@NotNull ClientPacket... packets) {
+        this.connection.sendGroupedPacket(new GroupedPacket(packets));
+    }
+
+    @ApiStatus.Internal
+    public void sendBundledPackets(Runnable runnable) {
+        this.connection.sendBundled(runnable);
     }
 
     @ApiStatus.Internal
@@ -200,9 +207,9 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     public void handleConfigurationToPlay() {
-        Preconditions.checkArgument(connection.getState() == ConnectionState.CONFIGURATION, "Player is not in configuration state");
+        Preconditions.checkArgument(this.connection.getState() == ConnectionState.CONFIGURATION, "Player is not in configuration state");
 
-        connection.setState(ConnectionState.PLAY);
+        this.connection.setState(ConnectionState.PLAY);
         EventExecutor.emitEvent(new PlayerJoinEvent(this));
         if (this.getWorld() == null) {
             logger.error("Player's world is null, cannot spawn in. Make sure to set the world on PlayerJoinEvent!");
@@ -230,6 +237,7 @@ public class Player extends LivingEntity {
 
         Set<Chunk> chunks = new HashSet<>();
         WorldGenerator generator = world.getGenerator();
+        this.sendBundledPackets();
         for (int x = -14; x < 14; x++) {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
@@ -243,7 +251,7 @@ public class Player extends LivingEntity {
         sendChunkBatch(chunks);
         logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
 
-        EventExecutor.emitEvent(new EntitySpawnEvent(this, this.world));
+        this.world.addEntity(this);
     }
 
     @ApiStatus.Internal

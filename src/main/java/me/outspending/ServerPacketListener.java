@@ -2,6 +2,8 @@ package me.outspending;
 
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.ConnectionState;
+import me.outspending.events.EventExecutor;
+import me.outspending.events.event.EntityInteractEvent;
 import me.outspending.player.GameProfile;
 import me.outspending.player.Player;
 import me.outspending.player.Property;
@@ -19,10 +21,7 @@ import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
-import me.outspending.protocol.packets.server.play.PlayerRotationPacket;
-import me.outspending.protocol.packets.server.play.SetPlayerPositionAndRotationPacket;
-import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
-import me.outspending.protocol.packets.server.play.SwingArmPacket;
+import me.outspending.protocol.packets.server.play.*;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.types.ServerPacket;
@@ -45,6 +44,7 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
         handleSwingArmPacket();
 
         handleMovementPackets();
+        handleEntityInteract();
     }
 
     private void handleHandshakePacket() {
@@ -128,4 +128,9 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
                     .forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
         });
     }
+
+    private void handleEntityInteract() {
+        super.addListener(EntityInteractPacket.class, packet -> EventExecutor.emitEvent(new EntityInteractEvent(packet.entityID(), packet.type(), packet.targetPos(), packet.hand(), packet.sneaking())));
+    }
+
 }

@@ -59,18 +59,26 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     }
 
     public void spawn(@NotNull Player player) {
+        Preconditions.checkNotNull(this.world, "Spawning entity without a world!");
+
         player.sendPacket(new ClientSpawnEntityPacket(this));
+//        player.sendBundledPackets(
+//                new ClientSpawnEntityPacket(this),
+//                new ClientSetEntityMetaPacket(this)
+//        );
     }
 
     public void spawn(@NotNull Player... players) {
-        for (Player player : players) {
-            spawn(player);
-        }
+        this.spawn(List.of(players));
+    }
+
+    public void spawn(@NotNull Collection<Player> players) {
+        players.forEach(this::spawn);
     }
 
     public void spawnGlobal() {
         world.addEntity(this);
-        world.getPlayers().forEach(this::spawn);
+        this.spawn(world.getPlayers());
     }
 
     @Contract("null -> fail")
@@ -132,15 +140,15 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     @Override
     public void tick(long time) {
         updateViewers();
-        logger.info(getViewers().toString());
     }
 
     public enum Hand {
         MAIN_HAND,
         OFF_HAND;
 
-        public static @Nullable Hand getById(@Range(from = 0, to = 1) int id) {
-            return values()[id];
+        public static @NotNull Hand getById(@Range(from = 0, to = 1) int id) {
+            final Hand value = values()[id];
+            return value != null ? value : MAIN_HAND;
         }
     }
 
@@ -161,8 +169,9 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
         EMERGING,
         DIGGING;
 
-        public static @Nullable Pose getById(@Range(from = 0, to = 14) int id) {
-            return values()[id];
+        public static @NotNull Pose getById(@Range(from = 0, to = 14) int id) {
+            final Pose value = values()[id];
+            return value != null ? value : STANDING;
         }
 
     }
@@ -204,6 +213,7 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
 
             return entity;
         }
+
     }
 
 }
