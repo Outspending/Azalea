@@ -46,7 +46,6 @@ public class Player extends LivingEntity {
     private static final Logger logger = LoggerFactory.getLogger(Player.class);
 
     private final ClientConnection connection;
-
     private final GameProfile profile;
 
     private GameMode gameMode = GameMode.CREATIVE;
@@ -93,7 +92,7 @@ public class Player extends LivingEntity {
         }
 
         EventExecutor.emitEvent(new PlayerDisconnectEvent(this, reason));
-        this.getViewers().forEach(viewer -> viewer.sendRemoveEntityPacket(this));
+        this.getPlayerViewers().forEach(viewer -> viewer.sendRemoveEntityPacket(this));
 
         try {
             logger.info("Client disconnected: {}", clientSocket.getInetAddress());
@@ -109,7 +108,7 @@ public class Player extends LivingEntity {
 
     @Override
     public void tick(long time) {
-        updateViewers();
+        super.tick(time);
         handleMovement();
 
         lastPosition = position;
@@ -122,7 +121,7 @@ public class Player extends LivingEntity {
         if (!to.equals(from)) {
             EventExecutor.emitEvent(new PlayerMoveEvent(this, to));
 
-            getViewers().forEach(viewer -> viewer.sendEntityMovementPacket(this, to, from));
+            this.getPlayerViewers().forEach(viewer -> viewer.sendEntityMovementPacket(this, to, from));
 
             Chunk fromChunk = world.getChunk(from);
             Chunk toChunk = world.getChunk(to);
@@ -249,7 +248,7 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     private void handleWorldEntityPackets() {
-        getViewers().forEach(viewer -> {
+        this.getPlayerViewers().forEach(viewer -> {
             sendAddPlayerPacket(viewer);
             viewer.sendAddPlayerPacket(this);
         });

@@ -23,7 +23,7 @@ import java.util.UUID;
 public class Entity implements Viewable, Tickable, Comparable<Entity> {
     private static final Logger logger = LoggerFactory.getLogger(Entity.class);
 
-    private final List<Player> viewers = new ArrayList<>();
+    private final List<Entity> viewers = new ArrayList<>();
     protected final EntityType type;
     protected final int entityID;
     protected final UUID entityUUID;
@@ -93,17 +93,17 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     }
 
     @Override
-    public void addViewer(@NotNull Player player) {
-        viewers.add(player);
+    public void addViewer(@NotNull Entity entity) {
+        viewers.add(entity);
     }
 
     @Override
-    public void removeViewer(@NotNull Player player) {
-        viewers.remove(player);
+    public void removeViewer(@NotNull Entity entity) {
+        viewers.remove(entity);
     }
 
     @Override
-    public @NotNull List<Player> getViewers() {
+    public @NotNull List<Entity> getViewers() {
         return viewers;
     }
 
@@ -111,22 +111,24 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     public void updateViewers() {
         if (world == null) return;
 
-        world.getPlayers().forEach(player -> {
-            if (this.equals(player)) return;
+        world.getAllEntities().forEach(entity -> {
+            if (this.equals(entity)) return;
 
-            boolean isViewer = this.isViewer(player);
-            double distance = this.distanceFrom(player);
+            boolean isViewer = this.isViewer(entity);
+            double distance = this.distanceFrom(entity);
 
             if (distance <= this.viewableDistance && !isViewer) {
-                this.addViewer(player);
+                this.addViewer(entity);
             } else if (distance >= this.viewableDistance && isViewer) {
-                this.removeViewer(player);
+                this.removeViewer(entity);
             }
         });
     }
 
     @Override
-    public void tick(long time) {}
+    public void tick(long time) {
+        updateViewers();
+    }
 
     public enum Pose {
         STANDING,

@@ -123,7 +123,9 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     private void handleSwingArmPacket() {
         super.addListener(SwingArmPacket.class, packet -> {
             final Player player = packet.getSendingConnection().getPlayer();
-            packet.getSendingConnection().getPlayer().getViewers().forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
+            packet.getSendingConnection().getPlayer()
+                    .getPlayerViewers()
+                    .forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
         });
     }
 }

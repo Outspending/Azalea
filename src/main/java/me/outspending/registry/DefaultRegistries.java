@@ -40,16 +40,19 @@ public class DefaultRegistries {
 
     public static final List<Registry<? extends RegistryType>> ALL_REGISTRIES;
 
+    @SafeVarargs
     private static <T extends RegistryType> Registry<T> register(Registry<T> registry, T... values) {
         registry.addAll(values);
         return registry;
     }
 
+    @SafeVarargs
     private static <T extends RegistryType> Registry<T> registerNew(@NotNull NamespacedID registryID, @NotNull T... values) {
         DefaultedRegistry<T> registry = new DefaultedRegistry<>(registryID);
         return register(registry, values);
     }
 
+    @SafeVarargs
     private static <T extends RegistryType> Registry<T> registerNew(@NotNull String registryID, @NotNull T... values) {
         return registerNew(NamespacedID.of(registryID), values);
     }
