@@ -2,6 +2,7 @@ package me.outspending;
 
 import me.outspending.block.BlockType;
 import me.outspending.entity.Entity;
+import me.outspending.entity.EntityType;
 import me.outspending.events.EventHandler;
 import me.outspending.events.EventListener;
 import me.outspending.events.event.EntitySpawnEvent;
@@ -31,7 +32,12 @@ public class Testing implements EventListener {
     public void onEntitySpawn(EntitySpawnEvent e) {
         final Entity entity = e.getEntity();
         if (entity instanceof Player player) {
-            player.showDemoScreen();
+            final Entity entity1 = Entity.builder(EntityType.SHEEP)
+                    .setPosition(player.getPosition())
+                    .setWorld(player.getWorld())
+                    .build();
+
+            entity1.spawnGlobal();
         }
     }
 

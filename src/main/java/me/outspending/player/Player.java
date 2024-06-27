@@ -295,18 +295,8 @@ public class Player extends LivingEntity {
                                 0, new Property[0]),
                         new ClientPlayerInfoUpdatePacket.Action.UpdateListed(true)
                 )));
-        sendAddEntityPacket(player);
-    }
 
-    @ApiStatus.Internal
-    public void sendAddEntityPacket(@NotNull Entity entity) {
-        final Pos position = entity.getPosition();
-        sendPacket(new ClientSpawnEntityPacket(
-                entity.getEntityID(), entity.getEntityUUID(),
-                entity.getType().getId(), position.x(), position.y(), position.z(),
-                new Angle(position.yaw()), new Angle(position.pitch()), Angle.ZERO,
-                0, (short) 0, (short) 0, (short) 0
-        ));
+        this.spawn(player);
     }
 
     @ApiStatus.Internal
@@ -341,7 +331,7 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     public void keepAliveConnection(long time) {
-        if (getConnection().getState() == ConnectionState.PLAY) {
+        if (this.connection.getState() == ConnectionState.PLAY) {
             sendPacket(new ClientKeepAlivePacket(time));
         }
     }

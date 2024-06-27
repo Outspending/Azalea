@@ -8,6 +8,8 @@ import me.outspending.connection.ClientConnection;
 import me.outspending.entity.meta.EntityMeta;
 import me.outspending.player.Player;
 import me.outspending.position.Pos;
+import me.outspending.protocol.packets.client.play.ClientSetEntityMetaPacket;
+import me.outspending.protocol.packets.client.play.ClientSpawnEntityPacket;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.*;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,8 +29,6 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     protected final EntityType type;
     protected final int entityID;
     protected final UUID entityUUID;
-    // private final EntityMeta entityMeta;
-
     protected EntityMeta entityMeta = new EntityMeta();
 
     protected boolean onGround = true;
@@ -44,8 +45,32 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
         this.entityUUID = entityUUID;
     }
 
+    public static @NotNull Builder builder(@NotNull EntityType type) {
+        return new Builder(type);
+    }
+
     public void setRotation(float yaw, float pitch) {
         setPosition(new Pos(position.x(), position.y(), position.z(), yaw, pitch));
+    }
+
+    public void setMeta(@NotNull EntityMeta meta) {
+        this.entityMeta = meta;
+        sendPacketsToViewers(new ClientSetEntityMetaPacket(this));
+    }
+
+    public void spawn(@NotNull Player player) {
+        player.sendPacket(new ClientSpawnEntityPacket(this));
+    }
+
+    public void spawn(@NotNull Player... players) {
+        for (Player player : players) {
+            spawn(player);
+        }
+    }
+
+    public void spawnGlobal() {
+        world.addEntity(this);
+        world.getPlayers().forEach(this::spawn);
     }
 
     @Contract("null -> fail")
@@ -107,6 +132,7 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     @Override
     public void tick(long time) {
         updateViewers();
+        logger.info(getViewers().toString());
     }
 
     public enum Hand {
@@ -139,6 +165,45 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
             return values()[id];
         }
 
+    }
+
+    public static class Builder {
+        private final EntityType type;
+        private UUID entityUUID = UUID.randomUUID();
+        private Pos position = Pos.ZERO;
+        private World world;
+
+        public Builder(EntityType type) {
+            this.type = type;
+        }
+
+        @Contract("_ -> this")
+        public @NotNull Builder setEntityUUID(@NotNull UUID entityUUID) {
+            this.entityUUID = entityUUID;
+            return this;
+        }
+
+        @Contract("_ -> this")
+        public @NotNull Builder setPosition(@NotNull Pos position) {
+            this.position = position;
+            return this;
+        }
+
+        @Contract("_ -> this")
+        public @NotNull Builder setWorld(@NotNull World world) {
+            this.world = world;
+            return this;
+        }
+
+        public @NotNull Entity build() {
+            Preconditions.checkNotNull(world, "World cannot be null");
+
+            final Entity entity = new Entity(type, entityUUID);
+            entity.setPosition(this.position);
+            entity.setWorld(this.world);
+
+            return entity;
+        }
     }
 
 }

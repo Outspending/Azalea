@@ -5,9 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/meta/EntityMeta.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSetEntityMetaPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/known_bugs.md" beforeDir="false" afterPath="$PROJECT_DIR$/known_bugs.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Entity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/EntityType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/EntityType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSpawnEntityPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSpawnEntityPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/world/WorldImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/world/WorldImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,9 +49,9 @@
       <list>
         <option value="AnnotationType" />
         <option value="Interface" />
-        <option value="Record" />
         <option value="Enum" />
         <option value="Class" />
+        <option value="Record" />
       </list>
     </option>
   </component>
@@ -85,6 +93,7 @@
     &quot;Application.Main.executor&quot;: &quot;Profiler#1&quot;,
     &quot;Gradle./media/outspending/Coding/java/Azalea [Main.main()].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.Azalea [:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build Azalea.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.Build ServerImpl.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.ServerImpl [:Main.main()].executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -227,7 +236,8 @@
       <workItem from="1719286090284" duration="3703000" />
       <workItem from="1719292482493" duration="3023000" />
       <workItem from="1719295836442" duration="179000" />
-      <workItem from="1719464335046" duration="998000" />
+      <workItem from="1719464335046" duration="2143000" />
+      <workItem from="1719498879956" duration="1801000" />
     </task>
     <servers />
   </component>
