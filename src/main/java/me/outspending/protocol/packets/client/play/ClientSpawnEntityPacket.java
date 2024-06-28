@@ -16,7 +16,7 @@ public record ClientSpawnEntityPacket(@NotNull Entity entity) implements ClientP
         final Pos pos = this.entity.getPosition();
 
         writer.writeVarInt(this.entity.getEntityID());
-        writer.writeUUID(this.entity.getEntityUUID());
+        writer.writeUUID(this.entity.getUuid());
         writer.writeVarInt(this.entity.getType().getId());
         writer.writeDouble(pos.x());
         writer.writeDouble(pos.y());

@@ -5,16 +5,18 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
-import me.outspending.events.event.PlayerDisconnectEvent;
-import me.outspending.player.Player;
+import me.outspending.cache.PlayerCache;
 import me.outspending.events.EventExecutor;
 import me.outspending.events.event.ClientPacketReceivedEvent;
+import me.outspending.events.event.PlayerDisconnectEvent;
 import me.outspending.events.event.ServerPacketReceivedEvent;
+import me.outspending.player.Player;
 import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.PacketDecoder;
 import me.outspending.protocol.PacketEncoder;
 import me.outspending.protocol.listener.PacketListener;
 import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
+import me.outspending.protocol.packets.client.play.ClientPlayerInfoRemovePacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.GroupedPacket;
@@ -68,9 +70,12 @@ public class ClientConnection {
                 int result = inputStream.read(BYTE_ARRAY);
                 if (result == -1) {
                     final Player t = this.player;
-                    MinecraftServer.getInstance().getServerProcess().getPlayerCache().remove(t);
+                    final PlayerCache cache = MinecraftServer.getInstance().getServerProcess().getPlayerCache();
+
+                    cache.remove(t);
                     t.getWorld().removeEntity(t);
 
+                    cache.getAll().forEach(player -> player.sendRemovePlayersPacket(player));
                     EventExecutor.emitEvent(new PlayerDisconnectEvent(t));
                     logger.info("Client disconnected");
                     return;
@@ -90,7 +95,7 @@ public class ClientConnection {
 
         ServerPacket readPacket = PacketDecoder.decode(this, reader, compressionType, state);
         if (readPacket != null) {
-            logger.info("[{}] Received packet: {}", readPacket.id(), readPacket);
+            // logger.info("[{}] Received packet: {}", readPacket.id(), readPacket);
 
             final ServerPacketReceivedEvent event = new ServerPacketReceivedEvent(readPacket);
             EventExecutor.emitEvent(event);
@@ -131,7 +136,7 @@ public class ClientConnection {
     @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (isOnline()) {
-            logger.info("[{}] Sending packet: {}", packet.id(), packet);
+            // logger.info("[{}] Sending packet: {}", packet.id(), packet);
             PacketWriter writer = PacketEncoder.encode(PacketWriter.createNormalWriter(), compressionType, packet);
 
             final ClientPacketReceivedEvent event = new ClientPacketReceivedEvent(packet, this);

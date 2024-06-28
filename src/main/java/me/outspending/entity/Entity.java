@@ -4,15 +4,16 @@ import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.Tickable;
-import me.outspending.connection.ClientConnection;
 import me.outspending.entity.meta.EntityMeta;
 import me.outspending.player.Player;
 import me.outspending.position.Pos;
 import me.outspending.protocol.packets.client.play.ClientSetEntityMetaPacket;
 import me.outspending.protocol.packets.client.play.ClientSpawnEntityPacket;
 import me.outspending.world.World;
-import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
+import org.jetbrains.annotations.UnknownNullability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,13 +23,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter @Setter
-public class Entity implements Viewable, Tickable, Comparable<Entity> {
+public class Entity implements Viewable, Tickable {
     private static final Logger logger = LoggerFactory.getLogger(Entity.class);
 
     private final List<Entity> viewers = new ArrayList<>();
     protected final EntityType type;
     protected final int entityID;
-    protected final UUID entityUUID;
+    protected final UUID uuid;
     protected EntityMeta entityMeta = new EntityMeta();
 
     protected boolean onGround = true;
@@ -39,10 +40,10 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
         this(type, UUID.randomUUID());
     }
 
-    public Entity(@NotNull EntityType type, @NotNull UUID entityUUID) {
+    public Entity(@NotNull EntityType type, @NotNull UUID uuid) {
         this.type = type;
         this.entityID = EntityCounter.getNextEntityID();
-        this.entityUUID = entityUUID;
+        this.uuid = uuid;
     }
 
     public static @NotNull Builder builder(@NotNull EntityType type) {
@@ -94,13 +95,8 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     }
 
     @Override
-    public int compareTo(@NotNull Entity o) {
-        int idCompare = Integer.compare(this.entityID, o.entityID);
-        if (idCompare != 0) {
-            return idCompare;
-        }
-
-        return this.entityUUID.compareTo(o.entityUUID);
+    public boolean equals(Object obj) {
+        return obj instanceof Entity entity && this.uuid == entity.uuid;
     }
 
     @Override
@@ -122,19 +118,23 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     public void updateViewers() {
         if (world == null) return;
 
-        world.getAllEntities().forEach(entity -> {
-            if (this.equals(entity)) return;
+        for (Entity entity : world.getAllEntities()) {
+            if (this.equals(entity)) {
+                continue;
+            }
 
             boolean isViewer = this.isViewer(entity);
             double distance = this.distanceFrom(entity);
 
             int viewableDistance = this.entityMeta.getViewableDistance();
             if (distance <= viewableDistance && !isViewer) {
+                logger.info("Adding Viewer: {}", entity.entityID);
                 this.addViewer(entity);
             } else if (distance >= viewableDistance && isViewer) {
+                logger.info("Removing Viewer: {}", entity.entityID);
                 this.removeViewer(entity);
             }
-        });
+        }
     }
 
     @Override

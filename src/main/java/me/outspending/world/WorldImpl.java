@@ -54,9 +54,8 @@ public final class WorldImpl implements World {
     public void addEntity(@NotNull Entity entity) {
         if (entity instanceof Player player) {
             players.add(player);
-        } else {
-            entities.add(entity);
         }
+        entities.add(entity);
 
         EventExecutor.emitEvent(new EntityWorldAddEvent(entity, this, entity.getPosition()));
     }
@@ -65,9 +64,8 @@ public final class WorldImpl implements World {
     public void removeEntity(@NotNull Entity entity) {
         if (entity instanceof Player player) {
             players.remove(player);
-        } else {
-            entities.remove(entity);
         }
+        entities.remove(entity);
 
         EventExecutor.emitEvent(new EntityWorldRemoveEvent(entity, this, entity.getPosition()));
     }

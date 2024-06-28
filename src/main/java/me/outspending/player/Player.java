@@ -1,13 +1,13 @@
 package me.outspending.player;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
-import me.outspending.block.BlockType;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.light.Blocklight;
 import me.outspending.chunk.light.Skylight;
@@ -18,7 +18,10 @@ import me.outspending.entity.Entity;
 import me.outspending.entity.EntityType;
 import me.outspending.entity.LivingEntity;
 import me.outspending.events.EventExecutor;
-import me.outspending.events.event.*;
+import me.outspending.events.event.ChunkSwitchEvent;
+import me.outspending.events.event.PlayerDisconnectEvent;
+import me.outspending.events.event.PlayerJoinEvent;
+import me.outspending.events.event.PlayerMoveEvent;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Angle;
 import me.outspending.position.Pos;
@@ -42,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 @Getter @Setter
 public class Player extends LivingEntity {
@@ -95,7 +97,7 @@ public class Player extends LivingEntity {
         }
 
         EventExecutor.emitEvent(new PlayerDisconnectEvent(this));
-        this.getPlayerViewers().forEach(viewer -> viewer.sendRemoveEntityPacket(this));
+        this.getPlayerViewers().forEach(viewer -> viewer.sendRemovePlayersPacket(this));
 
         try {
             logger.info("Client disconnected: {}", clientSocket.getInetAddress());
@@ -114,7 +116,9 @@ public class Player extends LivingEntity {
         super.tick(time);
         handleMovement();
 
-        lastPosition = position;
+        if (position.x() != lastPosition.x() || position.y() != lastPosition.z() || position.z() != lastPosition.z()) {
+            lastPosition = position;
+        }
     }
 
     private void handleMovement() {
@@ -161,8 +165,8 @@ public class Player extends LivingEntity {
         sendPacket(new ClientHurtAnimationPacket(this, yaw));
     }
 
-    public boolean canSee(@NotNull Player player) {
-        return getViewers().contains(player);
+    public boolean canSee(@NotNull Entity entity) {
+        return getViewers().contains(entity);
     }
 
     @ApiStatus.Internal
@@ -227,14 +231,21 @@ public class Player extends LivingEntity {
         sendLoginPlayPacket();
 
         sendPacket(new ClientSynchronizePlayerPosition(position, (byte) 0, 24));
+
+        updateViewers();
         for (Player player : MinecraftServer.getInstance().getAllPlayers()) {
-            if (this.equals(player)) {
-                break;
+            if (this.getUuid() == player.getUuid()) {
+                continue;
             }
 
-            this.sendAddPlayerPacket(player, true);
+            logger.info("{}", player);
+            boolean spawn = player.canSee(player);
+
+            this.sendAddPlayerPacket(player, spawn);
+            player.sendAddPlayerPacket(this, spawn);
         }
         this.sendAddPlayerPacket(this, false);
+
         sendPacket(new ClientGameEventPacket(GameEvent.START_WAITING_FOR_CHUNKS, 0f));
 
         sendTickingPackets();
@@ -303,9 +314,9 @@ public class Player extends LivingEntity {
 
     @ApiStatus.Internal
     public void sendAddPlayerPacket(@NotNull Player player, boolean spawn) {
-        sendPacket(new ClientPlayerInfoUpdatePacket(
+        this.sendPacket(new ClientPlayerInfoUpdatePacket(
                 new ClientPlayerInfoUpdatePacket.Players(
-                        player.getUUID(),
+                        player.getUuid(),
                         new ClientPlayerInfoUpdatePacket.Action.AddPlayer(
                                 player.getName(),
                                 0, new Property[0]),
@@ -313,7 +324,7 @@ public class Player extends LivingEntity {
                 )
         ));
 
-        if (spawn) this.spawn(player);
+        if (spawn) player.spawn(this);
     }
 
     @ApiStatus.Internal
@@ -338,12 +349,29 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    public void sendRemoveEntityPacket(@NotNull Entity entity) {
-        if (entity instanceof Player player) {
-            sendPacket(new ClientPlayerInfoRemovePacket(1, player.getUUID()));
-        } else {
-            sendPacket(new ClientRemoveEntitiesPacket(1, entity.getEntityID()));
+    public void sendRemoveEntitiesPacket(@NotNull Entity... entities) {
+        IntList list = new IntArrayList(entities.length);
+        for (Entity entity : entities) {
+            list.add(entity.getEntityID());
         }
+
+        sendPacket(new ClientRemoveEntitiesPacket(entities.length, list));
+    }
+
+    @ApiStatus.Internal
+    public void sendRemoveEntitiesPacket(@NotNull Collection<Entity> entities) {
+        sendRemoveEntitiesPacket(entities.toArray(new Entity[0]));
+    }
+
+    @ApiStatus.Internal
+    public void sendRemovePlayersPacket(@NotNull Player... players) {
+        List<UUID> uuids = Arrays.stream(players).map(Player::getUuid).toList();
+        sendPacket(new ClientPlayerInfoRemovePacket(players.length, uuids));
+    }
+
+    @ApiStatus.Internal
+    public void sendRemovePlayersPacket(@NotNull Collection<Player> players) {
+        sendRemoveEntitiesPacket(players.toArray(new Player[0]));
     }
 
     @ApiStatus.Internal
@@ -355,10 +383,6 @@ public class Player extends LivingEntity {
 
     public String getName() {
         return profile.getUsername();
-    }
-
-    public UUID getUUID() {
-        return profile.getUuid();
     }
 
 }

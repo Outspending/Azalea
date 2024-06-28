@@ -18,12 +18,12 @@ public non-sealed class PlayerCache implements Cache<Player> {
 
     private void safeAdd(@NotNull Player player) {
         nameToPlayer.put(player.getName(), player);
-        uuidToPlayer.put(player.getUUID(), player);
+        uuidToPlayer.put(player.getUuid(), player);
     }
 
     private void safeRemove(@NotNull Player player) {
         nameToPlayer.remove(player.getName());
-        uuidToPlayer.remove(player.getUUID());
+        uuidToPlayer.remove(player.getUuid());
     }
 
     @Override

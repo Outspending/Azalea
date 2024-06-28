@@ -5,25 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/utils/CompoundUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/known_bugs.md" beforeDir="false" afterPath="$PROJECT_DIR$/known_bugs.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/cache/PlayerCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/cache/PlayerCache.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/events/event/PlayerDisconnectEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/events/event/PlayerDisconnectEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Entity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/meta/EntityMeta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/meta/EntityMeta.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/NetworkTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/NetworkTypes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientPlayerInfoUpdatePacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientPlayerInfoUpdatePacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/AbstractPacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/AbstractPacketReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/PacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/PacketReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/AbstractPacketWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/AbstractPacketWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/NormalPacketWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/NormalPacketWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/PacketWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/PacketWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/DefaultRegistries.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/DefaultRegistries.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/registry/dimension/DimensionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/registry/dimension/DimensionType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/me/outspending/ServerTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/me/outspending/protocol/ProtocolTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/position/Pos.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/position/Pos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSpawnEntityPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSpawnEntityPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/world/WorldImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/world/WorldImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,36 +90,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Profiler#1&quot;,
-    &quot;Gradle./media/outspending/Coding/java/Azalea [Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Azalea [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build Azalea.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build ServerImpl.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ServerImpl [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;1__20__6&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/media/outspending/Coding/java/Azalea&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Profiler#1",
+    "Gradle./media/outspending/Coding/java/Azalea [Main.main()].executor": "Run",
+    "Gradle.Azalea [:Main.main()].executor": "Run",
+    "Gradle.Build Azalea.executor": "Run",
+    "Gradle.Build ServerImpl.executor": "Run",
+    "Gradle.ServerImpl [:Main.main()].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "1__20__6",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/media/outspending/Coding/java/Azalea",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;Excalidraw&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "Excalidraw"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="me.outspending.Main" />
@@ -247,7 +241,9 @@
       <workItem from="1719464335046" duration="2143000" />
       <workItem from="1719498879956" duration="5993000" />
       <workItem from="1719511196590" duration="2078000" />
-      <workItem from="1719517984832" duration="3619000" />
+      <workItem from="1719517984832" duration="3646000" />
+      <workItem from="1719539874675" duration="2157000" />
+      <workItem from="1719545668831" duration="2986000" />
     </task>
     <servers />
   </component>

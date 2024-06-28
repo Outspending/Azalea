@@ -27,7 +27,7 @@ public class EntityMeta implements Writable {
     protected int ticksFrozenInPowderedSnow = 0;
 
     // Custom Meta (not in the protocol)
-    protected int viewableDistance = 50;
+    protected int viewableDistance = 100;
     protected boolean canTick = true;
 
     @Override
