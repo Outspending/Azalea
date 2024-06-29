@@ -8,11 +8,13 @@ import lombok.Setter;
 import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
+import me.outspending.chat.Chatable;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.light.Blocklight;
 import me.outspending.chunk.light.Skylight;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.ConnectionState;
+import me.outspending.connection.NetworkClient;
 import me.outspending.entity.BlockEntity;
 import me.outspending.entity.Entity;
 import me.outspending.entity.EntityType;
@@ -47,7 +49,7 @@ import java.net.Socket;
 import java.util.*;
 
 @Getter @Setter
-public class Player extends LivingEntity {
+public class Player extends LivingEntity implements NetworkClient, Chatable {
     private static final Logger logger = LoggerFactory.getLogger(Player.class);
 
     private final ClientConnection connection;
@@ -170,47 +172,13 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
+    @Override
     public void sendPacket(@NotNull ClientPacket packet) {
         this.connection.sendPacket(packet);
     }
 
     @ApiStatus.Internal
-    public void sendBundledPackets(@NotNull ClientPacket... packets) {
-        this.connection.sendGroupedPacket(new GroupedPacket(packets));
-    }
-
-    @ApiStatus.Internal
-    public void sendBundledPackets(Runnable runnable) {
-        this.connection.sendBundled(runnable);
-    }
-
-    @ApiStatus.Internal
-    public void sendChunkBatch(Chunk... chunks) {
-        sendChunkBatch(Arrays.asList(chunks));
-    }
-
-    @ApiStatus.Internal
-    public void sendChunkBatch(Collection<Chunk> chunks) {
-        sendPacket(new ClientChunkBatchStartPacket());
-        for (Chunk chunk : chunks) {
-            sendChunkData(chunk);
-        }
-        sendPacket(new ClientChunkBatchFinishedPacket(chunks.size()));
-    }
-
-    @ApiStatus.Internal
-    public void sendChunkData(Chunk chunk) {
-        chunk.setIsLoaded(true);
-        sendPacket(new ClientChunkDataPacket(
-                chunk.getChunkX(), chunk.getChunkZ(),
-                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                chunk, new BlockEntity[0],
-                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                new Skylight[0], new Blocklight[0]
-        ));
-    }
-
-    @ApiStatus.Internal
+    @Override
     public void handleConfigurationToPlay() {
         Preconditions.checkArgument(this.connection.getState() == ConnectionState.CONFIGURATION, "Player is not in configuration state");
 
@@ -223,11 +191,12 @@ public class Player extends LivingEntity {
         }
 
         this.getServer().getServerProcess().getPlayerCache().add(this);
-        sendMainLoginPackets();
+        handleMainLoginPackets();
     }
 
     @ApiStatus.Internal
-    private void sendMainLoginPackets() {
+    @Override
+    public void handleMainLoginPackets() {
         sendLoginPlayPacket();
 
         sendPacket(new ClientSynchronizePlayerPosition(position, (byte) 0, 24));
@@ -275,25 +244,16 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    private void handleWorldEntityPackets() {
+    @Override
+    public void handleWorldEntityPackets() {
         this.getViewers().forEach(viewer -> {
             viewer.spawn(this);
         });
     }
 
     @ApiStatus.Internal
-    public void sendRegistryPacket() {
-        DefaultRegistries.sendRegistries(this.connection);
-    }
-
-    @ApiStatus.Internal
-    private void sendTickingPackets() {
-        sendPacket(new ClientSetTickingStatePacket(20, false));
-        sendPacket(new ClientStepTickPacket(0));
-    }
-
-    @ApiStatus.Internal
-    private void sendLoginPlayPacket() {
+    @Override
+    public void sendLoginPlayPacket() {
         final NamespacedID[] dimensionNames = Arrays.stream(DimensionType.getDimensions())
                 .map(Dimension::getBiomeKey)
                 .toArray(NamespacedID[]::new);
@@ -313,6 +273,7 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
+    @Override
     public void sendAddPlayerPacket(@NotNull Player player, boolean spawn) {
         this.sendPacket(new ClientPlayerInfoUpdatePacket(
                 new ClientPlayerInfoUpdatePacket.Players(
@@ -328,54 +289,8 @@ public class Player extends LivingEntity {
     }
 
     @ApiStatus.Internal
-    public void sendEntityMovementPacket(@NotNull Entity entity, @NotNull Pos to, @NotNull Pos from) {
-        short deltaX = (short) ((to.x() - from.x()) * 32 * 128);
-        short deltaY = (short) ((to.y() - from.y()) * 32 * 128);
-        short deltaZ = (short) ((to.z() - from.z()) * 32 * 128);
-
-        Angle yaw = new Angle(to.yaw());
-        int entityID = entity.getEntityID();
-
-        sendPacket(new ClientUpdateEntityPositionAndRotationPacket(
-                entityID,
-                deltaX,
-                deltaY,
-                deltaZ,
-                yaw,
-                new Angle(to.pitch()),
-                entity.isOnGround()
-        ));
-        sendPacket(new ClientSetHeadRotationPacket(entityID, yaw));
-    }
-
-    @ApiStatus.Internal
-    public void sendRemoveEntitiesPacket(@NotNull Entity... entities) {
-        IntList list = new IntArrayList(entities.length);
-        for (Entity entity : entities) {
-            list.add(entity.getEntityID());
-        }
-
-        sendPacket(new ClientRemoveEntitiesPacket(entities.length, list));
-    }
-
-    @ApiStatus.Internal
-    public void sendRemoveEntitiesPacket(@NotNull Collection<Entity> entities) {
-        sendRemoveEntitiesPacket(entities.toArray(new Entity[0]));
-    }
-
-    @ApiStatus.Internal
-    public void sendRemovePlayersPacket(@NotNull Player... players) {
-        List<UUID> uuids = Arrays.stream(players).map(Player::getUuid).toList();
-        sendPacket(new ClientPlayerInfoRemovePacket(players.length, uuids));
-    }
-
-    @ApiStatus.Internal
-    public void sendRemovePlayersPacket(@NotNull Collection<Player> players) {
-        sendRemoveEntitiesPacket(players.toArray(new Player[0]));
-    }
-
-    @ApiStatus.Internal
-    public void keepAliveConnection(long time) {
+    @Override
+    public void keepConnectionAlive(long time) {
         if (this.connection.getState() == ConnectionState.PLAY) {
             sendPacket(new ClientKeepAlivePacket(time));
         }
@@ -383,6 +298,57 @@ public class Player extends LivingEntity {
 
     public String getName() {
         return profile.getUsername();
+    }
+
+    @Override
+    public void chat(@NotNull String message) {
+
+    }
+
+    @Override
+    public void chat(java.awt.@NotNull Component message) {
+
+    }
+
+    @Override
+    public void sendMessage(@NotNull String message) {
+
+    }
+
+    @Override
+    public void sendMessage(java.awt.@NotNull Component message) {
+
+    }
+
+    @Override
+    public void sendMessages(@NotNull String... messages) {
+
+    }
+
+    @Override
+    public void sendMessages(java.awt.@NotNull Component... messages) {
+
+    }
+
+    public void setLevel(int level) {
+
+    }
+
+    public void resetLevel() {
+
+    }
+
+    public void setExp(float exp) {
+
+    }
+
+    public byte @NotNull [] grabCookieData(@NotNull NamespacedID key) {
+        sendPacket(new ClientRequestCookiePacket(key));
+        return new byte[0]; // TODO: Return the cookie data from the response packet!
+    }
+
+    public void storeCookie(@NotNull NamespacedID key, byte @NotNull [] value) {
+        sendPacket(new ClientStoreCookiePacket(key, value));
     }
 
 }

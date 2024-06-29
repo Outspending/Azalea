@@ -89,6 +89,11 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
+    public @Nullable NamespacedID readNamespacedID() {
+        return NetworkTypes.NAMESPACEDID_TYPE.read(buffer);
+    }
+
+    @Override
     public @Nullable Pos readPosition() {
         return NetworkTypes.LOCATION_TYPE.read(buffer);
     }

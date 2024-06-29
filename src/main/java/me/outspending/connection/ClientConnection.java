@@ -77,7 +77,9 @@ public class ClientConnection {
 
                     cache.getAll().forEach(player -> player.sendRemovePlayersPacket(player));
                     EventExecutor.emitEvent(new PlayerDisconnectEvent(t));
+
                     logger.info("Client disconnected");
+                    this.socket.close();
                     return;
                 }
 
@@ -136,7 +138,6 @@ public class ClientConnection {
     @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (isOnline()) {
-            // logger.info("[{}] Sending packet: {}", packet.id(), packet);
             PacketWriter writer = PacketEncoder.encode(PacketWriter.createNormalWriter(), compressionType, packet);
 
             final ClientPacketReceivedEvent event = new ClientPacketReceivedEvent(packet, this);

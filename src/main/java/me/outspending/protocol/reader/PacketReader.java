@@ -39,6 +39,7 @@ public interface PacketReader {
     @Nullable String readString();
     int readVarInt();
     @Nullable CompoundBinaryTag readNBTCompound();
+    @Nullable NamespacedID readNamespacedID();
     @Nullable Pos readPosition();
     @Nullable Angle readAngle();
     @Nullable UUID readUUID();

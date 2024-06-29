@@ -2,6 +2,7 @@ package me.outspending.registry;
 
 import me.outspending.NamespacedID;
 import me.outspending.connection.ClientConnection;
+import me.outspending.connection.NetworkClient;
 import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPacket;
 import me.outspending.registry.banner.BannerPattern;
 import me.outspending.registry.banner.BannerPatterns;
@@ -58,14 +59,14 @@ public class DefaultRegistries {
     }
 
     @ApiStatus.Internal
-    public static void sendRegistry(@NotNull ClientConnection connection, @NotNull Registry<? extends RegistryType> registry) {
-        connection.sendPacket(new ClientRegistryDataPacket(registry.registryID(), registry.all()));
+    public static void sendRegistry(@NotNull NetworkClient networkClient, @NotNull Registry<? extends RegistryType> registry) {
+        networkClient.sendPacket(new ClientRegistryDataPacket(registry.registryID(), registry.all()));
     }
 
     @ApiStatus.Internal
-    public static void sendRegistries(@NotNull ClientConnection connection) {
+    public static void sendRegistries(@NotNull NetworkClient networkClient) {
         for (Registry<? extends RegistryType> registry : ALL_REGISTRIES) {
-            sendRegistry(connection, registry);
+            sendRegistry(networkClient, registry);
         }
     }
 

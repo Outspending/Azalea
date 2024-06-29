@@ -18,7 +18,7 @@ import java.util.Map;
 public class CodecHandler {
     public static final PacketCodec<ConnectionState> CLIENT_CODEC = PacketCodec.builder(ConnectionState.class)
             .protocolVersion(MinecraftServer.PROTOCOL)
-            .minecraftVersion("1.20.4")
+            .minecraftVersion("1.21")
             .packetType(ConnectionState.HANDSHAKE, Map.ofEntries(
                     Map.entry(0x00, HandshakePacket::read)
             ))
@@ -50,7 +50,8 @@ public class CodecHandler {
                     Map.entry(0x00, ConfirmTeleportPacket::read),
                     Map.entry(0x21, PingRequestPlayPacket::read),
                     Map.entry(0x08, ChunkBatchReceivedPacket::read),
-                    Map.entry(0x16, EntityInteractPacket::read)
+                    Map.entry(0x16, EntityInteractPacket::read),
+                    Map.entry(0x11, CookieResponsePacket::read)
             ))
             .build();
 }
