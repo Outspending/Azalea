@@ -5,16 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/ClickEventSerializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/HoverEventSerializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTComponentSerializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTComponentSerializerImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTDataComponentValue.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTDataComponentValueImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTSerializerOptions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/StyleSerializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Damageable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/meta/LivingEntityMeta.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/TitleSender.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSetSubtitleTextPacket.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSetTitleAnimationTimesPacket.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSetTitleTextPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/GameMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/GameMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/Chatable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/Chatable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/ClickEventSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/serializer/ClickEventSerializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/HoverEventSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/serializer/HoverEventSerializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTComponentSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/serializer/NBTComponentSerializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTComponentSerializerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/serializer/NBTComponentSerializerImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTDataComponentValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/serializer/NBTDataComponentValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTDataComponentValueImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/serializer/NBTDataComponentValueImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/NBTSerializerOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/serializer/NBTSerializerOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/chat/serializer/StyleSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/serializer/StyleSerializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Entity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/LivingEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/LivingEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/events/event/EntityInteractEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/events/event/EntityInteractEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/NetworkTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/NetworkTypes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/EntityInteractPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/EntityInteractPacket.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,8 +64,8 @@
       <list>
         <option value="AnnotationType" />
         <option value="Enum" />
-        <option value="Interface" />
         <option value="Record" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -245,7 +261,7 @@
       <workItem from="1719625244736" duration="156000" />
       <workItem from="1719680746743" duration="2357000" />
       <workItem from="1719684077099" duration="344000" />
-      <workItem from="1719693775143" duration="354000" />
+      <workItem from="1719693775143" duration="6290000" />
     </task>
     <servers />
   </component>

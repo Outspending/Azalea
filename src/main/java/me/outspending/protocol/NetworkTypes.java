@@ -1,9 +1,10 @@
 package me.outspending.protocol;
 
+import lombok.SneakyThrows;
 import me.outspending.NamespacedID;
+import me.outspending.messages.serializer.NBTComponentSerializer;
 import me.outspending.position.Pos;
-import net.kyori.adventure.nbt.BinaryTagIO;
-import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -304,13 +305,29 @@ public interface NetworkTypes {
     };
 
     NetworkType<Component> TEXT_COMPONENT_TYPE = new NetworkType<>() {
+        private static final NBTComponentSerializer serializer = NBTComponentSerializer.nbt();
+
+        private String readString(ByteBuffer buffer) {
+            int length = SHORT_TYPE.read(buffer);
+            byte[] bytes = new byte[length];
+            buffer.get(bytes);
+            return new String(bytes, StandardCharsets.UTF_8);
+        }
+
         @Override
-        public @Nullable Component read(ByteBuffer buffer) {
-            return null;
+        @SneakyThrows
+        public @NotNull Component read(ByteBuffer buffer) {
+            final String json = this.readString(buffer);
+            return serializer.deserialize(TagStringIO.get().asCompound(json));
         }
 
         @Override
         public void write(DataOutputStream stream, Component type) throws IOException {
+            final BinaryTag tag = serializer.serialize(type);
+            final BinaryTagType<? extends BinaryTag> tagType = tag.type();
+
+            if (tagType == BinaryTagTypes.STRING) BinaryTagTypes.STRING.write((StringBinaryTag) tag, stream);
+            else if (tagType == BinaryTagTypes.COMPOUND) NBTCOMPOUND_TYPE.write(stream, (CompoundBinaryTag) tag);
         }
     };
 

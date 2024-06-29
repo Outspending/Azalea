@@ -142,16 +142,6 @@ public class Entity implements Viewable, Tickable {
         updateViewers();
     }
 
-    public enum Hand {
-        MAIN_HAND,
-        OFF_HAND;
-
-        public static @NotNull Hand getById(@Range(from = 0, to = 1) int id) {
-            final Hand value = values()[id];
-            return value != null ? value : MAIN_HAND;
-        }
-    }
-
     public enum Pose {
         STANDING,
         FALL_FLYING,

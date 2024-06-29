@@ -1,21 +1,11 @@
-package me.outspending.chat.serializer;
+package me.outspending.messages.serializer;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.ListBinaryTag;
 import net.kyori.adventure.nbt.StringBinaryTag;
-import net.kyori.adventure.text.BlockNBTComponent;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.EntityNBTComponent;
-import net.kyori.adventure.text.KeybindComponent;
-import net.kyori.adventure.text.NBTComponent;
-import net.kyori.adventure.text.ScoreComponent;
-import net.kyori.adventure.text.SelectorComponent;
-import net.kyori.adventure.text.StorageNBTComponent;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.TranslatableComponent;
-import net.kyori.adventure.text.TranslationArgument;
+import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.util.Services;
 import net.kyori.option.OptionState;

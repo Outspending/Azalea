@@ -1,21 +1,15 @@
 package me.outspending.player;
 
 import com.google.common.base.Preconditions;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
-import me.outspending.chat.Chatable;
 import me.outspending.chunk.Chunk;
-import me.outspending.chunk.light.Blocklight;
-import me.outspending.chunk.light.Skylight;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.ConnectionState;
 import me.outspending.connection.NetworkClient;
-import me.outspending.entity.BlockEntity;
 import me.outspending.entity.Entity;
 import me.outspending.entity.EntityType;
 import me.outspending.entity.LivingEntity;
@@ -25,19 +19,19 @@ import me.outspending.events.event.PlayerDisconnectEvent;
 import me.outspending.events.event.PlayerJoinEvent;
 import me.outspending.events.event.PlayerMoveEvent;
 import me.outspending.generation.WorldGenerator;
-import me.outspending.position.Angle;
+import me.outspending.messages.Chatable;
+import me.outspending.messages.TitleSender;
 import me.outspending.position.Pos;
 import me.outspending.protocol.GameEvent;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
-import me.outspending.protocol.types.GroupedPacket;
-import me.outspending.registry.DefaultRegistries;
 import me.outspending.registry.dimension.Dimension;
 import me.outspending.registry.dimension.DimensionType;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
@@ -46,10 +40,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter @Setter
-public class Player extends LivingEntity implements NetworkClient, Chatable {
+public class Player extends LivingEntity implements NetworkClient, Chatable, TitleSender {
     private static final Logger logger = LoggerFactory.getLogger(Player.class);
 
     private final ClientConnection connection;
@@ -169,6 +165,59 @@ public class Player extends LivingEntity implements NetworkClient, Chatable {
 
     public boolean canSee(@NotNull Entity entity) {
         return getViewers().contains(entity);
+    }
+
+    @Override
+    public void chat(@NotNull Component message) {
+
+    }
+
+    @Override
+    public void sendMessage(@NotNull Component message) {
+
+    }
+
+    @Override
+    public void sendTitle(@NotNull Title title) {
+        final Title.Times titleTimes = title.times();
+        sendBundledPackets(() -> {
+            sendPacket(new ClientSetTitleTextPacket(title.title()));
+            sendPacket(new ClientSetSubtitleTextPacket(title.subtitle()));
+            if (titleTimes != null) {
+                sendPacket(new ClientSetTitleAnimationTimesPacket(titleTimes.fadeIn(), titleTimes.stay(), titleTimes.fadeOut()));
+            }
+        });
+    }
+
+    @Override
+    public void sendTitle(@NotNull Component component) {
+        sendPacket(new ClientSetTitleTextPacket(component));
+    }
+
+    @Override
+    public void sendSubtitle(@NotNull Component component) {
+        sendPacket(new ClientSetSubtitleTextPacket(component));
+    }
+
+    public void setLevel(int level) {
+
+    }
+
+    public void resetLevel() {
+
+    }
+
+    public void setExp(float exp) {
+
+    }
+
+    public byte @NotNull [] grabCookieData(@NotNull NamespacedID key) {
+        sendPacket(new ClientRequestCookiePacket(key));
+        return new byte[0]; // TODO: Return the cookie data from the response packet!
+    }
+
+    public void storeCookie(@NotNull NamespacedID key, byte @NotNull [] value) {
+        sendPacket(new ClientStoreCookiePacket(key, value));
     }
 
     @ApiStatus.Internal
@@ -298,57 +347,6 @@ public class Player extends LivingEntity implements NetworkClient, Chatable {
 
     public String getName() {
         return profile.getUsername();
-    }
-
-    @Override
-    public void chat(@NotNull String message) {
-
-    }
-
-    @Override
-    public void chat(java.awt.@NotNull Component message) {
-
-    }
-
-    @Override
-    public void sendMessage(@NotNull String message) {
-
-    }
-
-    @Override
-    public void sendMessage(java.awt.@NotNull Component message) {
-
-    }
-
-    @Override
-    public void sendMessages(@NotNull String... messages) {
-
-    }
-
-    @Override
-    public void sendMessages(java.awt.@NotNull Component... messages) {
-
-    }
-
-    public void setLevel(int level) {
-
-    }
-
-    public void resetLevel() {
-
-    }
-
-    public void setExp(float exp) {
-
-    }
-
-    public byte @NotNull [] grabCookieData(@NotNull NamespacedID key) {
-        sendPacket(new ClientRequestCookiePacket(key));
-        return new byte[0]; // TODO: Return the cookie data from the response packet!
-    }
-
-    public void storeCookie(@NotNull NamespacedID key, byte @NotNull [] value) {
-        sendPacket(new ClientStoreCookiePacket(key, value));
     }
 
 }

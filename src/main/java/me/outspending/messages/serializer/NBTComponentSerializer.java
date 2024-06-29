@@ -1,4 +1,4 @@
-package me.outspending.chat.serializer;
+package me.outspending.messages.serializer;
 
 import net.kyori.adventure.builder.AbstractBuilder;
 import net.kyori.adventure.nbt.BinaryTag;
