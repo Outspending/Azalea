@@ -22,10 +22,10 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("ch.qos.logback:logback-classic:1.5.6")
 
-    implementation("net.kyori:adventure-api:4.16.0")
-    implementation("net.kyori:adventure-text-serializer-gson:4.16.0")
-    implementation("net.kyori:adventure-text-minimessage:4.16.0")
-    implementation("net.kyori:adventure-nbt:4.16.0")
+    implementation("net.kyori:adventure-api:4.17.0")
+    implementation("net.kyori:adventure-text-serializer-gson:4.17.0")
+    implementation("net.kyori:adventure-text-minimessage:4.17.0")
+    implementation("net.kyori:adventure-nbt:4.17.0")
 
     implementation("com.google.code.gson:gson:2.10.1")
 
