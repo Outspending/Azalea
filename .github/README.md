@@ -12,9 +12,6 @@
 
 ## About
 
-> [!NOTE]  
-> Azalea currently has a **1.21** branch! Check it out [HERE](https://github.com/Outspending/Azalea/pull/6). All development will be moved to here until its completed and working, then it'll be merged into the main branch!
-
 Azalea was created just for fun and to learn more about how Minecraft works.
 Although I decided to make it public and work on it more.
 Azalea is a **light-weight Minecraft Protocol** that is written in **Java**.

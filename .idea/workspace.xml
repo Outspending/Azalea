@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.github/KNOWN_BUGS.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.github/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/known_bugs.md" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +89,7 @@
     "Gradle.ServerImpl [:Main.main()].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "1__20__6",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/media/outspending/Coding/java/Azalea",
     "node.js.detected.package.eslint": "true",
