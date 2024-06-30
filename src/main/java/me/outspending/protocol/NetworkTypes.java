@@ -101,8 +101,13 @@ public class NetworkTypes {
         final BinaryTag tag = textComponentSerializer.serialize(type);
         final BinaryTagType<? extends BinaryTag> tagType = tag.type();
 
-        if (tagType == BinaryTagTypes.STRING) BinaryTagTypes.STRING.write((StringBinaryTag) tag, stream);
-        else if (tagType == BinaryTagTypes.COMPOUND) NBTCOMPOUND.write(stream, (CompoundBinaryTag) tag);
+        if (tagType == BinaryTagTypes.STRING) {
+            stream.write(tagType.id());
+            BinaryTagTypes.STRING.write((StringBinaryTag) tag, stream);
+        }
+        else if (tagType == BinaryTagTypes.COMPOUND) {
+            NBTCOMPOUND.write(stream, (CompoundBinaryTag) tag);
+        }
     }));
 
     @Contract("_, _ -> new")

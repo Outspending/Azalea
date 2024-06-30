@@ -5,57 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/VarNum.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/ServerPacketListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/ServerPacketListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/connection/ClientConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/BlockEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/BlockEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Viewable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/entity/Viewable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/listeners/MovementPacketListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/listeners/MovementPacketListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/NetworkTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/NetworkTypes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketDecoder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketEncoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/PacketEncoder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/codec/PacketCodec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/codec/PacketCodec.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketListenerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketListenerImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketNodeImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/listener/PacketNodeImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/login/ClientLoginDisconnectPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/login/ClientLoginDisconnectPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientChunkDataPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientChunkDataPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/HandshakePacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/HandshakePacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/configuration/AcknowledgeFinishConfigurationPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/configuration/AcknowledgeFinishConfigurationPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/configuration/ClientInformationPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/configuration/ClientInformationPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/configuration/ConfigurationPongPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/configuration/ConfigurationPongPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/configuration/PluginMessageConfigurationPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/configuration/PluginMessageConfigurationPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/login/LoginAcknowledgedPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/login/LoginAcknowledgedPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/login/LoginStartPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/login/LoginStartPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/ChunkBatchReceivedPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/ChunkBatchReceivedPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/ConfirmTeleportPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/ConfirmTeleportPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/CookieResponsePacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/CookieResponsePacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/EntityInteractPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/EntityInteractPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PingRequestPlayPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PingRequestPlayPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PlayerAbilitiesPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PlayerAbilitiesPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PlayerActionPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PlayerActionPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PlayerCommandPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PlayerCommandPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PlayerRotationPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PlayerRotationPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/ServerKeepAlivePacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/ServerKeepAlivePacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SetHeldItemPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SetHeldItemPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SetPlayerPositionAndRotationPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SetPlayerPositionAndRotationPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SetPlayerPositionPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SetPlayerPositionPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SwingArmPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/SwingArmPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/UseItemOnPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/UseItemOnPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/status/PingRequestPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/status/PingRequestPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/status/StatusRequestPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/status/StatusRequestPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/AbstractPacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/AbstractPacketReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/NormalPacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/NormalPacketReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/PacketReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/reader/PacketReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/types/ClientPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/types/ClientPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/types/GroupedPacket.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/types/ServerPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/types/ServerPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/AbstractPacketWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/AbstractPacketWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/NormalPacketWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/NormalPacketWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/PacketWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/writer/PacketWriter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -287,7 +239,7 @@
       <workItem from="1719680746743" duration="2357000" />
       <workItem from="1719684077099" duration="344000" />
       <workItem from="1719693775143" duration="6321000" />
-      <workItem from="1719707388766" duration="4834000" />
+      <workItem from="1719707388766" duration="5188000" />
     </task>
     <servers />
   </component>
