@@ -6,7 +6,7 @@ import me.outspending.messages.serializer.NBTComponentSerializer;
 import me.outspending.position.Pos;
 import net.kyori.adventure.nbt.*;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,329 +19,117 @@ import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 import java.util.UUID;
 
-public interface NetworkTypes {
-    int SEGMENT_BITS = 0x7F;
-    int CONTINUE_BIT = 0x80;
+public class NetworkTypes {
+    private static final NBTComponentSerializer textComponentSerializer = NBTComponentSerializer.nbt();
 
-    NetworkType<Boolean> BOOLEAN_TYPE = new NetworkType<>() {
-        @Override
-        public Boolean read(ByteBuffer buffer) {
-            return buffer.get() == 0x01;
+    public static final NetworkType<Boolean> BOOLEAN = register((buffer) -> buffer.get() == 0x01, (stream, type) -> stream.writeByte(type ? (byte) 0x01 : (byte) 0x00));
+    public static final NetworkType<Byte> BYTE = register(ByteBuffer::get, (Writer<Byte>) DataOutputStream::writeByte);
+    public static final NetworkType<Short> SHORT = register(ByteBuffer::getShort, (Writer<Short>) DataOutputStream::writeShort);
+    public static final NetworkType<Integer> INT = register(ByteBuffer::getInt, DataOutputStream::writeInt);
+    public static final NetworkType<Long> LONG = register(ByteBuffer::getLong, DataOutputStream::writeLong);
+    public static final NetworkType<Float> FLOAT = register(ByteBuffer::getFloat, DataOutputStream::writeFloat);
+    public static final NetworkType<Double> DOUBLE = register(ByteBuffer::getDouble, DataOutputStream::writeDouble);
+    public static final NetworkType<Integer> VARINT = register(VarNum::readVarInt, VarNum::writeVarInt);
+    public static final NetworkType<Long> VARLONG = register(VarNum::readVarLong, VarNum::writeVarLong);
+    public static final NetworkType<Pos> POSITION = register((buffer) -> Pos.fromNetwork(buffer.getLong()), (stream, type) -> stream.writeLong(type.toNetwork()));
+    public static final NetworkType<String> STRING = register((buffer) -> {
+        final int length = VARINT.read(buffer);
+        final byte[] bytes = new byte[length];
+
+        buffer.get(bytes);
+        return new String(bytes, StandardCharsets.UTF_8);
+    }, (stream, type) -> {
+        final byte[] bytes = type.getBytes(StandardCharsets.UTF_8);
+
+        NetworkTypes.VARINT.write(stream, bytes.length);
+        stream.write(bytes);
+    });
+    public static final NetworkType<NamespacedID> NAMESPACEDID = register((buffer) -> {
+        final String read = STRING.read(buffer);
+        if (read.contains(":")) {
+            String[] split = read.split(":");
+            return new NamespacedID(split[0], split[1]);
         }
 
-        @Override
-        public void write(DataOutputStream stream, Boolean type) throws IOException {
-            stream.writeByte(type ? (byte) 0x01 : (byte) 0x00);
-        }
-    };
-
-    NetworkType<Byte> BYTE_TYPE = new NetworkType<>() {
-        @Override
-        public Byte read(ByteBuffer buffer) {
-            return buffer.get();
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Byte type) throws IOException {
-            stream.writeByte(type);
-        }
-    };
-
-    NetworkType<Integer> UNSIGNED_BYTE_TYPE = new NetworkType<>() {
-        @Override
-        public Integer read(ByteBuffer buffer) {
-            return buffer.get() & 0xFF;
+        return null;
+    }, (stream, type) -> {
+        STRING.write(stream, type.toString());
+    });
+    public static final NetworkType<CompoundBinaryTag> NBTCOMPOUND = register((buffer) -> {
+        try (ByteArrayInputStream stream = new ByteArrayInputStream(buffer.array())) {
+            return BinaryTagIO.reader().readNameless(stream);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        @Override
-        public void write(DataOutputStream stream, Integer type) throws IOException {
-            stream.write(type & 0xFF);
-        }
-    };
-
-    NetworkType<Short> SHORT_TYPE = new NetworkType<>() {
-        @Override
-        public Short read(ByteBuffer buffer) {
-            return buffer.getShort();
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Short type) throws IOException {
-            stream.writeShort(type);
-        }
-    };
-
-    NetworkType<Integer> INT_TYPE = new NetworkType<>() {
-        @Override
-        public Integer read(ByteBuffer buffer) {
-            return buffer.getInt();
+        return null;
+    }, ((stream, type) -> {
+        BinaryTagIO.writer().writeNameless(type, (OutputStream) stream);
+    }));
+    public static final NetworkType<UUID> UUID = register((buffer) -> new UUID(buffer.getLong(), buffer.getLong()), (stream, type) -> {
+        stream.writeLong(type.getMostSignificantBits());
+        stream.writeLong(type.getLeastSignificantBits());
+    });
+    public static final NetworkType<BitSet> BITSET = register((buffer) -> {
+        int length = VARINT.read(buffer);
+        BitSet bitSet = new BitSet(length);
+        for (int i = 0; i < length; i++) {
+            bitSet.set(i, BOOLEAN.read(buffer));
         }
 
-        @Override
-        public void write(DataOutputStream stream, Integer type) throws IOException {
-            stream.writeInt(type);
+        return bitSet;
+    }, (stream, type) -> {
+        VARINT.write(stream, type.cardinality());
+        for (int i = 0; i < type.length(); i++) {
+            BOOLEAN.write(stream, type.get(i));
         }
-    };
+    });
+    public static final NetworkType<byte[]> BYTEARRAY = register((buffer) -> {
+        int length = VARINT.read(buffer);
+        byte[] bytes = new byte[length];
+        return buffer.get(bytes).array();
+    }, (stream, type) -> {
+        stream.write(type);
+    });
+    public static final NetworkType<Component> TEXT_COMPONENT = register((buffer) -> {
+        final int length = SHORT.read(buffer);
+        final byte[] bytes = new byte[length];
+        buffer.get(bytes);
+        final String json = new String(bytes, StandardCharsets.UTF_8);
+        return textComponentSerializer.deserialize(TagStringIO.get().asCompound(json));
+    }, ((stream, type) -> {
+        final BinaryTag tag = textComponentSerializer.serialize(type);
+        final BinaryTagType<? extends BinaryTag> tagType = tag.type();
 
-    NetworkType<Long> LONG_TYPE = new NetworkType<>() {
-        @Override
-        public Long read(ByteBuffer buffer) {
-            return buffer.getLong();
-        }
+        if (tagType == BinaryTagTypes.STRING) BinaryTagTypes.STRING.write((StringBinaryTag) tag, stream);
+        else if (tagType == BinaryTagTypes.COMPOUND) NBTCOMPOUND.write(stream, (CompoundBinaryTag) tag);
+    }));
 
-        @Override
-        public void write(DataOutputStream stream, Long type) throws IOException {
-            stream.writeLong(type);
-        }
-    };
-
-    NetworkType<Float> FLOAT_TYPE = new NetworkType<>() {
-        @Override
-        public Float read(ByteBuffer buffer) {
-            return buffer.getFloat();
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Float type) throws IOException {
-            stream.writeFloat(type);
-        }
-    };
-
-    NetworkType<Double> DOUBLE_TYPE = new NetworkType<>() {
-        @Override
-        public Double read(ByteBuffer buffer) {
-            return buffer.getDouble();
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Double type) throws IOException {
-            stream.writeDouble(type);
-        }
-    };
-
-    NetworkType<String> STRING_TYPE = new NetworkType<>() {
-        @Override
-        public String read(ByteBuffer buffer) {
-            int length = VARINT_TYPE.read(buffer);
-            byte[] bytes = new byte[length];
-            buffer.get(bytes);
-            return new String(bytes, StandardCharsets.UTF_8);
-        }
-
-        @Override
-        public void write(DataOutputStream stream, String type) throws IOException {
-            byte[] bytes = type.getBytes(StandardCharsets.UTF_8);
-
-            VARINT_TYPE.write(stream, bytes.length);
-            stream.write(bytes);
-        }
-    };
-
-    NetworkType<NamespacedID> NAMESPACEDID_TYPE = new NetworkType<>() {
-        @Override
-        public @Nullable NamespacedID read(ByteBuffer buffer) {
-            String read = STRING_TYPE.read(buffer);
-            if (read.contains(":")) {
-                String[] split = read.split(":");
-                return new NamespacedID(split[0], split[1]);
+    @Contract("_, _ -> new")
+    private static <T> NetworkType<T> register(@NotNull Reader<@Nullable T> reader, @NotNull Writer<@Nullable T> writer) {
+        return new NetworkType<>() {
+            @Override
+            @SneakyThrows
+            public T read(ByteBuffer buffer) {
+                return reader.read(buffer);
             }
 
-            return null;
-        }
-
-        @Override
-        public void write(DataOutputStream stream, NamespacedID type) throws IOException {
-            STRING_TYPE.write(stream, type.toString());
-        }
-    };
-
-    NetworkType<Integer> VARINT_TYPE = new NetworkType<>() {
-        @Override
-        public Integer read(ByteBuffer buffer) {
-            int value = 0;
-            int position = 0;
-            byte currentByte;
-
-            while (true) {
-                currentByte = buffer.get();
-                value |= (currentByte & SEGMENT_BITS) << position;
-
-                if ((currentByte & CONTINUE_BIT) == 0) break;
-
-                position += 7;
-
-                if (position >= 32) throw new RuntimeException("VarInt is too big");
+            @Override
+            @SneakyThrows
+            public void write(DataOutputStream stream, T type) {
+                writer.write(stream, type);
             }
+        };
+    }
 
-            return value;
-        }
+    @FunctionalInterface
+    interface Reader<T> {
+        T read(@NotNull ByteBuffer buffer) throws IOException;
+    }
 
-        @Override
-        public void write(DataOutputStream stream, Integer type) throws IOException {
-            while (true) {
-                if ((type & ~SEGMENT_BITS) == 0) {
-                    stream.writeByte(type.byteValue());
-                    return;
-                }
+    @FunctionalInterface
+    interface Writer<T> {
+        void write(@NotNull DataOutputStream stream, T type) throws IOException;
+    }
 
-                stream.writeByte((byte) ((byte) (type & SEGMENT_BITS) | CONTINUE_BIT));
-                type >>>= 7;
-            }
-        }
-    };
-
-    NetworkType<Long> VARLONG_TYPE = new NetworkType<>() {
-        @Override
-        public Long read(ByteBuffer buffer) {
-            long value = 0;
-            int position = 0;
-            byte currentByte;
-
-            while (true) {
-                currentByte = buffer.get();
-                value |= (long) (currentByte & SEGMENT_BITS) << position;
-
-                if ((currentByte & CONTINUE_BIT) == 0) break;
-
-                position += 7;
-
-                if (position >= 64) throw new RuntimeException("VarLong is too big");
-            }
-
-            return value;
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Long type) throws IOException {
-            while (true) {
-                if ((type & ~((long) SEGMENT_BITS)) == 0) {
-                    stream.writeByte(type.byteValue());
-                    return;
-                }
-
-                stream.writeByte((byte) ((byte) (type & SEGMENT_BITS) | CONTINUE_BIT));
-
-                type >>>= 7;
-            }
-        }
-    };
-
-    NetworkType<CompoundBinaryTag> NBTCOMPOUND_TYPE = new NetworkType<>() {
-        @Override
-        public CompoundBinaryTag read(ByteBuffer buffer) {
-            try (ByteArrayInputStream stream = new ByteArrayInputStream(buffer.array())) {
-                return BinaryTagIO.reader().readNameless(stream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        public void write(DataOutputStream stream, CompoundBinaryTag type) throws IOException {
-            BinaryTagIO.writer().writeNameless(type, (OutputStream) stream);
-        }
-    };
-
-    NetworkType<Pos> LOCATION_TYPE = new NetworkType<>() {
-        @Override
-        public @NotNull Pos read(ByteBuffer buffer) {
-            return Pos.fromNetwork(buffer.getLong());
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Pos type) throws IOException {
-            stream.writeLong(type.toNetwork());
-        }
-    };
-
-    NetworkType<UUID> UUID_TYPE = new NetworkType<>() {
-        @Override
-        public UUID read(ByteBuffer buffer) {
-            return new UUID(buffer.getLong(), buffer.getLong());
-        }
-
-        @Override
-        public void write(DataOutputStream stream, UUID type) throws IOException {
-            stream.writeLong(type.getMostSignificantBits());
-            stream.writeLong(type.getLeastSignificantBits());
-        }
-    };
-
-    NetworkType<BitSet> BITSET_TYPE = new NetworkType<>() {
-        @Override
-        public @NotNull BitSet read(ByteBuffer buffer) {
-            int length = VARINT_TYPE.read(buffer);
-            BitSet bitSet = new BitSet(length);
-            for (int i = 0; i < length; i++) {
-                bitSet.set(i, BOOLEAN_TYPE.read(buffer));
-            }
-
-            return bitSet;
-        }
-
-        @Override
-        public void write(DataOutputStream stream, BitSet type) throws IOException {
-            VARINT_TYPE.write(stream, type.cardinality());
-            for (int i = 0; i < type.length(); i++) {
-                BOOLEAN_TYPE.write(stream, type.get(i));
-            }
-        }
-    };
-
-    NetworkType<byte[]> BYTEARRAY_TYPE = new NetworkType<>() {
-        @Override
-        public byte[] read(ByteBuffer buffer) {
-            int length = VARINT_TYPE.read(buffer);
-            byte[] bytes = new byte[length];
-            return buffer.get(bytes).array();
-        }
-
-        @Override
-        public void write(DataOutputStream stream, byte[] type) throws IOException {
-            stream.write(type);
-        }
-    };
-
-    NetworkType<Component> TEXT_COMPONENT_TYPE = new NetworkType<>() {
-        private static final NBTComponentSerializer serializer = NBTComponentSerializer.nbt();
-
-        private String readString(ByteBuffer buffer) {
-            int length = SHORT_TYPE.read(buffer);
-            byte[] bytes = new byte[length];
-            buffer.get(bytes);
-            return new String(bytes, StandardCharsets.UTF_8);
-        }
-
-        @Override
-        @SneakyThrows
-        public @NotNull Component read(ByteBuffer buffer) {
-            final String json = this.readString(buffer);
-            return serializer.deserialize(TagStringIO.get().asCompound(json));
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Component type) throws IOException {
-            final BinaryTag tag = serializer.serialize(type);
-            final BinaryTagType<? extends BinaryTag> tagType = tag.type();
-
-            if (tagType == BinaryTagTypes.STRING) BinaryTagTypes.STRING.write((StringBinaryTag) tag, stream);
-            else if (tagType == BinaryTagTypes.COMPOUND) NBTCOMPOUND_TYPE.write(stream, (CompoundBinaryTag) tag);
-        }
-    };
-
-    NetworkType<Component> JSON_TEXT_COMPONENT_TYPE = new NetworkType<>() {
-        @Override
-        public @NotNull Component read(ByteBuffer buffer) {
-            final String json = STRING_TYPE.read(buffer);
-            return GsonComponentSerializer.gson().deserialize(json);
-        }
-
-        @Override
-        public void write(DataOutputStream stream, Component type) throws IOException {
-            final String json = GsonComponentSerializer.gson().serialize(type);
-            STRING_TYPE.write(stream, json);
-        }
-    };
 }

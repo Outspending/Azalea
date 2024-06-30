@@ -6,10 +6,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record SetPlayerPositionAndRotationPacket(@NotNull ClientConnection connection, @NotNull Pos position, boolean onGround) implements ServerPacket {
-    public static SetPlayerPositionAndRotationPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
+public record SetPlayerPositionAndRotationPacket(@NotNull Pos position, boolean onGround) implements ServerPacket {
+
+    public static SetPlayerPositionAndRotationPacket read(@NotNull PacketReader reader) {
         return new SetPlayerPositionAndRotationPacket(
-                connection,
                 new Pos(
                         reader.readDouble(),
                         reader.readDouble(),
@@ -26,8 +26,4 @@ public record SetPlayerPositionAndRotationPacket(@NotNull ClientConnection conne
         return 0x18;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

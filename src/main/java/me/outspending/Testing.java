@@ -24,12 +24,4 @@ public class Testing implements EventListener {
         player.setPosition(new Pos(0, 100, 0, 0, 0));
     }
 
-    @EventHandler
-    public void onEntityAdd(EntityWorldAddEvent e) {
-        final Entity entity = e.getEntity();
-        if (entity instanceof Player player) {
-            player.sendTitle("Testing");
-        }
-    }
-
 }

@@ -19,7 +19,6 @@ import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
 import me.outspending.protocol.packets.client.play.ClientPlayerInfoRemovePacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
-import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.types.ServerPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
@@ -105,7 +104,7 @@ public class ClientConnection {
                 return;
             }
 
-            server.getPacketListener().onPacketReceived(readPacket);
+            server.getPacketListener().onPacketReceived(this, readPacket);
             packetsReceived++;
 
             if (reader.hasAnotherPacket()) {
@@ -146,20 +145,12 @@ public class ClientConnection {
                 return;
             }
 
-            packetListener.onPacketReceived(packet);
+            packetListener.onPacketReceived(this, packet);
             packetsSent++;
 
             outputStream.write(writer.toByteArray());
             writer.flush();
         }
-    }
-
-    public void sendGroupedPacket(@NotNull GroupedPacket packet) {
-        sendBundled(() -> {
-            for (ClientPacket entryPacket : packet.getPackets()) {
-                sendPacket(entryPacket);
-            }
-        });
     }
 
 }

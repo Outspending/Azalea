@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public record LoginStartPacket(@NotNull ClientConnection connection, @NotNull String name, @NotNull UUID uuid) implements ServerPacket {
-    public static LoginStartPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
+public record LoginStartPacket(@NotNull String name, @NotNull UUID uuid) implements ServerPacket {
+
+    public static LoginStartPacket read(@NotNull PacketReader reader) {
         return new LoginStartPacket(
-                connection,
                 reader.readString(),
                 reader.readUUID()
         );
@@ -21,8 +21,4 @@ public record LoginStartPacket(@NotNull ClientConnection connection, @NotNull St
         return 0x00;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

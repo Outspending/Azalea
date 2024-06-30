@@ -13,15 +13,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public record PacketCodec<T extends Enum<T>>(int protocolVersion, String minecraftVersion,
-                                             EnumMap<T, Map<Integer, BiFunction<ClientConnection, PacketReader, ServerPacket>>> packets) {
+                                             EnumMap<T, Map<Integer, Function<PacketReader, ServerPacket>>> packets) {
     public static <T extends Enum<T>> @NotNull Builder<T> builder(Class<T> type) {
         return new Builder<>(type);
     }
 
-    public @Nullable BiFunction<ClientConnection, PacketReader, ServerPacket> getPacket(T type, int id) {
-        Map<Integer, BiFunction<ClientConnection, PacketReader, ServerPacket>> value = packets.get(type);
+    public @Nullable Function<PacketReader, ServerPacket> getPacket(T type, int id) {
+        Map<Integer, Function<PacketReader, ServerPacket>> value = packets.get(type);
 
         if (value == null) throw new IllegalArgumentException("Unknown packet type: " + type);
         else return value.get(id);
@@ -32,7 +33,7 @@ public record PacketCodec<T extends Enum<T>>(int protocolVersion, String minecra
     public static class Builder<T extends Enum<T>> {
         private int protocolVersion = -1;
         private String minecraftVersion = null;
-        private EnumMap<T, Map<Integer, BiFunction<ClientConnection, PacketReader, ServerPacket>>> packets;
+        private EnumMap<T, Map<Integer, Function<PacketReader, ServerPacket>>> packets;
 
         public Builder(@NotNull Class<T> keyType) {
             this.packets = new EnumMap<>(keyType);
@@ -50,7 +51,7 @@ public record PacketCodec<T extends Enum<T>>(int protocolVersion, String minecra
         }
 
         @Contract("_, _ -> this")
-        public Builder<T> packetType(@NotNull T type, @NotNull Map<Integer, BiFunction<ClientConnection, PacketReader, ServerPacket>> packets) {
+        public Builder<T> packetType(@NotNull T type, @NotNull Map<Integer, Function<PacketReader, ServerPacket>> packets) {
             this.packets.put(type, packets);
             return this;
         }

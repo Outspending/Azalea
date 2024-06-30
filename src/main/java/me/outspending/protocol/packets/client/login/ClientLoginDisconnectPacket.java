@@ -12,7 +12,7 @@ public record ClientLoginDisconnectPacket(@NotNull Component component) implemen
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-        writer.writeJSONTextComponent(component);
+        writer.writeTextComponent(this.component);
     }
 
     @Override

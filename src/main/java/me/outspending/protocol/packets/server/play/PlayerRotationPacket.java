@@ -5,10 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record PlayerRotationPacket(@NotNull ClientConnection connection, float yaw, float pitch, boolean onGround) implements ServerPacket {
-    public static PlayerRotationPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
+public record PlayerRotationPacket(float yaw, float pitch, boolean onGround) implements ServerPacket {
+
+    public static PlayerRotationPacket read(@NotNull PacketReader reader) {
         return new PlayerRotationPacket(
-                connection,
                 reader.readFloat(),
                 reader.readFloat(),
                 reader.readBoolean()
@@ -20,8 +20,4 @@ public record PlayerRotationPacket(@NotNull ClientConnection connection, float y
         return 0x19;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

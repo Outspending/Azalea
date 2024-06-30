@@ -5,10 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record PluginMessageConfigurationPacket(@NotNull ClientConnection connection, @NotNull String channel, byte[] data) implements ServerPacket {
-    public static PluginMessageConfigurationPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
+public record PluginMessageConfigurationPacket(@NotNull String channel, byte[] data) implements ServerPacket {
+
+    public static PluginMessageConfigurationPacket read(@NotNull PacketReader reader) {
         return new PluginMessageConfigurationPacket(
-                connection,
                 reader.readString(),
                 reader.readByteArray()
         );
@@ -19,8 +19,4 @@ public record PluginMessageConfigurationPacket(@NotNull ClientConnection connect
         return 0x01;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

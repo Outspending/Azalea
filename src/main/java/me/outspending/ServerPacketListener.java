@@ -48,8 +48,7 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handleHandshakePacket() {
-        super.addListener(HandshakePacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(HandshakePacket.class, (connection, packet) -> {
             switch (packet.nextState()) {
                 case 1 -> connection.setState(ConnectionState.STATUS);
                 case 2 -> connection.setState(ConnectionState.LOGIN);
@@ -60,8 +59,7 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handleStatusRequestPacket() {
-        super.addListener(StatusRequestPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(StatusRequestPacket.class, (connection, packet) -> {
             final MinecraftServer server = connection.getServer();
             final Collection<Player> players = server.getAllPlayers();
             connection.sendPacket(new ClientStatusResponsePacket(
@@ -73,16 +71,13 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handlePingRequestPacket() {
-        super.addListener(PingRequestPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(PingRequestPacket.class, (connection, packet) -> {
             connection.sendPacket(new ClientPingResponsePacket(packet.payload()));
         });
     }
 
     private void handleLoginStartPacket() {
-        super.addListener(LoginStartPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
-
+        super.addListener(LoginStartPacket.class, (connection, packet) -> {
             String name = packet.name();
             UUID uuid = packet.uuid();
 
@@ -98,8 +93,7 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handleLoginAcknowledgedPacket() {
-        super.addListener(LoginAcknowledgedPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(LoginAcknowledgedPacket.class, (connection, packet) -> {
             connection.setState(ConnectionState.CONFIGURATION);
 
             connection.getPlayer().sendRegistryPackets();
@@ -108,8 +102,7 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handleAcknowledgeFinishConfigurationPacket() {
-        super.addListener(AcknowledgeFinishConfigurationPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(AcknowledgeFinishConfigurationPacket.class, (connection, packet) -> {
             connection.getPlayer().handleConfigurationToPlay();
         });
     }
@@ -121,16 +114,16 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handleSwingArmPacket() {
-        super.addListener(SwingArmPacket.class, packet -> {
-            final Player player = packet.getSendingConnection().getPlayer();
-            packet.getSendingConnection().getPlayer()
+        super.addListener(SwingArmPacket.class, (connection, packet) -> {
+            final Player player = connection.getPlayer();
+            connection.getPlayer()
                     .getPlayerViewers()
                     .forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
         });
     }
 
     private void handleEntityInteract() {
-        super.addListener(EntityInteractPacket.class, packet -> EventExecutor.emitEvent(new EntityInteractEvent(packet.entityID(), packet.type(), packet.targetPos(), packet.hand(), packet.sneaking())));
+        super.addListener(EntityInteractPacket.class, (connection, packet) -> EventExecutor.emitEvent(new EntityInteractEvent(packet.entityID(), packet.type(), packet.targetPos(), packet.hand(), packet.sneaking())));
     }
 
 }

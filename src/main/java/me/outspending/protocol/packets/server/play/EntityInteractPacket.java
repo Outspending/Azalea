@@ -8,9 +8,9 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record EntityInteractPacket(@NotNull ClientConnection connection, int entityID, InteractType type, Pos targetPos, LivingEntity.Hand hand, boolean sneaking) implements ServerPacket {
+public record EntityInteractPacket(int entityID, InteractType type, Pos targetPos, LivingEntity.Hand hand, boolean sneaking) implements ServerPacket {
 
-    public static EntityInteractPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
+    public static EntityInteractPacket read(@NotNull PacketReader reader) {
         int entityID = reader.readVarInt();
         int type = reader.readVarInt();
 
@@ -30,12 +30,7 @@ public record EntityInteractPacket(@NotNull ClientConnection connection, int ent
         }
 
         boolean sneaking = reader.readBoolean();
-        return new EntityInteractPacket(connection, entityID, InteractType.getById(type), new Pos(targetX, targetY, targetZ), LivingEntity.Hand.getById(hand), sneaking);
-    }
-
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
+        return new EntityInteractPacket(entityID, InteractType.getById(type), new Pos(targetX, targetY, targetZ), LivingEntity.Hand.getById(hand), sneaking);
     }
 
     @Override

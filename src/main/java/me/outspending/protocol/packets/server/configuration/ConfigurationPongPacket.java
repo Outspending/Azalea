@@ -6,14 +6,15 @@ import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public record ConfigurationPongPacket(@NotNull ClientConnection connection, int id) implements ServerPacket {
-    public static @NotNull ConfigurationPongPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
-        return new ConfigurationPongPacket(connection, reader.readInt());
+public record ConfigurationPongPacket(int ping) implements ServerPacket {
+
+    public static @NotNull ConfigurationPongPacket read(@NotNull PacketReader reader) {
+        return new ConfigurationPongPacket(reader.readInt());
     }
 
     @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return this.connection;
+    public int id() {
+        return 0x03;
     }
 
 }

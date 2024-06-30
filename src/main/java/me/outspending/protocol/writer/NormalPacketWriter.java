@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class NormalPacketWriter extends AbstractPacketWriter {
+final class NormalPacketWriter extends AbstractPacketWriter {
 
     private Pair<Integer, PacketWriter> getPacketLength(@NotNull ClientPacket packet) {
         PacketWriter writer = PacketWriter.createNormalWriter();
@@ -28,15 +28,4 @@ public class NormalPacketWriter extends AbstractPacketWriter {
 
     public NormalPacketWriter() {}
 
-    @Override
-    public <T> void writeArray(@NotNull T[] array, Consumer<T> consumer) {
-        for (T element : array) {
-            consumer.accept(element);
-        }
-    }
-
-    @Override
-    public <T extends Enum<?>> void writeEnum(@NotNull T e) {
-
-    }
 }

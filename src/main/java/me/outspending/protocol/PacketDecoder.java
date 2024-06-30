@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -40,13 +41,13 @@ public class PacketDecoder {
                 packetData = reader.getRemainingBytes();
             }
 
-            BiFunction<ClientConnection, PacketReader, ServerPacket> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, packetID);
+            Function<PacketReader, ServerPacket> packetFunction = CodecHandler.CLIENT_CODEC.getPacket(state, packetID);
             if (packetFunction == null) {
                 logger.info("Unknown packet ID: {}, in state: {}", packetID, state.name());
                 return null;
             }
 
-            return packetFunction.apply(connection, PacketReader.createNormalReader(packetData));
+            return packetFunction.apply(PacketReader.createNormalReader(packetData));
         } catch (InvalidPacketException e) {
             logger.error("Error decoding packet:", e);
             throw new InvalidPacketException("Failed to decode packet", e);
@@ -70,12 +71,4 @@ public class PacketDecoder {
         }
     }
 
-    private static int getVarIntSize(int value) {
-        int size = 0;
-        do {
-            value >>>= 7;
-            size++;
-        } while (value != 0);
-        return size;
-    }
 }
