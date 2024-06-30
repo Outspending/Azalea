@@ -2,6 +2,8 @@ package me.outspending;
 
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.ConnectionState;
+import me.outspending.events.EventExecutor;
+import me.outspending.events.event.EntityInteractEvent;
 import me.outspending.player.GameProfile;
 import me.outspending.player.Player;
 import me.outspending.player.Property;
@@ -19,16 +21,14 @@ import me.outspending.protocol.packets.server.HandshakePacket;
 import me.outspending.protocol.packets.server.configuration.AcknowledgeFinishConfigurationPacket;
 import me.outspending.protocol.packets.server.login.LoginAcknowledgedPacket;
 import me.outspending.protocol.packets.server.login.LoginStartPacket;
-import me.outspending.protocol.packets.server.play.PlayerRotationPacket;
-import me.outspending.protocol.packets.server.play.SetPlayerPositionAndRotationPacket;
-import me.outspending.protocol.packets.server.play.SetPlayerPositionPacket;
-import me.outspending.protocol.packets.server.play.SwingArmPacket;
+import me.outspending.protocol.packets.server.play.*;
 import me.outspending.protocol.packets.server.status.PingRequestPacket;
 import me.outspending.protocol.packets.server.status.StatusRequestPacket;
 import me.outspending.protocol.types.ServerPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.UUID;
 
 final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
@@ -44,21 +44,26 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
         handleSwingArmPacket();
 
         handleMovementPackets();
+        handleEntityInteract();
     }
 
     private void handleHandshakePacket() {
-        super.addListener(HandshakePacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
-            connection.setState(packet.nextState() == 2 ? ConnectionState.LOGIN : ConnectionState.STATUS);
+        super.addListener(HandshakePacket.class, (connection, packet) -> {
+            switch (packet.nextState()) {
+                case 1 -> connection.setState(ConnectionState.STATUS);
+                case 2 -> connection.setState(ConnectionState.LOGIN);
+                case 3 -> connection.setState(ConnectionState.TRANSFER);
+                default -> {}
+            }
         });
     }
 
     private void handleStatusRequestPacket() {
-        super.addListener(StatusRequestPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(StatusRequestPacket.class, (connection, packet) -> {
             final MinecraftServer server = connection.getServer();
+            final Collection<Player> players = server.getAllPlayers();
             connection.sendPacket(new ClientStatusResponsePacket(
-                    new ClientStatusResponsePacket.Players(0, server.getMaxPlayers()),
+                    new ClientStatusResponsePacket.Players(players.size(), server.getMaxPlayers()),
                     new ClientStatusResponsePacket.Version(MinecraftServer.PROTOCOL, MinecraftServer.VERSION),
                     server.getDescription()
             ));
@@ -66,16 +71,13 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handlePingRequestPacket() {
-        super.addListener(PingRequestPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(PingRequestPacket.class, (connection, packet) -> {
             connection.sendPacket(new ClientPingResponsePacket(packet.payload()));
         });
     }
 
     private void handleLoginStartPacket() {
-        super.addListener(LoginStartPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
-
+        super.addListener(LoginStartPacket.class, (connection, packet) -> {
             String name = packet.name();
             UUID uuid = packet.uuid();
 
@@ -91,18 +93,16 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handleLoginAcknowledgedPacket() {
-        super.addListener(LoginAcknowledgedPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(LoginAcknowledgedPacket.class, (connection, packet) -> {
             connection.setState(ConnectionState.CONFIGURATION);
 
-            connection.sendPacket(new ClientRegistryDataPacket(connection.getServer().REGISTRY_NBT));
+            connection.getPlayer().sendRegistryPackets();
             connection.sendPacket(new ClientFinishConfigurationPacket());
         });
     }
 
     private void handleAcknowledgeFinishConfigurationPacket() {
-        super.addListener(AcknowledgeFinishConfigurationPacket.class, packet -> {
-            final ClientConnection connection = packet.getSendingConnection();
+        super.addListener(AcknowledgeFinishConfigurationPacket.class, (connection, packet) -> {
             connection.getPlayer().handleConfigurationToPlay();
         });
     }
@@ -114,9 +114,16 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
     }
 
     private void handleSwingArmPacket() {
-        super.addListener(SwingArmPacket.class, packet -> {
-            final Player player = packet.getSendingConnection().getPlayer();
-            packet.getSendingConnection().getPlayer().getViewers().forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
+        super.addListener(SwingArmPacket.class, (connection, packet) -> {
+            final Player player = connection.getPlayer();
+            connection.getPlayer()
+                    .getPlayerViewers()
+                    .forEach(viewer -> viewer.sendPacket(new ClientEntityAnimationPacket(player.getEntityID(), (byte) 0)));
         });
     }
+
+    private void handleEntityInteract() {
+        super.addListener(EntityInteractPacket.class, (connection, packet) -> EventExecutor.emitEvent(new EntityInteractEvent(packet.entityID(), packet.type(), packet.targetPos(), packet.hand(), packet.sneaking())));
+    }
+
 }

@@ -1,24 +1,22 @@
 package me.outspending.protocol.packets.client.play;
 
+import me.outspending.NamespacedID;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
-public record ClientInfoRemovePacket(int numOfPlayers, UUID @NotNull [] uuids) implements ClientPacket {
+public record ClientStoreCookiePacket(@NotNull NamespacedID key, byte @NotNull [] data) implements ClientPacket {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-        writer.writeVarInt(numOfPlayers);
-        for (UUID uuid : uuids) {
-            writer.writeUUID(uuid);
-        }
+        writer.writeNamespacedKey(this.key);
+        writer.writeVarInt(data.length);
+        writer.writeByteArray(data);
     }
 
     @Override
     public int id() {
-        return 0x3C;
+        return 0x6B;
     }
 
 }

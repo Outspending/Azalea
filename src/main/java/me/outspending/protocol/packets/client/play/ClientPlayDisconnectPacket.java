@@ -17,7 +17,7 @@ public record ClientPlayDisconnectPacket(@NotNull Component component) implement
 
     @Override
     public int id() {
-        return 0x1B;
+        return 0x1E;
     }
 
 }

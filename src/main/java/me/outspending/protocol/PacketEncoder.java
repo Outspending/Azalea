@@ -10,7 +10,6 @@ import java.util.zip.Deflater;
 public class PacketEncoder {
 
     public static PacketWriter encode(@NotNull PacketWriter writer, @NotNull CompressionType type, @NotNull ClientPacket packet) {
-        // Temporary PacketWriter to write the packet data
         PacketWriter packetWriter = PacketWriter.createNormalWriter();
         packetWriter.writeVarInt(packet.id());
         packet.write(packetWriter);
@@ -34,7 +33,7 @@ public class PacketEncoder {
 
         if (dataLength >= MinecraftServer.COMPRESSION_THRESHOLD) {
             byte[] compressedData = compress(packetData);
-            final int packetLength = getVarIntSize(dataLength) + compressedData.length;
+            final int packetLength = VarNum.getVarIntSize(dataLength) + compressedData.length;
 
             writer.writeVarInt(packetLength);
             writer.writeVarInt(dataLength);
@@ -57,15 +56,6 @@ public class PacketEncoder {
         byte[] result = new byte[compressedLength];
         System.arraycopy(compressedData, 0, result, 0, compressedLength);
         return result;
-    }
-
-    private static int getVarIntSize(int value) {
-        int size = 0;
-        do {
-            value >>>= 7;
-            size++;
-        } while (value != 0);
-        return size;
     }
 
 }

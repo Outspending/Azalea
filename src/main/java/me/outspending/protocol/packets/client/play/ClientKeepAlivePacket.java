@@ -13,7 +13,7 @@ public record ClientKeepAlivePacket(long keepAliveID) implements ClientPacket {
 
     @Override
     public int id() {
-        return 0x24;
+        return 0x26;
     }
 
 }

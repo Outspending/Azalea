@@ -5,18 +5,20 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.outspending.MinecraftServer;
-import me.outspending.player.Player;
+import me.outspending.cache.PlayerCache;
 import me.outspending.events.EventExecutor;
-import me.outspending.events.event.ClientPacketRecieveEvent;
-import me.outspending.events.event.ServerPacketRecieveEvent;
+import me.outspending.events.event.ClientPacketReceivedEvent;
+import me.outspending.events.event.PlayerDisconnectEvent;
+import me.outspending.events.event.ServerPacketReceivedEvent;
+import me.outspending.player.Player;
 import me.outspending.protocol.CompressionType;
 import me.outspending.protocol.PacketDecoder;
 import me.outspending.protocol.PacketEncoder;
 import me.outspending.protocol.listener.PacketListener;
 import me.outspending.protocol.packets.client.play.ClientBundleDelimiterPacket;
+import me.outspending.protocol.packets.client.play.ClientPlayerInfoRemovePacket;
 import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ClientPacket;
-import me.outspending.protocol.types.GroupedPacket;
 import me.outspending.protocol.types.ServerPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
@@ -66,11 +68,21 @@ public class ClientConnection {
             while (server.isRunning()) {
                 int result = inputStream.read(BYTE_ARRAY);
                 if (result == -1) {
+                    final Player t = this.player;
+                    final PlayerCache cache = MinecraftServer.getInstance().getServerProcess().getPlayerCache();
+
+                    cache.remove(t);
+                    t.getWorld().removeEntity(t);
+
+                    cache.getAll().forEach(player -> player.sendRemovePlayersPacket(player));
+                    EventExecutor.emitEvent(new PlayerDisconnectEvent(t));
+
+                    logger.info("Client disconnected");
+                    this.socket.close();
                     return;
                 }
 
                 byte[] responseArray = Arrays.copyOf(BYTE_ARRAY, result);
-                logger.info("Received packet: {}", Arrays.toString(responseArray));
                 handlePacket(responseArray);
             }
         } catch (IOException e) {
@@ -83,10 +95,16 @@ public class ClientConnection {
         final PacketReader reader = PacketReader.createNormalReader(buffer);
 
         ServerPacket readPacket = PacketDecoder.decode(this, reader, compressionType, state);
-        logger.info("Received packet: {}", readPacket.toString());
         if (readPacket != null) {
-            EventExecutor.emitEvent(new ServerPacketRecieveEvent(readPacket));
-            server.getPacketListener().onPacketReceived(readPacket);
+            // logger.info("[{}] Received packet: {}", readPacket.id(), readPacket);
+
+            final ServerPacketReceivedEvent event = new ServerPacketReceivedEvent(readPacket);
+            EventExecutor.emitEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+
+            server.getPacketListener().onPacketReceived(this, readPacket);
             packetsReceived++;
 
             if (reader.hasAnotherPacket()) {
@@ -99,7 +117,7 @@ public class ClientConnection {
         return socket.isConnected();
     }
 
-    public void sendBundled() {
+    private void sendBundled() {
         sendPacket(new ClientBundleDelimiterPacket());
     }
 
@@ -110,25 +128,29 @@ public class ClientConnection {
     }
 
     @SneakyThrows
+    public void sendPackets(@NotNull ClientPacket... packets) {
+        for (ClientPacket packet : packets) {
+            sendPacket(packet);
+        }
+    }
+
+    @SneakyThrows
     public void sendPacket(@NotNull ClientPacket packet) {
         if (isOnline()) {
             PacketWriter writer = PacketEncoder.encode(PacketWriter.createNormalWriter(), compressionType, packet);
 
-            EventExecutor.emitEvent(new ClientPacketRecieveEvent(packet, this));
-            packetListener.onPacketReceived(packet);
+            final ClientPacketReceivedEvent event = new ClientPacketReceivedEvent(packet, this);
+            EventExecutor.emitEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+
+            packetListener.onPacketReceived(this, packet);
             packetsSent++;
 
             outputStream.write(writer.toByteArray());
             writer.flush();
         }
-    }
-
-    public void sendGroupedPacket(@NotNull GroupedPacket packet) {
-        sendBundled(() -> {
-            for (ClientPacket entryPacket : packet.getPackets()) {
-                sendPacket(entryPacket);
-            }
-        });
     }
 
 }

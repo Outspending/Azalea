@@ -5,9 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record SwingArmPacket(@NotNull ClientConnection connection, int hand) implements ServerPacket {
-    public static SwingArmPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
-        return new SwingArmPacket(connection, reader.readVarInt());
+public record SwingArmPacket(int hand) implements ServerPacket {
+
+    public static SwingArmPacket read(@NotNull PacketReader reader) {
+        return new SwingArmPacket(reader.readVarInt());
     }
 
     @Override
@@ -15,8 +16,4 @@ public record SwingArmPacket(@NotNull ClientConnection connection, int hand) imp
         return 0x33;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

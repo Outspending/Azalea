@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum EntityType {
+    SHEEP(87),
     PLAYER(124);
 
     private final int id;

@@ -20,7 +20,7 @@ public record ClientRemoveEntitiesPacket(int entityCount, IntList entityIds) imp
 
     @Override
     public int id() {
-        return 0x40;
+        return 0x42;
     }
 
 }

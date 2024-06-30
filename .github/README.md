@@ -25,6 +25,9 @@ It is **not recommended** to use this in a **production environment** right now.
 This project will continue to be worked on and updated as time goes on.
 I'm not planning on finishing it anytime soon as I want to add more features and make it more stable than it currently is right now.
 
+## Bugs
+Anything that is known to be broken or not working will be listed in the [HERE](./KNOWN_BUGS.md). This includes any issues that are currently being worked on or have been fixed.
+
 ## Currently Working On
 
 *This list is in order on what is going to be worked on.*

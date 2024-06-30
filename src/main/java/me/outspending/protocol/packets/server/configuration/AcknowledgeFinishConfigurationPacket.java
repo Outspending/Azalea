@@ -5,9 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record AcknowledgeFinishConfigurationPacket(@NotNull ClientConnection connection) implements ServerPacket {
-    public static AcknowledgeFinishConfigurationPacket read(ClientConnection connection, PacketReader reader) {
-        return new AcknowledgeFinishConfigurationPacket(connection);
+public record AcknowledgeFinishConfigurationPacket() implements ServerPacket {
+
+    public static AcknowledgeFinishConfigurationPacket read(PacketReader reader) {
+        return new AcknowledgeFinishConfigurationPacket();
     }
 
     @Override
@@ -15,8 +16,4 @@ public record AcknowledgeFinishConfigurationPacket(@NotNull ClientConnection con
         return 0x02;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

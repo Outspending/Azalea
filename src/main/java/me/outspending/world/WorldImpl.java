@@ -5,6 +5,9 @@ import me.outspending.MinecraftServer;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkMap;
 import me.outspending.entity.Entity;
+import me.outspending.events.EventExecutor;
+import me.outspending.events.event.EntityWorldAddEvent;
+import me.outspending.events.event.EntityWorldRemoveEvent;
 import me.outspending.player.Player;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
@@ -17,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 @Getter
-public class WorldImpl implements World {
+public final class WorldImpl implements World {
 
     private final ChunkMap chunkMap = new ChunkMap(this);
     private final List<Entity> entities = Collections.synchronizedList(new ArrayList<>());
@@ -34,7 +37,7 @@ public class WorldImpl implements World {
     }
 
     public WorldImpl(String name) {
-        this(name, new WorldGenerator());
+        this(name, WorldGenerator.EMPTY);
     }
 
     @Override
@@ -51,18 +54,20 @@ public class WorldImpl implements World {
     public void addEntity(@NotNull Entity entity) {
         if (entity instanceof Player player) {
             players.add(player);
-        } else {
-            entities.add(entity);
         }
+        entities.add(entity);
+
+        EventExecutor.emitEvent(new EntityWorldAddEvent(entity, this, entity.getPosition()));
     }
 
     @Override
     public void removeEntity(@NotNull Entity entity) {
         if (entity instanceof Player player) {
             players.remove(player);
-        } else {
-            entities.remove(entity);
         }
+        entities.remove(entity);
+
+        EventExecutor.emitEvent(new EntityWorldRemoveEvent(entity, this, entity.getPosition()));
     }
 
     @Override
@@ -87,15 +92,11 @@ public class WorldImpl implements World {
 
     @Override
     public void tick(long time) {
-        for (Entity entity : entities) {
-            if (entity.isCanTick()) {
-                entity.tick(time);
-            }
-        }
+        entities.stream()
+                .filter(entity -> entity.getEntityMeta().isCanTick())
+                .forEach(entity -> entity.tick(time));
 
-        for (Player player : players) {
-            player.tick(time);
-        }
+        players.forEach(player -> player.tick(time));
     }
 
 }

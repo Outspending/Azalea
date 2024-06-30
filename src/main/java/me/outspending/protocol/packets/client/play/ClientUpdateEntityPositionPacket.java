@@ -17,7 +17,7 @@ public record ClientUpdateEntityPositionPacket(int entityID, short deltaX, short
 
     @Override
     public int id() {
-        return 0x2C;
+        return 0x30;
     }
 
 }

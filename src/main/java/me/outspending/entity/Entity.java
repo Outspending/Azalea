@@ -4,53 +4,33 @@ import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.Tickable;
-import me.outspending.connection.ClientConnection;
+import me.outspending.entity.meta.EntityMeta;
 import me.outspending.player.Player;
 import me.outspending.position.Pos;
+import me.outspending.protocol.packets.client.play.ClientSetEntityMetaPacket;
+import me.outspending.protocol.packets.client.play.ClientSpawnEntityPacket;
 import me.outspending.world.World;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.UnknownNullability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 @Getter @Setter
-public class Entity implements Viewable, Tickable, Comparable<Entity> {
+public class Entity implements Viewable, Tickable {
     private static final Logger logger = LoggerFactory.getLogger(Entity.class);
 
-    private final List<Player> viewers = new ArrayList<>();
+    private final List<Entity> viewers = new ArrayList<>();
     protected final EntityType type;
     protected final int entityID;
-    protected final UUID entityUUID;
-    // private final EntityMeta entityMeta;
-
-    // EntityMeta - Start
-    protected byte isOnFire = 0;
-    protected byte isCrouching = 0;
-    protected byte isSprinting = 0;
-    protected byte isSwimming = 0;
-    protected byte isInvisible = 0;
-    protected byte hasGlowEffect = 0;
-    protected byte isFlyingWithElytra = 0;
-
-    protected int airTicks = 300;
-    protected Component customName = Component.empty();
-    protected boolean isCustomNameVisible = false;
-    protected boolean isSilent = false;
-    protected boolean isNoGravity = false;
-    protected boolean isInvulnerable = false;
-    protected Pose pose = Pose.STANDING;
-    protected int frozenTicks = 0;
-
-    // EntityMeta - Custom
-    protected int viewableDistance = 50;
-    protected boolean canTick = true;
-    // EntityMeta - End
+    protected final UUID uuid;
+    protected EntityMeta entityMeta = new EntityMeta();
 
     protected boolean onGround = true;
     protected Pos position = Pos.ZERO;
@@ -60,19 +40,46 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
         this(type, UUID.randomUUID());
     }
 
-    public Entity(@NotNull EntityType type, @NotNull UUID entityUUID) {
+    public Entity(@NotNull EntityType type, @NotNull UUID uuid) {
         this.type = type;
         this.entityID = EntityCounter.getNextEntityID();
-        this.entityUUID = entityUUID;
+        this.uuid = uuid;
+    }
+
+    public static @NotNull Builder builder(@NotNull EntityType type) {
+        return new Builder(type);
     }
 
     public void setRotation(float yaw, float pitch) {
         setPosition(new Pos(position.x(), position.y(), position.z(), yaw, pitch));
     }
 
-    public void updateEntity(@NotNull Player player) {
-        final ClientConnection connection = player.getConnection();
+    public void setMeta(@NotNull EntityMeta meta) {
+        this.entityMeta = meta;
+        sendPacketsToViewers(new ClientSetEntityMetaPacket(this));
+    }
 
+    public void spawn(@NotNull Player player) {
+        Preconditions.checkNotNull(this.world, "Spawning entity without a world!");
+
+        player.sendPacket(new ClientSpawnEntityPacket(this));
+//        player.sendBundledPackets(
+//                new ClientSpawnEntityPacket(this),
+//                new ClientSetEntityMetaPacket(this)
+//        );
+    }
+
+    public void spawn(@NotNull Player... players) {
+        this.spawn(List.of(players));
+    }
+
+    public void spawn(@NotNull Collection<Player> players) {
+        players.forEach(this::spawn);
+    }
+
+    public void spawnGlobal() {
+        world.addEntity(this);
+        this.spawn(world.getPlayers());
     }
 
     @Contract("null -> fail")
@@ -88,27 +95,22 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     }
 
     @Override
-    public int compareTo(@NotNull Entity o) {
-        int idCompare = Integer.compare(this.entityID, o.entityID);
-        if (idCompare != 0) {
-            return idCompare;
-        }
-
-        return this.entityUUID.compareTo(o.entityUUID);
+    public boolean equals(Object obj) {
+        return obj instanceof Entity entity && this.uuid == entity.uuid;
     }
 
     @Override
-    public void addViewer(@NotNull Player player) {
-        viewers.add(player);
+    public void addViewer(@NotNull Entity entity) {
+        viewers.add(entity);
     }
 
     @Override
-    public void removeViewer(@NotNull Player player) {
-        viewers.remove(player);
+    public void removeViewer(@NotNull Entity entity) {
+        viewers.remove(entity);
     }
 
     @Override
-    public @NotNull List<Player> getViewers() {
+    public @NotNull List<Entity> getViewers() {
         return viewers;
     }
 
@@ -116,22 +118,29 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
     public void updateViewers() {
         if (world == null) return;
 
-        world.getPlayers().forEach(player -> {
-            if (this.equals(player)) return;
-
-            boolean isViewer = this.isViewer(player);
-            double distance = this.distanceFrom(player);
-
-            if (distance <= this.viewableDistance && !isViewer) {
-                this.addViewer(player);
-            } else if (distance >= this.viewableDistance && isViewer) {
-                this.removeViewer(player);
+        for (Entity entity : world.getAllEntities()) {
+            if (this.equals(entity)) {
+                continue;
             }
-        });
+
+            boolean isViewer = this.isViewer(entity);
+            double distance = this.distanceFrom(entity);
+
+            int viewableDistance = this.entityMeta.getViewableDistance();
+            if (distance <= viewableDistance && !isViewer) {
+                logger.info("Adding Viewer: {}", entity.entityID);
+                this.addViewer(entity);
+            } else if (distance >= viewableDistance && isViewer) {
+                logger.info("Removing Viewer: {}", entity.entityID);
+                this.removeViewer(entity);
+            }
+        }
     }
 
     @Override
-    public void tick(long time) {}
+    public void tick(long time) {
+        updateViewers();
+    }
 
     public enum Pose {
         STANDING,
@@ -150,8 +159,49 @@ public class Entity implements Viewable, Tickable, Comparable<Entity> {
         EMERGING,
         DIGGING;
 
-        public static Pose getById(int id) {
-            return values()[id];
+        public static @NotNull Pose getById(@Range(from = 0, to = 14) int id) {
+            final Pose value = values()[id];
+            return value != null ? value : STANDING;
+        }
+
+    }
+
+    public static class Builder {
+        private final EntityType type;
+        private UUID entityUUID = UUID.randomUUID();
+        private Pos position = Pos.ZERO;
+        private World world;
+
+        public Builder(EntityType type) {
+            this.type = type;
+        }
+
+        @Contract("_ -> this")
+        public @NotNull Builder setEntityUUID(@NotNull UUID entityUUID) {
+            this.entityUUID = entityUUID;
+            return this;
+        }
+
+        @Contract("_ -> this")
+        public @NotNull Builder setPosition(@NotNull Pos position) {
+            this.position = position;
+            return this;
+        }
+
+        @Contract("_ -> this")
+        public @NotNull Builder setWorld(@NotNull World world) {
+            this.world = world;
+            return this;
+        }
+
+        public @NotNull Entity build() {
+            Preconditions.checkNotNull(world, "World cannot be null");
+
+            final Entity entity = new Entity(type, entityUUID);
+            entity.setPosition(this.position);
+            entity.setWorld(this.world);
+
+            return entity;
         }
 
     }

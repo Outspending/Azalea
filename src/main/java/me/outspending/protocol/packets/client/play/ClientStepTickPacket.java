@@ -13,7 +13,7 @@ public record ClientStepTickPacket(int tickSteps) implements ClientPacket {
 
     @Override
     public int id() {
-        return 0x6F;
+        return 0x72;
     }
 
 }

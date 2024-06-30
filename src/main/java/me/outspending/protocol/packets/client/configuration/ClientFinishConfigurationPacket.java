@@ -11,7 +11,7 @@ public record ClientFinishConfigurationPacket() implements ClientPacket {
 
     @Override
     public int id() {
-        return 0x02;
+        return 0x03;
     }
 
 }

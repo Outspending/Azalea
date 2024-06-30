@@ -17,7 +17,7 @@ public record ClientConfigurationDisconnectPacket(@NotNull Component component) 
 
     @Override
     public int id() {
-        return 0x01;
+        return 0x02;
     }
 
 }

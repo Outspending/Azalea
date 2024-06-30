@@ -14,7 +14,7 @@ public record ClientChunkUnloadPacket(int chunkX, int chunkZ) implements ClientP
 
     @Override
     public int id() {
-        return 0x1F;
+        return 0x21;
     }
 
 }

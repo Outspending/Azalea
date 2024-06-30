@@ -5,9 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record LoginAcknowledgedPacket(@NotNull ClientConnection connection) implements ServerPacket {
-    public static LoginAcknowledgedPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
-        return new LoginAcknowledgedPacket(connection);
+public record LoginAcknowledgedPacket() implements ServerPacket {
+
+    public static LoginAcknowledgedPacket read(@NotNull PacketReader reader) {
+        return new LoginAcknowledgedPacket();
     }
 
     @Override
@@ -15,8 +16,4 @@ public record LoginAcknowledgedPacket(@NotNull ClientConnection connection) impl
         return 0x03;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

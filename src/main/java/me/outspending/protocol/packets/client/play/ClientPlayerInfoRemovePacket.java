@@ -23,7 +23,7 @@ public record ClientPlayerInfoRemovePacket(int numOfPlayers, @NotNull Collection
 
     @Override
     public int id() {
-        return 0x3B;
+        return 0x3D;
     }
 
 }

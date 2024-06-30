@@ -20,7 +20,7 @@ public record ClientUpdateEntityPositionAndRotationPacket(int entityID, short de
 
     @Override
     public int id() {
-        return 0x2D;
+        return 0x2F;
     }
 
 }

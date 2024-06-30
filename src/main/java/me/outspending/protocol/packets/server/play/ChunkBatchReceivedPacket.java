@@ -5,9 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record ChunkBatchReceivedPacket(@NotNull ClientConnection connection, float chunksPerTick) implements ServerPacket {
-    public static ChunkBatchReceivedPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
-        return new ChunkBatchReceivedPacket(connection, reader.readFloat());
+public record ChunkBatchReceivedPacket(float chunksPerTick) implements ServerPacket {
+
+    public static ChunkBatchReceivedPacket read(@NotNull PacketReader reader) {
+        return new ChunkBatchReceivedPacket(reader.readFloat());
     }
 
     @Override
@@ -15,8 +16,4 @@ public record ChunkBatchReceivedPacket(@NotNull ClientConnection connection, flo
         return 0x07;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

@@ -65,7 +65,7 @@ public class ServerConnection {
     private void keepConnectionsAlive() {
         keepAliveExecutor.scheduleAtFixedRate(() -> {
             final long time = System.currentTimeMillis();
-            server.getAllPlayers().forEach(player -> player.keepAliveConnection(time));
+            server.getAllPlayers().forEach(player -> player.keepConnectionAlive(time));
         }, 10, 10, TimeUnit.SECONDS);
     }
 

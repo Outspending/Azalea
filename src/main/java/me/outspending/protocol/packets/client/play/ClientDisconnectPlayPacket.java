@@ -14,7 +14,7 @@ public record ClientDisconnectPlayPacket(@NotNull CompoundBinaryTag reason) impl
 
     @Override
     public int id() {
-        return 0x1B;
+        return 0x1D;
     }
 
 }

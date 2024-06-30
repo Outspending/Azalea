@@ -6,13 +6,10 @@ import lombok.Setter;
 import me.outspending.GameMode;
 import me.outspending.MinecraftServer;
 import me.outspending.NamespacedID;
-import me.outspending.block.BlockType;
 import me.outspending.chunk.Chunk;
-import me.outspending.chunk.light.Blocklight;
-import me.outspending.chunk.light.Skylight;
 import me.outspending.connection.ClientConnection;
 import me.outspending.connection.ConnectionState;
-import me.outspending.entity.BlockEntity;
+import me.outspending.connection.NetworkClient;
 import me.outspending.entity.Entity;
 import me.outspending.entity.EntityType;
 import me.outspending.entity.LivingEntity;
@@ -22,14 +19,19 @@ import me.outspending.events.event.PlayerDisconnectEvent;
 import me.outspending.events.event.PlayerJoinEvent;
 import me.outspending.events.event.PlayerMoveEvent;
 import me.outspending.generation.WorldGenerator;
-import me.outspending.position.Angle;
+import me.outspending.messages.Chatable;
+import me.outspending.messages.TitleSender;
 import me.outspending.position.Pos;
+import me.outspending.protocol.GameEvent;
 import me.outspending.protocol.packets.client.configuration.ClientConfigurationDisconnectPacket;
 import me.outspending.protocol.packets.client.login.ClientLoginDisconnectPacket;
 import me.outspending.protocol.packets.client.play.*;
 import me.outspending.protocol.types.ClientPacket;
+import me.outspending.registry.dimension.Dimension;
+import me.outspending.registry.dimension.DimensionType;
 import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
@@ -38,17 +40,18 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter @Setter
-public class Player extends LivingEntity {
+public class Player extends LivingEntity implements NetworkClient, Chatable, TitleSender {
     private static final Logger logger = LoggerFactory.getLogger(Player.class);
 
     private final ClientConnection connection;
-
-    private final GameMode gameMode = GameMode.CREATIVE;
     private final GameProfile profile;
 
+    private GameMode gameMode = GameMode.CREATIVE;
     private Pos lastPosition = Pos.ZERO;
 
     private boolean isHardcore;
@@ -88,13 +91,11 @@ public class Player extends LivingEntity {
             case LOGIN -> sendPacket(new ClientLoginDisconnectPacket(reason));
             case CONFIGURATION -> sendPacket(new ClientConfigurationDisconnectPacket(reason));
             case PLAY -> sendPacket(new ClientPlayDisconnectPacket(reason));
-            default -> {
-                // Do Nothing
-            }
+            default -> {}
         }
 
-        EventExecutor.emitEvent(new PlayerDisconnectEvent(this, reason));
-        this.getViewers().forEach(viewer -> viewer.sendRemoveEntityPacket(this));
+        EventExecutor.emitEvent(new PlayerDisconnectEvent(this));
+        this.getPlayerViewers().forEach(viewer -> viewer.sendRemovePlayersPacket(this));
 
         try {
             logger.info("Client disconnected: {}", clientSocket.getInetAddress());
@@ -110,10 +111,12 @@ public class Player extends LivingEntity {
 
     @Override
     public void tick(long time) {
-        updateViewers();
+        super.tick(time);
         handleMovement();
 
-        lastPosition = position;
+        if (position.x() != lastPosition.x() || position.y() != lastPosition.z() || position.z() != lastPosition.z()) {
+            lastPosition = position;
+        }
     }
 
     private void handleMovement() {
@@ -123,67 +126,112 @@ public class Player extends LivingEntity {
         if (!to.equals(from)) {
             EventExecutor.emitEvent(new PlayerMoveEvent(this, to));
 
-            getViewers().forEach(viewer -> viewer.sendEntityMovementPacket(this, to, from));
+            this.getPlayerViewers().forEach(viewer -> viewer.sendEntityMovementPacket(this, to, from));
 
             Chunk fromChunk = world.getChunk(from);
             Chunk toChunk = world.getChunk(to);
             if (!fromChunk.equals(toChunk)) {
                 EventExecutor.emitEvent(new ChunkSwitchEvent(this, to, fromChunk, toChunk));
 
-                // dont send chunks yet
+                // TODO: Send chunks when player moves to a new chunk
             }
         }
-    }
-
-    @ApiStatus.Internal
-    public void sendPacket(@NotNull ClientPacket packet) {
-        connection.sendPacket(packet);
-    }
-
-    public void sendBundled(Runnable runnable) {
-        connection.sendBundled(runnable);
     }
 
     public void sendActionBar(@NotNull Component component) {
         sendPacket(new ClientActionBarTextPacket(component));
     }
 
-    @ApiStatus.Internal
-    public void sendBundledPacket() {
-        connection.sendBundled();
+    public void setGameMode(@NotNull GameMode gameMode) {
+        this.gameMode = gameMode;
+        sendPacket(new ClientGameEventPacket(GameEvent.CHANGE_GAME_MODE, gameMode.getId()));
+    }
+
+    public void showDemoScreen() {
+        sendPacket(new ClientGameEventPacket(GameEvent.DEMO_EVENT, 0));
+    }
+
+    public void showCredits() {
+        sendPacket(new ClientGameEventPacket(GameEvent.WIN_GAME, 1));
+    }
+
+    public void showHurtAnimation(@NotNull Pos pos) {
+        showHurtAnimation(pos.yaw());
+    }
+
+    public void showHurtAnimation(float yaw) {
+        sendPacket(new ClientHurtAnimationPacket(this, yaw));
+    }
+
+    public boolean canSee(@NotNull Entity entity) {
+        return getViewers().contains(entity);
+    }
+
+    @Override
+    public void chat(@NotNull Component message) {
+
+    }
+
+    @Override
+    public void sendMessage(@NotNull Component message) {
+
+    }
+
+    @Override
+    public void sendTitle(@NotNull Title title) {
+        final Title.Times titleTimes = title.times();
+        sendBundledPackets(() -> {
+            sendPacket(new ClientSetTitleTextPacket(title.title()));
+            sendPacket(new ClientSetSubtitleTextPacket(title.subtitle()));
+            if (titleTimes != null) {
+                sendPacket(new ClientSetTitleAnimationTimesPacket(titleTimes.fadeIn(), titleTimes.stay(), titleTimes.fadeOut()));
+            }
+        });
+    }
+
+    @Override
+    public void sendTitle(@NotNull Component component) {
+        sendPacket(new ClientSetTitleTextPacket(component));
+    }
+
+    @Override
+    public void sendSubtitle(@NotNull Component component) {
+        sendPacket(new ClientSetSubtitleTextPacket(component));
+    }
+
+    public void setLevel(int level) {
+
+    }
+
+    public void resetLevel() {
+
+    }
+
+    public void setExp(float exp) {
+
+    }
+
+    public byte @NotNull [] grabCookieData(@NotNull NamespacedID key) {
+        sendPacket(new ClientRequestCookiePacket(key));
+        return new byte[0]; // TODO: Return the cookie data from the response packet!
+    }
+
+    public void storeCookie(@NotNull NamespacedID key, byte @NotNull [] value) {
+        sendPacket(new ClientStoreCookiePacket(key, value));
     }
 
     @ApiStatus.Internal
-    public void sendChunkBatch(Chunk... chunks) {
-        sendChunkBatch(Arrays.asList(chunks));
+    @Override
+    public void sendPacket(@NotNull ClientPacket packet) {
+        this.connection.sendPacket(packet);
     }
 
     @ApiStatus.Internal
-    public void sendChunkBatch(Collection<Chunk> chunks) {
-        sendPacket(new ClientChunkBatchStartPacket());
-        for (Chunk chunk : chunks) {
-            sendChunkData(chunk);
-        }
-        sendPacket(new ClientChunkBatchFinishedPacket(chunks.size()));
-    }
-
-    @ApiStatus.Internal
-    public void sendChunkData(Chunk chunk) {
-        chunk.setIsLoaded(true);
-        sendPacket(new ClientChunkDataPacket(
-                chunk.getChunkX(), chunk.getChunkZ(),
-                ClientChunkDataPacket.EMPTY_HEIGHTMAP,
-                chunk, new BlockEntity[0],
-                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                new Skylight[0], new Blocklight[0]
-        ));
-    }
-
-    @ApiStatus.Internal
+    @Override
     public void handleConfigurationToPlay() {
-        Preconditions.checkArgument(connection.getState() == ConnectionState.CONFIGURATION, "Player is not in configuration state");
+        Preconditions.checkArgument(this.connection.getState() == ConnectionState.CONFIGURATION, "Player is not in configuration state");
 
-        connection.setState(ConnectionState.PLAY);
+        this.connection.setState(ConnectionState.PLAY);
         EventExecutor.emitEvent(new PlayerJoinEvent(this));
         if (this.getWorld() == null) {
             logger.error("Player's world is null, cannot spawn in. Make sure to set the world on PlayerJoinEvent!");
@@ -192,16 +240,31 @@ public class Player extends LivingEntity {
         }
 
         this.getServer().getServerProcess().getPlayerCache().add(this);
-        sendMainLoginPackets();
+        handleMainLoginPackets();
     }
 
     @ApiStatus.Internal
-    public void sendMainLoginPackets() {
+    @Override
+    public void handleMainLoginPackets() {
         sendLoginPlayPacket();
 
         sendPacket(new ClientSynchronizePlayerPosition(position, (byte) 0, 24));
-        handleWorldEntityPackets();
-        sendPacket(new ClientGameEventPacket((byte) 13, 0f));
+
+        updateViewers();
+        for (Player player : MinecraftServer.getInstance().getAllPlayers()) {
+            if (this.getUuid() == player.getUuid()) {
+                continue;
+            }
+
+            logger.info("{}", player);
+            boolean spawn = player.canSee(player);
+
+            this.sendAddPlayerPacket(player, spawn);
+            player.sendAddPlayerPacket(this, spawn);
+        }
+        this.sendAddPlayerPacket(this, false);
+
+        sendPacket(new ClientGameEventPacket(GameEvent.START_WAITING_FOR_CHUNKS, 0f));
 
         sendTickingPackets();
 
@@ -211,12 +274,11 @@ public class Player extends LivingEntity {
 
         Set<Chunk> chunks = new HashSet<>();
         WorldGenerator generator = world.getGenerator();
+        this.sendBundledPackets();
         for (int x = -14; x < 14; x++) {
             for (int z = -14; z < 14; z++) {
                 Chunk chunk = world.getChunk(x, z);
-                generator.generate(chunk, chunkGenerator -> {
-                    chunkGenerator.fillSection(4, BlockType.MANGROVE_PLANKS);
-                });
+                generator.generate(chunk);
 
                 chunks.add(chunk);
             }
@@ -225,103 +287,66 @@ public class Player extends LivingEntity {
         long start = System.currentTimeMillis();
         sendChunkBatch(chunks);
         logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
+
+        handleWorldEntityPackets();
+        this.world.addEntity(this);
     }
 
     @ApiStatus.Internal
+    @Override
     public void handleWorldEntityPackets() {
-        getViewers().forEach(viewer -> {
-            sendAddPlayerPacket(viewer);
-            viewer.sendAddPlayerPacket(this);
+        this.getViewers().forEach(viewer -> {
+            viewer.spawn(this);
         });
     }
 
     @ApiStatus.Internal
-    public void sendTickingPackets() {
-        sendPacket(new ClientSetTickingStatePacket(20, false));
-        sendPacket(new ClientStepTickPacket(0));
-    }
-
-    @ApiStatus.Internal
+    @Override
     public void sendLoginPlayPacket() {
-        final NamespacedID overworld = new NamespacedID("overworld");
+        final NamespacedID[] dimensionNames = Arrays.stream(DimensionType.getDimensions())
+                .map(Dimension::getBiomeKey)
+                .toArray(NamespacedID[]::new);
+
         sendPacket(new ClientLoginPlayPacket(
-                273, false, 1,
-                new NamespacedID[]{overworld}, 20,
+                this.entityID, false,
+                dimensionNames, 20,
                 10, 8, false,
                 true, false,
-                overworld, overworld,
+                0, dimensionNames[0],
                 0L,
-                gameMode.getId(), (byte) -1,
+                this.gameMode.getId(), (byte) -1,
                 false, false, false,
                 null, null,
-                0
+                0, false
         ));
     }
 
     @ApiStatus.Internal
-    public void sendAddPlayerPacket(@NotNull Player player) {
-        final Pos position = player.getPosition();
-        sendPacket(new ClientPlayerInfoUpdatePacket(
-                (byte) 0x01,
+    @Override
+    public void sendAddPlayerPacket(@NotNull Player player, boolean spawn) {
+        this.sendPacket(new ClientPlayerInfoUpdatePacket(
                 new ClientPlayerInfoUpdatePacket.Players(
-                        player.getUUID(),
+                        player.getUuid(),
                         new ClientPlayerInfoUpdatePacket.Action.AddPlayer(
                                 player.getName(),
-                                0, new Property[0])
-                )));
-
-        sendPacket(new ClientSpawnEntityPacket(
-                player.getEntityID(), player.getUUID(),
-                124, position.x(), position.y(), position.z(),
-                new Angle(position.yaw()), new Angle(position.pitch()), Angle.ZERO,
-                0, (short) 0, (short) 0, (short) 0
+                                0, new Property[0]),
+                        new ClientPlayerInfoUpdatePacket.Action.UpdateListed(true)
+                )
         ));
+
+        if (spawn) player.spawn(this);
     }
 
     @ApiStatus.Internal
-    public void sendEntityMovementPacket(@NotNull Entity entity, @NotNull Pos to, @NotNull Pos from) {
-        short deltaX = (short) ((to.x() - from.x()) * 32 * 128);
-        short deltaY = (short) ((to.y() - from.y()) * 32 * 128);
-        short deltaZ = (short) ((to.z() - from.z()) * 32 * 128);
-
-        Angle yaw = new Angle(to.yaw());
-        int entityID = entity.getEntityID();
-
-        sendPacket(new ClientUpdateEntityPositionAndRotationPacket(
-                entityID,
-                deltaX,
-                deltaY,
-                deltaZ,
-                yaw,
-                new Angle(to.pitch()),
-                entity.isOnGround()
-        ));
-        sendPacket(new ClientSetHeadRotationPacket(entityID, yaw));
-    }
-
-    @ApiStatus.Internal
-    public void sendRemoveEntityPacket(@NotNull Player player) {
-        sendPacket(new ClientPlayerInfoRemovePacket(1, player.getUUID()));
-    }
-
-    @ApiStatus.Internal
-    public void sendRemoveEntityPacket(@NotNull Entity entity) {
-        sendPacket(new ClientRemoveEntitiesPacket(1, entity.getEntityID()));
-    }
-
-    @ApiStatus.Internal
-    public void keepAliveConnection(long time) {
-        if (getConnection().getState() == ConnectionState.PLAY) {
+    @Override
+    public void keepConnectionAlive(long time) {
+        if (this.connection.getState() == ConnectionState.PLAY) {
             sendPacket(new ClientKeepAlivePacket(time));
         }
     }
 
     public String getName() {
         return profile.getUsername();
-    }
-
-    public UUID getUUID() {
-        return profile.getUuid();
     }
 
 }

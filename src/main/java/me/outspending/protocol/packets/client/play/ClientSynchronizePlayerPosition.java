@@ -20,7 +20,7 @@ public record ClientSynchronizePlayerPosition(@NotNull Pos position, byte flags,
 
     @Override
     public int id() {
-        return 0x3E;
+        return 0x40;
     }
 
 }

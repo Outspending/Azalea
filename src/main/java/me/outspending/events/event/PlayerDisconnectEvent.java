@@ -7,10 +7,9 @@ import net.kyori.adventure.text.Component;
 
 @Getter
 public class PlayerDisconnectEvent extends PlayerEvent {
-    private final Component reason;
 
-    public PlayerDisconnectEvent(Player player, Component reason) {
+    public PlayerDisconnectEvent(Player player) {
         super(player);
-        this.reason = reason;
     }
+
 }

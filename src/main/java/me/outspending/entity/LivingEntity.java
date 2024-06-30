@@ -2,33 +2,20 @@ package me.outspending.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.outspending.position.Pos;
-import me.outspending.world.World;
+import me.outspending.entity.meta.LivingEntityMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Getter @Setter
-public abstract class LivingEntity extends Entity {
+public abstract class LivingEntity extends Entity implements Damageable {
     private static final Logger logger = LoggerFactory.getLogger(LivingEntity.class);
 
-    // LivingEntityMeta - Start
-    private byte handStates = 0;
-    private byte isHandActive = 0;
-    private byte activeHand = 0;
-    private byte isInRiptideSpin = 0;
-
-    private float health = 1.0f;
-    private int potionEffectColor = 0;
-    private boolean isPotionEffectAmbient = false;
-    private int numberOfArrowsInEntity = 0;
-    private int numberOfBeeStingersInEntity = 0;
-    private Pos bedLocation;
-    // LivingEntityMeta - End
+    private float maxHealth = 20.0f;
+    private LivingEntityMeta entityMeta = new LivingEntityMeta();
 
     public LivingEntity(@NotNull EntityType type) {
         super(type);
@@ -38,4 +25,35 @@ public abstract class LivingEntity extends Entity {
         super(type, entityUUID);
     }
 
+    @Override
+    public void setHealth(float health) {
+        this.entityMeta.setHealth(health);
+        // TODO: Send packet to viewers
+    }
+
+    @Override
+    public void damage(double amount) {
+        this.entityMeta.setHealth(this.entityMeta.getHealth() - (float) amount);
+        // TODO: Send packet to viewers
+    }
+
+    @Override
+    public float getHealth() {
+        return this.entityMeta.getHealth();
+    }
+
+    @Override
+    public float getMaxHealth() {
+        return maxHealth;
+    }
+
+    public enum Hand {
+        MAIN_HAND,
+        OFF_HAND;
+
+        public static @NotNull Hand getById(@Range(from = 0, to = 1) int id) {
+            final Hand value = values()[id];
+            return value != null ? value : MAIN_HAND;
+        }
+    }
 }

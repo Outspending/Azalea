@@ -5,10 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record ConfirmTeleportPacket(@NotNull ClientConnection connection, int teleportID) implements ServerPacket {
-    public static ConfirmTeleportPacket read(@NotNull ClientConnection connection, PacketReader reader) {
+public record ConfirmTeleportPacket(int teleportID) implements ServerPacket {
+
+    public static ConfirmTeleportPacket read(PacketReader reader) {
         return new ConfirmTeleportPacket(
-                connection,
                 reader.readVarInt()
         );
     }
@@ -18,8 +18,4 @@ public record ConfirmTeleportPacket(@NotNull ClientConnection connection, int te
         return 0x00;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

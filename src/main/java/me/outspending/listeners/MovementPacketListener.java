@@ -1,6 +1,7 @@
 package me.outspending.listeners;
 
 import com.google.common.base.Preconditions;
+import me.outspending.connection.ClientConnection;
 import me.outspending.player.Player;
 import me.outspending.position.Pos;
 import me.outspending.protocol.packets.server.play.PlayerRotationPacket;
@@ -13,11 +14,11 @@ import org.jetbrains.annotations.UnknownNullability;
 
 public final class MovementPacketListener {
 
-    @Contract("null -> fail")
-    public static void handlePacket(@UnknownNullability ServerPacket packet) {
+    @Contract("_, null -> fail")
+    public static void handlePacket(@NotNull ClientConnection connection, @UnknownNullability ServerPacket packet) {
         Preconditions.checkNotNull(packet, "packet cannot be null");
 
-        final Player recievedPlayer = packet.getSendingConnection().getPlayer();
+        final Player recievedPlayer = connection.getPlayer();
         switch (packet) {
             case SetPlayerPositionPacket positionPacket -> handlePosition(recievedPlayer, positionPacket);
             case SetPlayerPositionAndRotationPacket positionAndRotationPacket ->

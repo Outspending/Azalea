@@ -6,16 +6,11 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record SetPlayerPositionPacket(@NotNull ClientConnection connection, @NotNull Pos position, boolean onGround) implements ServerPacket {
-    public static SetPlayerPositionPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
+public record SetPlayerPositionPacket(@NotNull Pos position, boolean onGround) implements ServerPacket {
+
+    public static SetPlayerPositionPacket read(@NotNull PacketReader reader) {
         return new SetPlayerPositionPacket(
-                connection,
-                new Pos(
-                        reader.readDouble(),
-                        reader.readDouble(),
-                        reader.readDouble(),
-                        0f, 0f
-                ),
+                reader.readPosition(),
                 reader.readBoolean()
         );
     }
@@ -25,8 +20,4 @@ public record SetPlayerPositionPacket(@NotNull ClientConnection connection, @Not
         return 0x17;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

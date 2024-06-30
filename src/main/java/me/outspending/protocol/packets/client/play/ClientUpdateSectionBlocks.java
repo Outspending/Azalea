@@ -24,6 +24,6 @@ public record ClientUpdateSectionBlocks(long chunkSectionPosition, @NotNull Coll
 
     @Override
     public int id() {
-        return 0x47;
+        return 0x49;
     }
 }

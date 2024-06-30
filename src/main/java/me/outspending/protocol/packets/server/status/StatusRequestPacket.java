@@ -5,9 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record StatusRequestPacket(@NotNull ClientConnection connection) implements ServerPacket {
-    public static StatusRequestPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
-        return new StatusRequestPacket(connection);
+public record StatusRequestPacket() implements ServerPacket {
+
+    public static StatusRequestPacket read(@NotNull PacketReader reader) {
+        return new StatusRequestPacket();
     }
 
     @Override
@@ -15,8 +16,4 @@ public record StatusRequestPacket(@NotNull ClientConnection connection) implemen
         return 0x00;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

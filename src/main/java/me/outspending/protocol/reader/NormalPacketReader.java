@@ -8,8 +8,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-public class NormalPacketReader extends AbstractPacketReader {
-    public static @NotNull PacketReader create(@NotNull ByteBuffer buffer) {
+final class NormalPacketReader extends AbstractPacketReader {
+
+    static @NotNull PacketReader create(@NotNull ByteBuffer buffer) {
         return new NormalPacketReader(buffer);
     }
 
@@ -17,18 +18,4 @@ public class NormalPacketReader extends AbstractPacketReader {
         super(buffer);
     }
 
-    @Override
-    public @Nullable <T> Optional<T> readOptional(@NotNull Function<PacketReader, T> elementReader) {
-        return Optional.empty();
-    }
-
-    @Override
-    public <T> @Nullable T[] readArray(@NotNull Function<PacketReader, T> elementReader, @NotNull IntFunction<T[]> arrayCreator) {
-        return null;
-    }
-
-    @Override
-    public <T extends Enum<?>> @Nullable T readEnum(@NotNull Class<T> enumClass) {
-        return null;
-    }
 }

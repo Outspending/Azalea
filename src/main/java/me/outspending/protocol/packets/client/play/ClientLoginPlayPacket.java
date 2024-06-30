@@ -1,7 +1,7 @@
 package me.outspending.protocol.packets.client.play;
 
 import me.outspending.NamespacedID;
-import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
 import org.jetbrains.annotations.NotNull;
@@ -9,15 +9,14 @@ import org.jetbrains.annotations.NotNull;
 public record ClientLoginPlayPacket(
         int entityID,
         boolean isHardcore,
-        int dimensionCount,
         NamespacedID[] dimensionNames,
         int maxPlayers,
         int viewDistance,
         int simulationDistance,
-        boolean isDebug,
-        boolean respawnScreen,
+        boolean reducedDebugInfo,
+        boolean enableRespawnScreen,
         boolean limitedCrafting,
-        NamespacedID dimensionType,
+        int dimensionType,
         NamespacedID dimensionName,
         long hashedSeed,
         byte gameMode,
@@ -26,23 +25,28 @@ public record ClientLoginPlayPacket(
         boolean isFlatWorld,
         boolean hasDeathLocation,
         String deathDimensionName,
-        Location deathLocation,
-        int portalCooldown
+        Pos deathPosition,
+        int portalCooldown,
+        boolean enforceSecureChat
 ) implements ClientPacket {
 
     @Override
     public void write(@NotNull PacketWriter writer) {
         writer.writeInt(this.entityID);
         writer.writeBoolean(this.isHardcore);
-        writer.writeVarInt(this.dimensionCount);
-        writer.writeArray(this.dimensionNames, writer::writeNamespacedKey);
+        writer.writeVarInt(this.dimensionNames.length);
+
+        for (NamespacedID dimensionName : this.dimensionNames) {
+            writer.writeNamespacedKey(dimensionName);
+        }
+
         writer.writeVarInt(this.maxPlayers);
         writer.writeVarInt(this.viewDistance);
         writer.writeVarInt(this.simulationDistance);
-        writer.writeBoolean(this.isDebug);
-        writer.writeBoolean(this.respawnScreen);
+        writer.writeBoolean(this.reducedDebugInfo);
+        writer.writeBoolean(this.enableRespawnScreen);
         writer.writeBoolean(this.limitedCrafting);
-        writer.writeNamespacedKey(this.dimensionType);
+        writer.writeVarInt(this.dimensionType);
         writer.writeNamespacedKey(this.dimensionName);
         writer.writeLong(this.hashedSeed);
         writer.writeByte(this.gameMode);
@@ -52,14 +56,15 @@ public record ClientLoginPlayPacket(
         writer.writeBoolean(this.hasDeathLocation);
         if (hasDeathLocation) {
             writer.writeString(this.deathDimensionName);
-            writer.writeLocation(this.deathLocation);
+            writer.writePosition(this.deathPosition);
         }
         writer.writeVarInt(this.portalCooldown);
+        writer.writeBoolean(this.enforceSecureChat);
     }
 
     @Override
     public int id() {
-        return 0x29;
+        return 0x2B;
     }
 
 }

@@ -2,31 +2,33 @@ package me.outspending.entity;
 
 import me.outspending.player.Player;
 import me.outspending.protocol.types.ClientPacket;
-import me.outspending.protocol.types.GroupedPacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface Viewable {
 
-    void addViewer(@NotNull Player player);
+    void addViewer(@NotNull Entity entity);
 
-    void removeViewer(@NotNull Player player);
+    void removeViewer(@NotNull Entity entity);
 
-    @NotNull List<Player> getViewers();
+    @NotNull List<Entity> getViewers();
+
+    default @NotNull List<Player> getPlayerViewers() {
+        return getViewers().stream()
+                .filter(entity -> entity instanceof Player)
+                .map(entity -> (Player) entity)
+                .toList();
+    }
 
     void updateViewers();
 
-    default boolean isViewer(@NotNull Player player) {
-        return getViewers().contains(player);
+    default boolean isViewer(@NotNull Entity entity) {
+        return getViewers().contains(entity);
     }
 
     default void sendPacketsToViewers(@NotNull ClientPacket... packets) {
-        getViewers().forEach(player -> player.getConnection().sendGroupedPacket(new GroupedPacket(packets)));
-    }
-
-    default void sendPacketToViewers(@NotNull ClientPacket packet) {
-        getViewers().forEach(player -> player.getConnection().sendPacket(packet));
+        getPlayerViewers().forEach(player -> player.sendBundledPackets(packets));
     }
 
 }

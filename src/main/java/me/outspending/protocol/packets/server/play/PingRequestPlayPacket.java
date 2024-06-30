@@ -5,9 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record PingRequestPlayPacket(@NotNull ClientConnection connection, long payload) implements ServerPacket {
-    public static PingRequestPlayPacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
-        return new PingRequestPlayPacket(connection, reader.readLong());
+public record PingRequestPlayPacket(long payload) implements ServerPacket {
+
+    public static PingRequestPlayPacket read(@NotNull PacketReader reader) {
+        return new PingRequestPlayPacket(reader.readLong());
     }
 
     @Override
@@ -15,8 +16,4 @@ public record PingRequestPlayPacket(@NotNull ClientConnection connection, long p
         return 0x1E;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

@@ -18,6 +18,7 @@ public record ClientLoginSuccessPacket(@NotNull GameProfile profile) implements 
         for (Property property : properties) {
             property.write(writer);
         }
+        writer.writeBoolean(false);
     }
 
     @Override

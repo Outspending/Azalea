@@ -42,31 +42,31 @@ public record ClientChunkDataPacket(
         writer.writeByteArray(dataWriter.getStream().toByteArray());
 
         writer.writeVarInt(this.blockEntity.length);
-        writer.writeArray(this.blockEntity, blockEntity -> {
-            writer.writeUnsignedByte(blockEntity.packedXZ());
-            writer.writeShort(blockEntity.y());
-            writer.writeVarInt(blockEntity.type());
-            writer.writeNBTCompound(blockEntity.data());
-        });
+        for (BlockEntity entity : this.blockEntity) {
+            writer.writeByte(entity.packedXZ());
+            writer.writeShort(entity.y());
+            writer.writeVarInt(entity.type());
+            writer.writeNBTCompound(entity.data());
+        }
         writer.writeBitSet(this.skyLightMask);
         writer.writeBitSet(this.blockLightMask);
         writer.writeBitSet(this.emptySkyLightMask);
         writer.writeBitSet(this.emptyBlockLightMask);
         writer.writeVarInt(this.skyLight.length);
-        writer.writeArray(this.skyLight, skyLight -> {
-            writer.writeVarInt(skyLight.skyLightArray().length);
-            writer.writeByteArray(skyLight.skyLightArray());
-        });
+        for (Skylight light : this.skyLight) {
+            writer.writeVarInt(light.skyLightArray().length);
+            writer.writeByteArray(light.skyLightArray());
+        }
         writer.writeVarInt(this.blockLight.length);
-        writer.writeArray(this.blockLight, blockLight -> {
-            writer.writeVarInt(blockLight.blockLightArray().length);
-            writer.writeByteArray(blockLight.blockLightArray());
-        });
+        for (Blocklight light : this.blockLight) {
+            writer.writeVarInt(light.blockLightArray().length);
+            writer.writeByteArray(light.blockLightArray());
+        }
     }
 
     @Override
     public int id() {
-        return 0x25;
+        return 0x27;
     }
 
 }

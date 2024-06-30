@@ -1,10 +1,14 @@
 package me.outspending.position;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 public record Pos(double x, double y, double z, float yaw, float pitch) {
     public static final Pos ZERO = new Pos(0, 0, 0, 0f, 0f);
-    public static final Pos ONE = new Pos(1, 1, 1, 0f, 0f);
+
+    public Pos(double x, double y, double z) {
+        this(x, y, z, 0, 0);
+    }
 
     public static @UnknownNullability Pos fromNetwork(long l) {
         int x = (int) (l >> 38);
@@ -18,8 +22,16 @@ public record Pos(double x, double y, double z, float yaw, float pitch) {
         return (((long) ((int) this.x & 0x3FFFFFF) << 38) | ((long) ((int) this.z & 0x3FFFFFF) << 12) | ((int) this.y & 0xFFF));
     }
 
-    public double distance(Pos pos) {
-        return Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2) + Math.pow(z - pos.z, 2));
+    public double distance(@NotNull Pos pos) {
+        double dx = pos.x - this.x;
+        double dy = pos.y - this.y;
+        double dz = pos.z - this.z;
+
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    public @NotNull Pos difference(@NotNull Pos pos) {
+        return new Pos((pos.x - this.x), (pos.y - this.y), (pos.z - this.z));
     }
 
     @Override

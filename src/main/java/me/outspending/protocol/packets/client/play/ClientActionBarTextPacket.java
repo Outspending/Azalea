@@ -14,7 +14,7 @@ public record ClientActionBarTextPacket(@NotNull Component text) implements Clie
 
     @Override
     public int id() {
-        return 0x4A;
+        return 0x4C;
     }
 
 }

@@ -5,9 +5,10 @@ import me.outspending.protocol.reader.PacketReader;
 import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.NotNull;
 
-public record ServerKeepAlivePacket(@NotNull ClientConnection connection, long keepAliveID) implements ServerPacket {
-    public static ServerKeepAlivePacket read(@NotNull ClientConnection connection, @NotNull PacketReader reader) {
-        return new ServerKeepAlivePacket(connection, reader.readLong());
+public record ServerKeepAlivePacket(long keepAliveID) implements ServerPacket {
+
+    public static ServerKeepAlivePacket read(@NotNull PacketReader reader) {
+        return new ServerKeepAlivePacket(reader.readLong());
     }
 
     @Override
@@ -15,8 +16,4 @@ public record ServerKeepAlivePacket(@NotNull ClientConnection connection, long k
         return 0x15;
     }
 
-    @Override
-    public @NotNull ClientConnection getSendingConnection() {
-        return connection;
-    }
 }

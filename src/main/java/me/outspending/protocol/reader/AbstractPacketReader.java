@@ -3,7 +3,7 @@ package me.outspending.protocol.reader;
 import lombok.Getter;
 import me.outspending.NamespacedID;
 import me.outspending.position.Angle;
-import me.outspending.position.Location;
+import me.outspending.position.Pos;
 import me.outspending.protocol.NetworkType;
 import me.outspending.protocol.NetworkTypes;
 import me.outspending.protocol.exception.InvalidPacketException;
@@ -29,73 +29,48 @@ public abstract class AbstractPacketReader implements PacketReader {
     }
 
     @Override
-    public boolean hasAnotherPacket() {
-        return buffer.hasRemaining();
-    }
-
-    @Override
     public boolean readBoolean() {
-        return NetworkTypes.BOOLEAN_TYPE.read(buffer);
+        return NetworkTypes.BOOLEAN.read(buffer);
     }
 
     @Override
     public byte readByte() {
-        return NetworkTypes.BYTE_TYPE.read(buffer);
-    }
-
-    @Override
-    public int readUnsignedByte() {
-        return NetworkTypes.UNSIGNED_BYTE_TYPE.read(buffer);
+        return NetworkTypes.BYTE.read(buffer);
     }
 
     @Override
     public short readShort() {
-        return NetworkTypes.SHORT_TYPE.read(buffer);
-    }
-
-    @Override
-    public int readUnsignedShort() {
-        return NetworkTypes.UNSIGNED_SHORT_TYPE.read(buffer);
+        return NetworkTypes.SHORT.read(buffer);
     }
 
     @Override
     public int readInt() {
-        return NetworkTypes.INT_TYPE.read(buffer);
+        return NetworkTypes.INT.read(buffer);
     }
 
     @Override
     public long readLong() {
-        return NetworkTypes.LONG_TYPE.read(buffer);
+        return NetworkTypes.LONG.read(buffer);
     }
 
     @Override
     public float readFloat() {
-        return NetworkTypes.FLOAT_TYPE.read(buffer);
+        return NetworkTypes.FLOAT.read(buffer);
     }
 
     @Override
     public double readDouble() {
-        return NetworkTypes.DOUBLE_TYPE.read(buffer);
+        return NetworkTypes.DOUBLE.read(buffer);
     }
 
     @Override
     public @Nullable String readString() {
-        return NetworkTypes.STRING_TYPE.read(buffer);
-    }
-
-    @Override
-    public @Nullable NamespacedID readNamespacedKey() {
-        return NetworkTypes.NAMESPACEDID_TYPE.read(buffer);
+        return NetworkTypes.STRING.read(buffer);
     }
 
     @Override
     public int readVarInt() {
-        return NetworkTypes.VARINT_TYPE.read(buffer);
-    }
-
-    @Override
-    public long readVarLong() {
-        return NetworkTypes.VARLONG_TYPE.read(buffer);
+        return NetworkTypes.VARINT.read(buffer);
     }
 
     @Override
@@ -105,47 +80,27 @@ public abstract class AbstractPacketReader implements PacketReader {
 
     @Override
     public @Nullable CompoundBinaryTag readNBTCompound() {
-        return NetworkTypes.NBTCOMPOUND_TYPE.read(buffer);
+        return NetworkTypes.NBTCOMPOUND.read(buffer);
     }
 
     @Override
-    public @Nullable Location readLocation() {
-        return NetworkTypes.LOCATION_TYPE.read(buffer);
+    public @Nullable NamespacedID readNamespacedID() {
+        return NetworkTypes.NAMESPACEDID.read(buffer);
+    }
+
+    @Override
+    public @Nullable Pos readPosition() {
+        return NetworkTypes.POSITION.read(buffer);
     }
 
     @Override
     public @Nullable UUID readUUID() {
-        return NetworkTypes.UUID_TYPE.read(buffer);
+        return NetworkTypes.UUID.read(buffer);
     }
 
     @Override
     public byte[] readByteArray() {
-        return NetworkTypes.BYTEARRAY_TYPE.read(buffer);
-    }
-
-    @Override
-    public byte[] readByteArray(int length) {
-        if (buffer.remaining() < length) {
-            throw new InvalidPacketException("Insufficient data in buffer to read byte array of length " + length);
-        }
-
-        byte[] bytes = new byte[length];
-        return buffer.get(bytes).array();
-    }
-
-//    @Override
-//    public @Nullable ItemStack readSlot() {
-//        return NetworkTypes.SLOT_TYPE.read(buffer);
-//    }
-
-    @Override
-    public @Nullable Component readJSONTextComponent() {
-        return NetworkTypes.JSON_TEXT_COMPONENT_TYPE.read(buffer);
-    }
-
-    @Override
-    public @NotNull Component readTextComponent() {
-        return NetworkTypes.TEXT_COMPONENT_TYPE.read(buffer);
+        return NetworkTypes.BYTEARRAY.read(buffer);
     }
 
     @Override
@@ -153,11 +108,6 @@ public abstract class AbstractPacketReader implements PacketReader {
         byte[] remaining = new byte[buffer.remaining()];
         buffer.get(remaining);
         return remaining;
-    }
-
-    @Override
-    public byte[] getAllBytes() {
-        return buffer.array();
     }
 
 }
