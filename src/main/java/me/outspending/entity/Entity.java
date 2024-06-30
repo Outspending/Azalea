@@ -7,6 +7,7 @@ import me.outspending.Tickable;
 import me.outspending.entity.meta.EntityMeta;
 import me.outspending.player.Player;
 import me.outspending.position.Pos;
+import me.outspending.protocol.packets.client.play.ClientRemoveEntitiesPacket;
 import me.outspending.protocol.packets.client.play.ClientSetEntityMetaPacket;
 import me.outspending.protocol.packets.client.play.ClientSpawnEntityPacket;
 import me.outspending.protocol.packets.client.play.ClientTeleportEntityPacket;
@@ -136,9 +137,15 @@ public class Entity implements Viewable, Tickable {
             if (distance <= viewableDistance && !isViewer) {
                 logger.info("Adding Viewer: {}", entity.entityID);
                 this.addViewer(entity);
+                if (entity instanceof Player player) {
+                    player.sendPacket(new ClientSpawnEntityPacket(this));
+                }
             } else if (distance >= viewableDistance && isViewer) {
                 logger.info("Removing Viewer: {}", entity.entityID);
                 this.removeViewer(entity);
+                if (entity instanceof Player player) {
+                    player.sendRemoveEntitiesPacket(this);
+                }
             }
         }
     }

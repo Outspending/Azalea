@@ -129,7 +129,7 @@ public interface NetworkClient {
             list.add(entity.getEntityID());
         }
 
-        sendPacket(new ClientRemoveEntitiesPacket(entities.length, list));
+        sendPacket(new ClientRemoveEntitiesPacket(list));
     }
 
     @ApiStatus.Internal
