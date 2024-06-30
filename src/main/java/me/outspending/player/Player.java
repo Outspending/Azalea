@@ -109,32 +109,18 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
         return connection.getServer();
     }
 
-    @Override
-    public void tick(long time) {
-        super.tick(time);
-        handleMovement();
+    @ApiStatus.Internal
+    public void handleMovement() {
+        EventExecutor.emitEvent(new PlayerMoveEvent(this, this.position));
 
-        if (position.x() != lastPosition.x() || position.y() != lastPosition.z() || position.z() != lastPosition.z()) {
-            lastPosition = position;
-        }
-    }
+        this.getPlayerViewers().forEach(viewer -> viewer.sendEntityMovementPacket(this, this.position, this.lastPosition));
 
-    private void handleMovement() {
-        final Pos to = position;
-        final Pos from = lastPosition;
+        Chunk fromChunk = world.getChunk(this.lastPosition);
+        Chunk toChunk = world.getChunk(this.position);
+        if (!fromChunk.equals(toChunk)) {
+            EventExecutor.emitEvent(new ChunkSwitchEvent(this, this.position, fromChunk, toChunk));
 
-        if (!to.equals(from)) {
-            EventExecutor.emitEvent(new PlayerMoveEvent(this, to));
-
-            this.getPlayerViewers().forEach(viewer -> viewer.sendEntityMovementPacket(this, to, from));
-
-            Chunk fromChunk = world.getChunk(from);
-            Chunk toChunk = world.getChunk(to);
-            if (!fromChunk.equals(toChunk)) {
-                EventExecutor.emitEvent(new ChunkSwitchEvent(this, to, fromChunk, toChunk));
-
-                // TODO: Send chunks when player moves to a new chunk
-            }
+            // TODO: Send chunks when player moves to a new chunk
         }
     }
 

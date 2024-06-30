@@ -8,4 +8,5 @@ final class EntityCounter {
     public static int getNextEntityID() {
         return entityCounter.incrementAndGet();
     }
+
 }

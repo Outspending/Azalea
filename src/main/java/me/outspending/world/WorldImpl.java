@@ -2,6 +2,7 @@ package me.outspending.world;
 
 import lombok.Getter;
 import me.outspending.MinecraftServer;
+import me.outspending.block.BlockType;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.ChunkMap;
 import me.outspending.entity.Entity;
@@ -99,4 +100,15 @@ public final class WorldImpl implements World {
         players.forEach(player -> player.tick(time));
     }
 
+    @Override
+    public @NotNull BlockType getBlock(int x, int y, int z) {
+        final Chunk chunkAt = chunkMap.getChunk(x >> 4, z >> 4);
+        return chunkAt.getBlock(x, y, z);
+    }
+
+    @Override
+    public void setBlock(int x, int y, int z, @NotNull BlockType blockType) {
+        final Chunk chunkAt = chunkMap.getChunk(x, z);
+        chunkAt.setBlock(x >> 4, y >> 4, z >> 4, blockType);
+    }
 }

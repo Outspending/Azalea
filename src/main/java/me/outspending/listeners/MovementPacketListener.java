@@ -11,8 +11,12 @@ import me.outspending.protocol.types.ServerPacket;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class MovementPacketListener {
+
+    private static final Logger log = LoggerFactory.getLogger(MovementPacketListener.class);
 
     @Contract("_, null -> fail")
     public static void handlePacket(@NotNull ClientConnection connection, @UnknownNullability ServerPacket packet) {
@@ -26,12 +30,15 @@ public final class MovementPacketListener {
             case PlayerRotationPacket rotationPacket -> handleRotation(recievedPlayer, rotationPacket);
             default -> throw new IllegalArgumentException("Unknown packet type: " + packet.getClass().getSimpleName());
         }
+
+        recievedPlayer.handleMovement();
     }
 
     private static void handlePosition(@NotNull Player player, @NotNull SetPlayerPositionPacket packet) {
         final Pos playerPos = player.getPosition();
         final Pos packetPos = packet.position();
 
+        player.setLastPosition(playerPos);
         player.setPosition(new Pos(packetPos.x(), packetPos.y(), packetPos.z(), playerPos.yaw(), playerPos.pitch()));
     }
 
@@ -40,6 +47,7 @@ public final class MovementPacketListener {
     }
 
     private static void handlePositionAndRotation(@NotNull Player player, @NotNull SetPlayerPositionAndRotationPacket packet) {
+        player.setLastPosition(player.getPosition());
         player.setPosition(packet.position());
     }
 

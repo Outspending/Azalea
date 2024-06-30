@@ -18,7 +18,7 @@ public record ClientUpdateSectionBlocks(long chunkSectionPosition, @NotNull Coll
         writer.writeLong(this.chunkSectionPosition);
         writer.writeVarInt(this.blocks.size());
         for (Block block : blocks) {
-            writer.writeVarLong(block.type().getId());
+            writer.writeVarLong(block.getType().getId());
         }
     }
 

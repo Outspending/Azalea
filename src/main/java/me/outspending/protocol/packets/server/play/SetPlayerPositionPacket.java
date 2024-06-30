@@ -10,7 +10,11 @@ public record SetPlayerPositionPacket(@NotNull Pos position, boolean onGround) i
 
     public static SetPlayerPositionPacket read(@NotNull PacketReader reader) {
         return new SetPlayerPositionPacket(
-                reader.readPosition(),
+                new Pos(
+                        reader.readDouble(),
+                        reader.readDouble(),
+                        reader.readDouble()
+                ),
                 reader.readBoolean()
         );
     }

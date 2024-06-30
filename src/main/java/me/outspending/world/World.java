@@ -3,6 +3,8 @@ package me.outspending.world;
 import me.outspending.Tickable;
 import me.outspending.chunk.Chunk;
 import me.outspending.entity.Entity;
+import me.outspending.generation.BlockGetter;
+import me.outspending.generation.BlockSetter;
 import me.outspending.player.Player;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
-public interface World extends Tickable {
+public interface World extends Tickable, BlockGetter, BlockSetter {
 
     static @NotNull World create(@NotNull String name) {
         return new WorldImpl(name);

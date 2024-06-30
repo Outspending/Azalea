@@ -143,6 +143,7 @@ public class ClientConnection {
                 return;
             }
 
+            // logger.info("[{}] Sent packet: {}", packet.id(), packet);
             packetListener.onPacketReceived(this, packet);
             packetsSent++;
 

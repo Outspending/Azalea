@@ -7,6 +7,7 @@ import lombok.Setter;
 import me.outspending.connection.ServerConnection;
 import me.outspending.player.Player;
 import me.outspending.protocol.listener.PacketListener;
+import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.types.ServerPacket;
 import me.outspending.registry.DefaultRegistries;
 import me.outspending.registry.Registry;
@@ -16,6 +17,7 @@ import me.outspending.utils.ResourceUtils;
 import me.outspending.world.World;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +91,22 @@ public class MinecraftServer {
 
     public Collection<Player> getAllPlayers() {
         return serverProcess.getPlayerCache().getAll();
+    }
+
+    public void broadcastMessage(@NotNull String message) {
+        broadcastMessage(Component.text(message));
+    }
+
+    public void broadcastMessage(@NotNull Component message) {
+        for (Player player : this.getAllPlayers()) {
+            player.sendMessage(message);
+        }
+    }
+
+    public void broadcastPacket(@NotNull ClientPacket packet) {
+        for (Player player : this.getAllPlayers()) {
+            player.sendPacket(packet);
+        }
     }
 
     public Collection<Player> getAllPlayers(Predicate<Player> playerPredicate) {

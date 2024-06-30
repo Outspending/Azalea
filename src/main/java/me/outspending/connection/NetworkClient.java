@@ -3,6 +3,8 @@ package me.outspending.connection;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import me.outspending.block.Block;
+import me.outspending.block.BlockType;
 import me.outspending.chunk.Chunk;
 import me.outspending.chunk.light.Blocklight;
 import me.outspending.chunk.light.Skylight;
@@ -157,6 +159,11 @@ public interface NetworkClient {
     @ApiStatus.Internal
     default void sendRemovePlayersPacket(@NotNull Collection<Player> players) {
         sendRemoveEntitiesPacket(players.toArray(new Player[0]));
+    }
+
+    @ApiStatus.Internal
+    default void sendBlockChange(@NotNull Pos pos, @NotNull BlockType blockType) {
+        sendPacket(new ClientBlockUpdatePacket(pos, blockType));
     }
 
 }

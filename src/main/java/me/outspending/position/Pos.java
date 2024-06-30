@@ -19,7 +19,7 @@ public record Pos(double x, double y, double z, float yaw, float pitch) {
     }
 
     public long toNetwork() {
-        return (((long) ((int) this.x & 0x3FFFFFF) << 38) | ((long) ((int) this.z & 0x3FFFFFF) << 12) | ((int) this.y & 0xFFF));
+        return (((long) ((int) Math.round(this.x) & 0x3FFFFFF) << 38) | ((long) ((int) Math.round(this.z) & 0x3FFFFFF) << 12) | ((int) Math.round(this.y) & 0xFFF));
     }
 
     public double distance(@NotNull Pos pos) {
@@ -41,4 +41,5 @@ public record Pos(double x, double y, double z, float yaw, float pitch) {
         Pos pos = (Pos) obj;
         return Double.compare(pos.x, x) == 0 && Double.compare(pos.y, y) == 0 && Double.compare(pos.z, z) == 0 && Float.compare(pos.yaw, yaw) == 0 && Float.compare(pos.pitch, pitch) == 0;
     }
+
 }
