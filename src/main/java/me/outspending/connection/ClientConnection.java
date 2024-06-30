@@ -45,6 +45,7 @@ public class ClientConnection {
     private MinecraftServer server;
     private ConnectionState state = ConnectionState.HANDSHAKE;
     private CompressionType compressionType = CompressionType.NONE;
+    private boolean isOnline = true;
     private Player player;
 
     private int packetsReceived = 0;
@@ -79,6 +80,7 @@ public class ClientConnection {
 
                     logger.info("Client disconnected");
                     this.socket.close();
+                    this.isOnline = false;
                     return;
                 }
 
@@ -111,10 +113,6 @@ public class ClientConnection {
                 handlePacket(reader.getRemainingBytes());
             }
         }
-    }
-
-    public boolean isOnline() {
-        return socket.isConnected();
     }
 
     private void sendBundled() {

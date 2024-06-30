@@ -138,8 +138,12 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
         }
     }
 
-    public void sendActionBar(@NotNull Component component) {
-        sendPacket(new ClientActionBarTextPacket(component));
+    public void sendActionBar(@NotNull Component message) {
+        sendPacket(new ClientActionBarTextPacket(message));
+    }
+
+    public void sendActionBar(@NotNull String message) {
+        sendActionBar(Component.text(message));
     }
 
     public void setGameMode(@NotNull GameMode gameMode) {
@@ -174,7 +178,7 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
 
     @Override
     public void sendMessage(@NotNull Component message) {
-
+        sendPacket(new ClientSystemChatMessagePacket(message, false));
     }
 
     @Override

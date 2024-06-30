@@ -6,6 +6,7 @@ import me.outspending.events.EventHandler;
 import me.outspending.events.EventListener;
 import me.outspending.events.event.EntityWorldAddEvent;
 import me.outspending.events.event.PlayerJoinEvent;
+import me.outspending.events.event.ServerTickEvent;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.player.Player;
 import me.outspending.position.Pos;
@@ -13,11 +14,14 @@ import me.outspending.world.World;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 
 import java.time.Duration;
 
 public class Testing implements EventListener {
+    private static final MiniMessage message = MiniMessage.miniMessage();
+    private static final Runtime runtime = Runtime.getRuntime();
     private static final World defaultWorld = World.builder("testing")
             .generator(WorldGenerator.create(chunkGenerator -> chunkGenerator.fillSection(4, BlockType.GRASS_BLOCK)))
             .build();
@@ -31,21 +35,14 @@ public class Testing implements EventListener {
     }
 
     @EventHandler
-    public void onEntityAdd(EntityWorldAddEvent e) {
-        final Entity entity = e.getEntity();
-        if (entity instanceof Player player) {
-            player.sendTitle(
-                    Title.title(
-                            Component.text("wowie"),
-                            Component.text("Is this a... subtitle?"),
-                            Title.Times.times(
-                                    Duration.ofSeconds(1),
-                                    Duration.ofSeconds(3),
-                                    Duration.ofSeconds(1)
-                            )
-                    )
-            );
-        }
+    public void onTick(ServerTickEvent e) {
+        defaultWorld.getPlayers().forEach(player -> {
+            final int usedMemory = (int) ((runtime.totalMemory() - runtime.freeMemory()) / 1048576);
+            final int maxMemory = (int) (runtime.maxMemory() / 1048576);
+            final int freeMemory = (int) (runtime.freeMemory() / 1048576);
+
+            player.sendActionBar(Component.text("Memory: " + usedMemory + "MB/" + maxMemory + "MB (" + freeMemory + "MB free)"));
+        });
     }
 
 }

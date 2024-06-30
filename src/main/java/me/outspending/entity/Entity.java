@@ -9,6 +9,7 @@ import me.outspending.player.Player;
 import me.outspending.position.Pos;
 import me.outspending.protocol.packets.client.play.ClientSetEntityMetaPacket;
 import me.outspending.protocol.packets.client.play.ClientSpawnEntityPacket;
+import me.outspending.protocol.packets.client.play.ClientTeleportEntityPacket;
 import me.outspending.world.World;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -80,6 +81,11 @@ public class Entity implements Viewable, Tickable {
     public void spawnGlobal() {
         world.addEntity(this);
         this.spawn(world.getPlayers());
+    }
+
+    public void teleport(@NotNull Pos pos) {
+        this.setPosition(pos);
+        sendPacketsToViewers(new ClientTeleportEntityPacket(this, pos));
     }
 
     @Contract("null -> fail")
