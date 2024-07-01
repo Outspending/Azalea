@@ -1,6 +1,8 @@
 package me.outspending.player;
 
 import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import lombok.Setter;
 import me.outspending.GameMode;
@@ -40,9 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter @Setter
 public class Player extends LivingEntity implements NetworkClient, Chatable, TitleSender {
@@ -50,6 +50,7 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
 
     private final ClientConnection connection;
     private final GameProfile profile;
+    private final List<Chunk> loadedChunks = new ArrayList<>();
 
     private GameMode gameMode = GameMode.CREATIVE;
     private Pos lastPosition = Pos.ZERO;
@@ -120,8 +121,67 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
         if (!fromChunk.equals(toChunk)) {
             EventExecutor.emitEvent(new ChunkSwitchEvent(this, this.position, fromChunk, toChunk));
 
-            // TODO: Send chunks when player moves to a new chunk
+            final List<Chunk> clientLoadedChunks = this.getLoadedChunks();
+            world.getChunksInRange(this.getChunkAt(), (this.viewDistance / 2)).thenAcceptAsync(chunksInRange -> {
+                long time = System.currentTimeMillis();
+
+                // Determine new chunks to load
+                List<Chunk> newChunksToLoad = chunksInRange.stream()
+                        .filter(chunk -> !clientLoadedChunks.contains(chunk))
+                        .toList();
+
+                // Determine old chunks to unload
+                List<Chunk> chunksToUnload = clientLoadedChunks.stream()
+                        .filter(chunk -> !chunksInRange.contains(chunk))
+                        .toList();
+
+                if (!newChunksToLoad.isEmpty() || !chunksToUnload.isEmpty()) {
+                    for (Chunk chunk : newChunksToLoad) {
+                        chunk.load();
+                    }
+
+                    sendBundledPackets(() -> {
+                        // Add new chunks to the loaded list
+                        this.addLoadedChunks(newChunksToLoad);
+                        this.sendChunkBatch(newChunksToLoad);
+
+                        // Send unload packets for old chunks
+                        for (Chunk chunk : chunksToUnload) {
+                            this.sendPacket(new ClientChunkUnloadPacket(chunk));
+                            this.removeLoadedChunk(chunk);
+                        }
+                    });
+
+                    // Ensure border chunks are updated
+                    updateBorderChunks(toChunk, this.viewDistance);
+                    sendMessage(String.format("Loaded %s Chunks, Unloaded %s Chunks (%s ms)", newChunksToLoad.size(), chunksToUnload.size(), (System.currentTimeMillis() - time)));
+                }
+            }).exceptionally(e -> {
+                logger.error("Error while sending chunk batch", e);
+                return null;
+            });
         }
+    }
+
+    private Set<Chunk> updateBorderChunks(Chunk currentChunk, int viewDistance) {
+        int chunkX = currentChunk.getChunkX();
+        int chunkZ = currentChunk.getChunkZ();
+
+        Set<Chunk> borderChunks = new HashSet<>();
+        for (int dx = -viewDistance; dx <= viewDistance; dx++) {
+            for (int dz = -viewDistance; dz <= viewDistance; dz++) {
+                if (dx == -viewDistance || dx == viewDistance || dz == -viewDistance || dz == viewDistance) {
+                    int newChunkX = chunkX + dx;
+                    int newChunkZ = chunkZ + dz;
+                    Chunk borderChunk = world.getChunk(newChunkX, newChunkZ);
+                    if (borderChunk != null) {
+                        borderChunks.add(borderChunk);
+                    }
+                }
+            }
+        }
+
+        return borderChunks;
     }
 
     public void sendActionBar(@NotNull Component message) {
@@ -155,6 +215,14 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
 
     public boolean canSee(@NotNull Entity entity) {
         return getViewers().contains(entity);
+    }
+
+    public Chunk getChunkAt() {
+        return this.world.getChunk(this.position);
+    }
+
+    public boolean canSeeChunk(@NotNull Chunk chunk) {
+        return this.loadedChunks.contains(chunk);
     }
 
     @Override
@@ -210,6 +278,18 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
         sendPacket(new ClientStoreCookiePacket(key, value));
     }
 
+    public void addLoadedChunk(@NotNull Chunk chunk) {
+        this.loadedChunks.add(chunk);
+    }
+
+    public void addLoadedChunks(@NotNull Collection<Chunk> chunks) {
+        this.loadedChunks.addAll(chunks);
+    }
+
+    public void removeLoadedChunk(@NotNull Chunk chunk) {
+        this.loadedChunks.remove(chunk);
+    }
+
     @ApiStatus.Internal
     @Override
     public void sendPacket(@NotNull ClientPacket packet) {
@@ -229,7 +309,6 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
             return;
         }
 
-        this.getServer().getServerProcess().getPlayerCache().add(this);
         handleMainLoginPackets();
     }
 
@@ -265,21 +344,20 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
         Set<Chunk> chunks = new HashSet<>();
         WorldGenerator generator = world.getGenerator();
         this.sendBundledPackets();
-        for (int x = -14; x < 14; x++) {
-            for (int z = -14; z < 14; z++) {
-                Chunk chunk = world.getChunk(x, z);
-                generator.generate(chunk);
-
-                chunks.add(chunk);
+        for (int x = -2; x < 2; x++) {
+            for (int z = -2; z < 2; z++) {
+                chunks.add(world.getChunk(x, z));
             }
         }
 
         long start = System.currentTimeMillis();
+        addLoadedChunks(chunks);
         sendChunkBatch(chunks);
         logger.info("Finished sending {} chunks in: {}MS", 28*28, System.currentTimeMillis() - start);
 
         handleWorldEntityPackets();
         this.world.addEntity(this);
+        this.getServer().getServerProcess().getPlayerCache().add(this);
     }
 
     @ApiStatus.Internal

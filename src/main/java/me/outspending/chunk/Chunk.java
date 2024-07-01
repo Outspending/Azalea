@@ -3,11 +3,15 @@ package me.outspending.chunk;
 import me.outspending.entity.Entity;
 import me.outspending.generation.BlockGetter;
 import me.outspending.generation.BlockSetter;
+import me.outspending.generation.ChunkGenerator;
+import me.outspending.player.Player;
+import me.outspending.position.Pos;
 import me.outspending.protocol.Writable;
 import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface Chunk extends Writable, BlockGetter, BlockSetter {
@@ -24,7 +28,19 @@ public interface Chunk extends Writable, BlockGetter, BlockSetter {
         return (x << 4) | z;
     }
 
-    @NotNull ChunkSection[] getSections();
+    default int getChunkIndex(@NotNull Chunk chunk) {
+        return getChunkIndex(chunk.getChunkX(), chunk.getChunkZ());
+    }
+
+    @NotNull ChunkSection[] getChunkSections();
+
+    @Nullable ChunkSection getChunkSection(int sectionY);
+
+    default @Nullable ChunkSection getChunkSection(@NotNull Pos pos) {
+        return this.getChunkSection((int) pos.y() >> 4);
+    }
+
+    @NotNull ChunkGenerator getGenerator();
 
     @NotNull World getWorld();
 
@@ -32,20 +48,18 @@ public interface Chunk extends Writable, BlockGetter, BlockSetter {
 
     int getChunkZ();
 
-    @Nullable ChunkSection getSectionAt(int y);
-
-    @NotNull ChunkSection[] getSectionsBelow(int y);
-
-    @NotNull ChunkSection[] getSectionsAbove(int y);
-
     @NotNull List<Entity> getEntities();
 
     boolean isLoaded();
 
-    void setIsLoaded(boolean isLoaded);
+    boolean load(boolean generate);
 
-    void load();
+    default boolean load() {
+        return this.load(true);
+    }
 
     void unload();
+
+    @NotNull Collection<Player> getAllPlayersSeeingChunk();
 
 }

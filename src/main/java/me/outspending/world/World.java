@@ -10,6 +10,7 @@ import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -43,15 +44,23 @@ public interface World extends Tickable, BlockGetter, BlockSetter {
 
     void removeEntity(@NotNull Entity entity);
 
+    boolean loadChunk(int x, int z, boolean generate);
+
+    boolean unloadChunk(@NotNull Chunk chunk);
+
     @NotNull List<Chunk> getLoadedChunks();
 
-    @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance);
+    @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Chunk centerChunk, int chunkDistance);
 
-    @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance, Predicate<Chunk> predicate);
+    @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Chunk centerChunk, int chunkDistance, Predicate<Chunk> predicate);
 
-    @NotNull Chunk getChunk(int x, int z);
+    @Nullable Chunk getChunk(int x, int z, boolean loadIfNotExists);
 
-    default @NotNull Chunk getChunk(@NotNull Pos position) {
+    default @Nullable Chunk getChunk(int x, int z) {
+        return this.getChunk(x, z, true);
+    }
+
+    default @Nullable Chunk getChunk(@NotNull Pos position) {
         return getChunk((int) position.x() >> 4, (int) position.z() >> 4);
     }
 

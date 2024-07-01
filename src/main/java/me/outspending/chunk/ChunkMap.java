@@ -7,9 +7,14 @@ import me.outspending.events.event.ChunkUnloadEvent;
 import me.outspending.position.Pos;
 import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
@@ -21,27 +26,33 @@ public final class ChunkMap {
         this.world = world;
     }
 
-    private int getChunkIndex(int x, int z) {
-        return (x << 16) | (z & 0xFFFF);
+    private int hashChunkCoords(int x, int z) {
+        int hash = x;
+        hash = 31 * hash + z;
+        return hash;
     }
 
-    public @NotNull Chunk getChunk(int x, int z) {
-        int index = getChunkIndex(x, z);
-        return storedChunks.containsKey(index) ? storedChunks.get(index) : loadChunk(x, z);
+    public @Nullable Chunk getChunk(int x, int z, boolean loadIfNotExists) {
+        int index = hashChunkCoords(x, z);
+        return storedChunks.containsKey(index) ? storedChunks.get(index) : loadIfNotExists ? loadChunk(x, z, true) : null;
     }
 
-    public @NotNull CompletableFuture<List<Chunk>> getChunksRange(@NotNull Pos centerPosition, int distanceChunks) {
+    public @NotNull CompletableFuture<List<Chunk>> getChunksRange(@NotNull Chunk centerChunk, int distanceChunks) {
         return CompletableFuture.supplyAsync(() -> {
             List<Chunk> chunks = new ArrayList<>();
-            int chunkX = (int) centerPosition.x() >> 4;
-            int chunkZ = (int) centerPosition.z() >> 4;
+            int chunkX = centerChunk.getChunkX();
+            int chunkZ = centerChunk.getChunkZ();
 
             if (distanceChunks == 0) {
-                chunks.add(getChunk(chunkX, chunkZ));
+                chunks.add(getChunk(chunkX, chunkZ, true));
             } else {
-                for (int x = chunkX - distanceChunks; x <= chunkX + distanceChunks; x++) {
-                    for (int z = chunkZ - distanceChunks; z <= chunkZ + distanceChunks; z++) {
-                        Chunk chunk = getChunk(x, z);
+                for (int dx = -distanceChunks; dx <= distanceChunks; dx++) {
+                    for (int dz = -distanceChunks; dz <= distanceChunks; dz++) {
+                        final int newChunkX = chunkX + dx;
+                        final int newChunkZ = chunkZ + dz;
+
+                        Chunk chunk = this.getChunk(newChunkX, newChunkZ, true);
+
                         chunks.add(chunk);
                     }
                 }
@@ -51,30 +62,35 @@ public final class ChunkMap {
         });
     }
 
-    public @NotNull CompletableFuture<List<Chunk>> getChunksRange(@NotNull Pos centerPosition, int distanceChunks, Predicate<Chunk> chunkPredicate) {
-        return getChunksRange(centerPosition, distanceChunks).thenApply(chunks -> chunks.stream()
+    public @NotNull CompletableFuture<List<Chunk>> getChunksRange(@NotNull Chunk centerChunk, int distanceChunks, Predicate<Chunk> chunkPredicate) {
+        return getChunksRange(centerChunk, distanceChunks).thenApply(chunks -> chunks.stream()
                 .filter(chunkPredicate)
                 .toList());
     }
 
-    public @NotNull Chunk loadChunk(int x, int z) {
-        final int index = getChunkIndex(x, z);
-        if (storedChunks.containsKey(index)) {
-            return storedChunks.get(index);
-        } else {
-            final Chunk chunk = Chunk.create(x, z, world, ChunkSection.generateChunkSections());
-
-            storedChunks.put(index, chunk);
-            EventExecutor.emitEvent(new ChunkLoadEvent(chunk));
-
-            return chunk;
-        }
+    public boolean isChunkSaved(@NotNull Chunk chunk) {
+        return storedChunks.containsKey(hashChunkCoords(chunk.getChunkX(), chunk.getChunkZ()));
     }
 
-    public @NotNull Chunk unloadChunk(int x, int z) {
-        int chunkIndex = getChunkIndex(x, z);
+    public @Nullable Chunk loadChunk(int x, int z, boolean generate) {
+        final int index = hashChunkCoords(x, z);
+        if (storedChunks.containsKey(index)) {
+            return null;
+        }
+
+        final Chunk chunk = Chunk.create(x, z, world);
+        chunk.load(generate);
+
+        storedChunks.put(index, chunk);
+        EventExecutor.emitEvent(new ChunkLoadEvent(chunk));
+
+        return chunk;
+    }
+
+    public @Nullable Chunk unloadChunk(int x, int z) {
+        int chunkIndex = hashChunkCoords(x, z);
         if (!storedChunks.containsKey(chunkIndex)) {
-            return getChunk(x, z);
+            return null;
         } else {
             final Chunk removedChunk = storedChunks.remove(chunkIndex);
             EventExecutor.emitEvent(new ChunkUnloadEvent(removedChunk));

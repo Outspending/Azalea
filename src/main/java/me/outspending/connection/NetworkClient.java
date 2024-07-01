@@ -81,7 +81,6 @@ public interface NetworkClient {
 
     @ApiStatus.Internal
     default void sendChunkData(@NotNull Chunk chunk) {
-        chunk.setIsLoaded(true);
         sendPacket(new ClientChunkDataPacket(
                 chunk.getChunkX(), chunk.getChunkZ(),
                 ClientChunkDataPacket.EMPTY_HEIGHTMAP,

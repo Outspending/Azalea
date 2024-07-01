@@ -1,14 +1,19 @@
 package me.outspending.chunk;
 
 import lombok.Getter;
+import me.outspending.MinecraftServer;
 import me.outspending.block.BlockType;
 import me.outspending.entity.Entity;
+import me.outspending.generation.ChunkGenerator;
+import me.outspending.player.Player;
 import me.outspending.position.Pos;
 import me.outspending.protocol.writer.PacketWriter;
 import me.outspending.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Getter
@@ -33,7 +38,7 @@ public final class ChunkImpl implements Chunk {
 
     @Override
     public void setBlock(int x, int y, int z, @NotNull BlockType blockType) {
-        final ChunkSection section = getSectionAt(y);
+        final ChunkSection section = getChunkSection(y);
         if (section != null) {
             section.setBlock(x, y, z, blockType);
         }
@@ -41,13 +46,27 @@ public final class ChunkImpl implements Chunk {
 
     @Override
     public @NotNull BlockType getBlock(int x, int y, int z) {
-        final ChunkSection section = getSectionAt(y);
+        final ChunkSection section = getChunkSection(y);
         return section != null ? section.getBlock(x, y, z) : BlockType.AIR;
     }
 
     @Override
-    public @NotNull ChunkSection[] getSections() {
-        return sections;
+    public @NotNull ChunkSection[] getChunkSections() {
+        return this.sections;
+    }
+
+    @Override
+    public @Nullable ChunkSection getChunkSection(int sectionY) {
+        if (this.sections.length <= sectionY) {
+            return null;
+        }
+
+        return this.sections[sectionY];
+    }
+
+    @Override
+    public @NotNull ChunkGenerator getGenerator() {
+        return this.world.getGenerator().getChunkGenerator(this);
     }
 
     @Override
@@ -66,32 +85,6 @@ public final class ChunkImpl implements Chunk {
     }
 
     @Override
-    public @Nullable ChunkSection getSectionAt(int y) {
-        return sections[y >> 4];
-    }
-
-    @Override
-    public @NotNull ChunkSection[] getSectionsBelow(int y) {
-        int delta = Math.max(0, y / 16);
-        ChunkSection[] belowSections = new ChunkSection[delta];
-        if (delta > 0) {
-            System.arraycopy(sections, 0, belowSections, 0, delta);
-        }
-        return belowSections;
-    }
-
-    @Override
-    public @NotNull ChunkSection[] getSectionsAbove(int y) {
-        int delta = Math.max(0, y / 16);
-        int aboveSize = Math.max(0, 16 - delta);
-        ChunkSection[] aboveSections = new ChunkSection[aboveSize];
-        if (aboveSize > 0) {
-            System.arraycopy(sections, delta, aboveSections, 0, aboveSize);
-        }
-        return aboveSections;
-    }
-
-    @Override
     public @NotNull List<Entity> getEntities() {
         return world.getAllEntities(entity -> {
             Pos position = entity.getPosition();
@@ -103,18 +96,34 @@ public final class ChunkImpl implements Chunk {
     }
 
     @Override
-    public void setIsLoaded(boolean isLoaded) {
-        this.isLoaded = isLoaded;
-    }
+    public boolean load(boolean generate) {
+        if (this.isLoaded) {
+            return false;
+        } else {
+            this.isLoaded = true;
+            if (generate) {
+                this.world.getGenerator().generate(this);
+            }
 
-    @Override
-    public void load() {
-        
+            return this.isLoaded;
+        }
     }
 
     @Override
     public void unload() {
-        // TODO: Implement
+        this.isLoaded = false;
+    }
+
+    @Override
+    public @NotNull Collection<Player> getAllPlayersSeeingChunk() {
+        Collection<Player> seeingPlayers = new HashSet<>();
+        for (Player player : MinecraftServer.getInstance().getAllPlayers()) {
+            if (player.canSeeChunk(this)) {
+                seeingPlayers.add(player);
+            }
+        }
+
+        return seeingPlayers;
     }
 
     @Override
@@ -123,4 +132,10 @@ public final class ChunkImpl implements Chunk {
             section.write(writer);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Chunk{x=" + chunkX + ", z=" + chunkZ + "}";
+    }
+
 }

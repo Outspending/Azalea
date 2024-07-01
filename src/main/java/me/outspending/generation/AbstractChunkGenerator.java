@@ -18,7 +18,7 @@ public abstract class AbstractChunkGenerator implements ChunkGenerator {
     private ChunkSection[] getSectionsFrom(int minHeight, int maxHeight) {
         ChunkSection[] sections = new ChunkSection[maxHeight - minHeight];
         for (int i = minHeight; i < maxHeight; i++) {
-            sections[i] = chunk.getSections()[i];
+            sections[i] = chunk.getChunkSections()[i];
         }
 
         return sections;
@@ -31,7 +31,7 @@ public abstract class AbstractChunkGenerator implements ChunkGenerator {
 
     @Override
     public void fill(@NotNull BlockType blockType) {
-        ChunkSection[] sections = chunk.getSections();
+        ChunkSection[] sections = chunk.getChunkSections();
         for (ChunkSection section : sections) {
             fillSection(section, blockType);
         }
@@ -39,7 +39,7 @@ public abstract class AbstractChunkGenerator implements ChunkGenerator {
 
     @Override
     public void fillSection(@Range(from = 0, to = 24) int sectionY, @NotNull BlockType blockType) {
-        ChunkSection section = chunk.getSections()[sectionY];
+        ChunkSection section = chunk.getChunkSections()[sectionY];
         fillSection(section, blockType);
     }
 
@@ -87,7 +87,7 @@ public abstract class AbstractChunkGenerator implements ChunkGenerator {
 
     @Override
     public void fillY(int y, @NotNull BlockType blockType) {
-        ChunkSection section = chunk.getSections()[y >> 4];
+        ChunkSection section = chunk.getChunkSections()[y >> 4];
         fillY(section, y, blockType);
     }
 

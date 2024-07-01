@@ -12,7 +12,9 @@ import me.outspending.events.event.EntityWorldRemoveEvent;
 import me.outspending.player.Player;
 import me.outspending.generation.WorldGenerator;
 import me.outspending.position.Pos;
+import me.outspending.protocol.packets.client.play.ClientBlockUpdatePacket;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,23 +74,33 @@ public final class WorldImpl implements World {
     }
 
     @Override
+    public boolean loadChunk(int x, int z, boolean generate) {
+        return chunkMap.loadChunk(x, z, generate) != null;
+    }
+
+    @Override
+    public boolean unloadChunk(@NotNull Chunk chunk) {
+        return chunkMap.unloadChunk(chunk.getChunkX(), chunk.getChunkZ()) != null;
+    }
+
+    @Override
     public @NotNull List<Chunk> getLoadedChunks() {
         return chunkMap.getAllChunks();
     }
 
     @Override
-    public @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance) {
-        return chunkMap.getChunksRange(centerPosition, chunkDistance);
+    public @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Chunk centerChunk, int chunkDistance) {
+        return chunkMap.getChunksRange(centerChunk, chunkDistance);
     }
 
     @Override
-    public @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Pos centerPosition, int chunkDistance, Predicate<Chunk> predicate) {
-        return chunkMap.getChunksRange(centerPosition, chunkDistance, predicate);
+    public @NotNull CompletableFuture<List<Chunk>> getChunksInRange(@NotNull Chunk centerChunk, int chunkDistance, Predicate<Chunk> predicate) {
+        return chunkMap.getChunksRange(centerChunk, chunkDistance, predicate);
     }
 
     @Override
-    public @NotNull Chunk getChunk(int x, int z) {
-        return chunkMap.getChunk(x, z);
+    public @Nullable Chunk getChunk(int x, int z, boolean loadIfNotExists) {
+        return chunkMap.getChunk(x, z, loadIfNotExists);
     }
 
     @Override
@@ -102,13 +114,25 @@ public final class WorldImpl implements World {
 
     @Override
     public @NotNull BlockType getBlock(int x, int y, int z) {
-        final Chunk chunkAt = chunkMap.getChunk(x >> 4, z >> 4);
+        final Chunk chunkAt = chunkMap.getChunk(x >> 4, z >> 4, false);
+        if (chunkAt == null) {
+            return BlockType.AIR;
+        }
+
         return chunkAt.getBlock(x, y, z);
     }
 
     @Override
     public void setBlock(int x, int y, int z, @NotNull BlockType blockType) {
-        final Chunk chunkAt = chunkMap.getChunk(x, z);
+        final Chunk chunkAt = chunkMap.getChunk(x, z, false);
+        if (chunkAt == null) {
+            return;
+        }
+
         chunkAt.setBlock(x >> 4, y >> 4, z >> 4, blockType);
+        for (Player player : chunkAt.getAllPlayersSeeingChunk()) {
+            player.sendPacket(new ClientBlockUpdatePacket(x, y, z, blockType));
+        }
     }
+
 }
