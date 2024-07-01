@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientSetTabListHeaderAndFooterPacket(@NotNull Component header, @NotNull Component footer) implements ClientPacket {
+
     public ClientSetTabListHeaderAndFooterPacket(@NotNull String header, @NotNull String footer) {
         this(Component.text(header), Component.text(footer));
     }

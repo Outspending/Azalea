@@ -36,6 +36,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -255,6 +256,30 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
     @Override
     public void sendSubtitle(@NotNull Component component) {
         sendPacket(new ClientSetSubtitleTextPacket(component));
+    }
+
+    public void setPlayerListHeader(@NotNull String header) {
+        this.setPlayerListHeader(Component.text(header));
+    }
+
+    public void setPlayerListHeader(@NotNull Component header) {
+        sendPacket(new ClientSetTabListHeaderAndFooterPacket(header, Component.empty()));
+    }
+
+    public void setPlayerListFooter(@NotNull String footer) {
+        this.setPlayerListFooter(Component.text(footer));
+    }
+
+    public void setPlayerListFooter(@NotNull Component footer) {
+        sendPacket(new ClientSetTabListHeaderAndFooterPacket(Component.empty(), footer));
+    }
+
+    public void setPlayerListHeaderAndFooter(@NotNull String header, @NotNull String footer) {
+        this.setPlayerListHeaderAndFooter(Component.text(header), Component.text(footer));
+    }
+
+    public void setPlayerListHeaderAndFooter(@NotNull Component header, @NotNull Component footer) {
+        sendPacket(new ClientSetTabListHeaderAndFooterPacket(header, footer));
     }
 
     public void setLevel(int level) {

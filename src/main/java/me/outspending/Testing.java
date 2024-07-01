@@ -37,6 +37,17 @@ public class Testing implements EventListener {
     }
 
     @EventHandler
+    public void onEntitySpawn(EntityWorldAddEvent e) {
+        final Entity entity = e.getEntity();
+        if (entity instanceof Player player) {
+            player.setPlayerListHeaderAndFooter(
+                    message.deserialize("<gradient:#ff0000:#00ff00>Header</gradient>"),
+                    message.deserialize("<gradient:#ff0000:#00ff00>Footer</gradient>")
+            );
+        }
+    }
+
+    @EventHandler
     public void onTick(ServerTickEvent e) {
         defaultWorld.getPlayers().forEach(player -> {
             final int usedMemory = (int) ((runtime.totalMemory() - runtime.freeMemory()) / 1048576);
