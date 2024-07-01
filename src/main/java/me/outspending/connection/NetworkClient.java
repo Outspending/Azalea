@@ -19,6 +19,8 @@ import me.outspending.registry.DefaultRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.*;
 
 public interface NetworkClient {
@@ -27,6 +29,12 @@ public interface NetworkClient {
     private void sendBundled() {
         sendPacket(new ClientBundleDelimiterPacket());
     }
+
+    @ApiStatus.Internal
+    Socket getSocket();
+
+    @ApiStatus.Internal
+    InetSocketAddress getAddress();
 
     @ApiStatus.Internal
     void sendPacket(@NotNull ClientPacket packet);
@@ -152,7 +160,7 @@ public interface NetworkClient {
             }
         }
 
-        sendPacket(new ClientPlayerInfoRemovePacket(players.length, uuids));
+        sendPacket(new ClientPlayerInfoRemovePacket(uuids));
     }
 
     @ApiStatus.Internal

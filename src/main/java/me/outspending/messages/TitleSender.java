@@ -4,6 +4,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+
 public interface TitleSender {
 
     void sendTitle(@NotNull Title title);
@@ -20,13 +22,26 @@ public interface TitleSender {
         sendSubtitle(Component.text(string));
     }
 
-    default void sendTitleAndSubtitle(@NotNull Component title, @NotNull Component subtitle) {
-        sendTitle(title);
-        sendSubtitle(subtitle);
+    void sendTitle(@NotNull Component title, @NotNull Component subtitle);
+
+    default void sendTitle(@NotNull String title, @NotNull String subtitle) {
+        sendTitle(Component.text(title), Component.text(subtitle));
     }
 
-    default void sendTitleAndSubtitle(@NotNull String title, @NotNull String subtitle) {
-        sendTitleAndSubtitle(Component.text(title), Component.text(subtitle));
+    default void sendTitle(@NotNull Component title, @NotNull Component subtitle, int fadeIn, int stay, int fadeOut) {
+        this.sendTitle(Title.title(title, subtitle,
+                Title.Times.times(
+                        Duration.ofMillis(fadeIn * 50L),
+                        Duration.ofMillis(stay * 50L),
+                        Duration.ofMillis(fadeOut * 50L)
+                ))
+        );
     }
+
+    default void sendTitle(@NotNull String title, @NotNull String subtitle, int fadeIn, int stay, int fadeOut) {
+        this.sendTitle(Component.text(title), Component.text(subtitle), fadeIn, stay, fadeOut);
+    }
+
+    void resetTitle();
 
 }

@@ -13,7 +13,7 @@ public record PingRequestPlayPacket(long payload) implements ServerPacket {
 
     @Override
     public int id() {
-        return 0x1E;
+        return 0x21;
     }
 
 }

@@ -8,14 +8,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
-public record ClientPlayerInfoRemovePacket(int numOfPlayers, @NotNull Collection<UUID> uuids) implements ClientPacket {
-    public ClientPlayerInfoRemovePacket(int numOfPlayers, @NotNull UUID... uuids) {
-        this(numOfPlayers, Arrays.asList(uuids));
+public record ClientPlayerInfoRemovePacket(@NotNull Collection<UUID> uuids) implements ClientPacket {
+    public ClientPlayerInfoRemovePacket(@NotNull UUID... uuids) {
+        this(Arrays.asList(uuids));
     }
 
     @Override
     public void write(@NotNull PacketWriter writer) {
-        writer.writeVarInt(numOfPlayers);
+        writer.writeVarInt(uuids.size());
         for (UUID uuid : uuids) {
             writer.writeUUID(uuid);
         }

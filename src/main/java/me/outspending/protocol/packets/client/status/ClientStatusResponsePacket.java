@@ -3,6 +3,7 @@ package me.outspending.protocol.packets.client.status;
 import com.google.gson.Gson;
 import me.outspending.protocol.types.ClientPacket;
 import me.outspending.protocol.writer.PacketWriter;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientStatusResponsePacket(@NotNull Players players, @NotNull Version version, @NotNull String description) implements ClientPacket {

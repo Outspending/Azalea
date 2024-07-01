@@ -5,12 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="169c97b4-1fb9-4935-b804-5c685d047fd6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientClearTitlesPacket.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientPingResponsePlayPacket.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/Testing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/ServerPacketListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/ServerPacketListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/connection/NetworkClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/connection/NetworkClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/messages/Chatable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/Chatable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/messages/TitleSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/messages/TitleSender.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/player/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSetTabListHeaderAndFooterPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientSetTabListHeaderAndFooterPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientPlayerInfoRemovePacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/play/ClientPlayerInfoRemovePacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/status/ClientStatusResponsePacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/client/status/ClientStatusResponsePacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PingRequestPlayPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/outspending/protocol/packets/server/play/PingRequestPlayPacket.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,7 +253,9 @@
       <workItem from="1719720299854" duration="4787000" />
       <workItem from="1719769417568" duration="1092000" />
       <workItem from="1719770631678" duration="5741000" />
-      <workItem from="1719793054969" duration="3461000" />
+      <workItem from="1719793054969" duration="3816000" />
+      <workItem from="1719796992663" duration="49000" />
+      <workItem from="1719805102718" duration="1384000" />
     </task>
     <servers />
   </component>

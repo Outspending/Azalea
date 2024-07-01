@@ -1,5 +1,6 @@
 package me.outspending.messages;
 
+import me.outspending.player.Player;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 

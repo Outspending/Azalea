@@ -15,6 +15,7 @@ import me.outspending.protocol.packets.client.configuration.ClientRegistryDataPa
 import me.outspending.protocol.packets.client.login.ClientLoginSuccessPacket;
 import me.outspending.protocol.packets.client.login.ClientSetCompressionPacket;
 import me.outspending.protocol.packets.client.play.ClientEntityAnimationPacket;
+import me.outspending.protocol.packets.client.play.ClientPingResponsePlayPacket;
 import me.outspending.protocol.packets.client.status.ClientPingResponsePacket;
 import me.outspending.protocol.packets.client.status.ClientStatusResponsePacket;
 import me.outspending.protocol.packets.server.HandshakePacket;
@@ -45,6 +46,7 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
 
         handleMovementPackets();
         handleEntityInteract();
+        handlePingRequest();
     }
 
     private void handleHandshakePacket() {
@@ -124,6 +126,10 @@ final class ServerPacketListener extends PacketListenerImpl<ServerPacket> {
 
     private void handleEntityInteract() {
         super.addListener(EntityInteractPacket.class, (connection, packet) -> EventExecutor.emitEvent(new EntityInteractEvent(packet.entityID(), packet.type(), packet.targetPos(), packet.hand(), packet.sneaking())));
+    }
+
+    public void handlePingRequest() {
+        super.addListener(PingRequestPlayPacket.class, (connection, packet) -> connection.sendPacket(new ClientPingResponsePlayPacket(packet.payload())));
     }
 
 }

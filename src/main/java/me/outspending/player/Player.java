@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.*;
 
@@ -258,6 +259,24 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
         sendPacket(new ClientSetSubtitleTextPacket(component));
     }
 
+    @Override
+    public void sendTitle(@NotNull Component title, @NotNull Component subtitle) {
+        sendBundledPackets(new ClientSetTitleTextPacket(title), new ClientSetSubtitleTextPacket(subtitle));
+    }
+
+    @Override
+    public void resetTitle() {
+        sendPacket(new ClientClearTitlesPacket(true));
+    }
+
+    public void hideEntity(@NotNull Entity entity) {
+        sendPacket(new ClientRemoveEntitiesPacket(entity.getEntityID()));
+    }
+
+    public void hidePlayer(@NotNull Player player) {
+        sendPacket(new ClientPlayerInfoRemovePacket(player.getUuid()));
+    }
+
     public void setPlayerListHeader(@NotNull String header) {
         this.setPlayerListHeader(Component.text(header));
     }
@@ -313,6 +332,16 @@ public class Player extends LivingEntity implements NetworkClient, Chatable, Tit
 
     public void removeLoadedChunk(@NotNull Chunk chunk) {
         this.loadedChunks.remove(chunk);
+    }
+
+    @Override
+    public Socket getSocket() {
+        return this.connection.getSocket();
+    }
+
+    @Override
+    public InetSocketAddress getAddress() {
+        return (InetSocketAddress) this.getSocket().getLocalSocketAddress();
     }
 
     @ApiStatus.Internal
